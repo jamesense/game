@@ -197,6 +197,7 @@ extern _printf
 extern _scanf
 extern _system
 extern _time
+
 section .data
 str_0 db "=== RESOURCE COLLECTOR GAME ===", 0
 str_1 db 10, 0
@@ -457,6 +458,7 @@ str_255 db "Turn: %d", 0
 str_256 db "Auto Collect Rate: %d", 0
 str_257 db "Prestige: Level %d (x%d bonus)", 0
 str_258 db "A wild RESOURCE GOLEM appears!", 0
+
 section .bss
 var_wood resd 1
 var_stone resd 1
@@ -580,6 +582,7 @@ var_rewardgold resd 1
 var_damage resd 1
 var_leveltimes50 resd 1
 var_total resd 1
+
 section .text
 global _main
 _main:
