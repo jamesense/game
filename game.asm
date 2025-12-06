@@ -2285,6 +2285,9 @@ if_then_36:
     push str_54
     call _printf
     add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
     mov eax, dword [var_wood]
     push eax
     mov eax, 67
