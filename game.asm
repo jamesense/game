@@ -40,7 +40,7 @@ _compare_strings:
 _clearscreen:
     push ebp
     mov ebp, esp
-    push cmd_473
+    push cmd_499
     call _system
     add esp, 4
     mov eax, 1
@@ -67,6 +67,14 @@ _autocollectresources:
     mov dword [var_gold], eax
     mov eax, dword [ebp+36]
     mov dword [var_totalcollect], eax
+    mov eax, dword [ebp+40]
+    mov dword [var_lumbermill], eax
+    mov eax, dword [ebp+44]
+    mov dword [var_quarry], eax
+    mov eax, dword [ebp+48]
+    mov dword [var_goldmine], eax
+    mov eax, dword [ebp+52]
+    mov dword [var_warehouse], eax
     mov eax, dword [var_autocollect]
     push eax
     mov eax, dword [var_multiplier]
@@ -74,6 +82,70 @@ _autocollectresources:
     imul ebx, dword [var_multiplier]
     mov eax, ebx
     mov dword [var_basecollect], eax
+    mov eax, 0
+    mov dword [var_buildingbonus], eax
+    mov eax, dword [var_buildingbonus]
+    push eax
+    mov eax, dword [var_lumbermill]
+    pop ebx
+    add ebx, dword [var_lumbermill]
+    mov eax, ebx
+    mov dword [var_buildingbonus], eax
+    mov eax, dword [var_buildingbonus]
+    push eax
+    mov eax, dword [var_quarry]
+    pop ebx
+    add ebx, dword [var_quarry]
+    mov eax, ebx
+    mov dword [var_buildingbonus], eax
+    mov eax, dword [var_buildingbonus]
+    push eax
+    mov eax, dword [var_goldmine]
+    pop ebx
+    add ebx, dword [var_goldmine]
+    mov eax, ebx
+    mov dword [var_buildingbonus], eax
+    mov eax, dword [var_basecollect]
+    push eax
+    mov eax, dword [var_buildingbonus]
+    pop ebx
+    add ebx, dword [var_buildingbonus]
+    mov eax, ebx
+    mov dword [var_basecollect], eax
+    mov eax, dword [var_warehouse]
+    mov ebx, 0
+    cmp eax, ebx
+    jg if_then_372
+    jmp if_else_372
+if_then_372:
+    mov eax, dword [var_basecollect]
+    push eax
+    mov eax, dword [var_warehouse]
+    pop ebx
+    imul ebx, dword [var_warehouse]
+    mov eax, ebx
+    mov dword [var_warehousebonus], eax
+    mov eax, dword [var_warehousebonus]
+    push eax
+    mov eax, 10
+    pop ebx
+    mov eax, ebx
+    mov ebx, eax
+    mov eax, ebx
+    mov ebx, 10
+    cdq
+    idiv ebx
+    mov dword [var_warehousebonus], eax
+    mov eax, dword [var_basecollect]
+    push eax
+    mov eax, dword [var_warehousebonus]
+    pop ebx
+    add ebx, dword [var_warehousebonus]
+    mov eax, ebx
+    mov dword [var_basecollect], eax
+    jmp if_end_372
+if_else_372:
+if_end_372:
     mov eax, dword [var_basecollect]
     push eax
     mov eax, dword [var_prestigebonus]
@@ -87,12 +159,22 @@ _autocollectresources:
     pop ebx
     add ebx, dword [var_totalcollect]
     mov eax, ebx
+    push eax
+    mov eax, dword [var_lumbermill]
+    pop ebx
+    add ebx, dword [var_lumbermill]
+    mov eax, ebx
     mov dword [var_wood], eax
     mov eax, dword [var_stone]
     push eax
     mov eax, dword [var_totalcollect]
     pop ebx
     add ebx, dword [var_totalcollect]
+    mov eax, ebx
+    push eax
+    mov eax, dword [var_quarry]
+    pop ebx
+    add ebx, dword [var_quarry]
     mov eax, ebx
     mov dword [var_stone], eax
     mov eax, dword [var_gold]
@@ -101,8 +183,13 @@ _autocollectresources:
     pop ebx
     add ebx, dword [var_totalcollect]
     mov eax, ebx
+    push eax
+    mov eax, dword [var_goldmine]
+    pop ebx
+    add ebx, dword [var_goldmine]
+    mov eax, ebx
     mov dword [var_gold], eax
-    mov eax, 1
+    mov eax, dword [var_wood]
     mov esp, ebp
     pop ebp
     ret
@@ -131,7 +218,7 @@ _showstats:
     mov eax, dword [ebp+44]
     mov dword [var_achievements], eax
     push dword [var_turn]
-    push str_474
+    push str_500
     call _printf
     add esp, 8
     push str_3
@@ -166,14 +253,14 @@ _showstats:
     call _printf
     add esp, 4
     push dword [var_autocollect]
-    push str_475
+    push str_501
     call _printf
     add esp, 8
     push str_3
     call _printf
     add esp, 4
     push dword [var_multiplier]
-    push str_81
+    push str_85
     call _printf
     add esp, 8
     push str_3
@@ -181,14 +268,14 @@ _showstats:
     add esp, 4
     push dword [var_prestigebonus]
     push dword [var_prestigelevel]
-    push str_476
+    push str_502
     call _printf
     add esp, 12
     push str_3
     call _printf
     add esp, 4
     push dword [var_achievements]
-    push str_82
+    push str_503
     call _printf
     add esp, 8
     push str_3
@@ -220,7 +307,7 @@ _spawnboss:
     imul ebx, dword [var_level]
     mov eax, ebx
     mov dword [var_bosshp], eax
-    push str_477
+    push str_504
     call _printf
     add esp, 4
     push str_3
@@ -344,404 +431,431 @@ str_76 db "Upgrade Cost: %d", 0
 str_77 db "Prestige Level: %d", 0
 str_78 db "Prestige Bonus: x%d", 0
 str_79 db "Next Prestige Cost: %d total resources", 0
-str_80 db "Next Upgrade Needs: Wood %d, Stone %d, Gold %d", 0
-str_81 db "Multiplier: %d", 0
-str_82 db "Achievements: %d/30", 0
-str_83 db "=== SHOP ===", 0
-str_84 db "1: Multiplier Boost (+1) - Cost: %d Gold", 0
-str_85 db "2: Wood Cutter - Cost: %d Stone, %d Gold", 0
-str_86 db "3: Stone Mason - Cost: %d Wood, %d Gold", 0
-str_87 db "4: Prestige (Reset for permanent x2 bonus)", 0
-str_88 db "   Cost: %d total resources", 0
-str_89 db "   Current: %d/%d", 0
-str_90 db "Enter choice: ", 0
-scanf_fmt_91 db "%d", 0
-str_92 db "Multiplier boosted!", 0
-str_93 db "Not enough gold for boost!", 0
-str_94 db "Wood Cutter hired! Gained %d wood.", 0
-str_95 db "Need Stone: %d, Gold: %d", 0
-str_96 db "Stone Mason hired! Gained %d stone.", 0
-str_97 db "Need Wood: %d, Gold: %d", 0
-str_98 db "PRESTIGE ACHIEVED!", 0
-str_99 db "All resources converted to permanent bonus!", 0
-str_100 db "Game reset with x%d production bonus!", 0
-str_101 db "Not enough resources for prestige!", 0
-str_102 db "Need %d total resources, you have %d", 0
-str_103 db "=== ACHIEVEMENTS (%d/30) ===", 0
-str_104 db "[X] First Steps - Collect your first resource", 0
-str_105 db "[ ] First Steps - Collect your first resource", 0
-str_106 db "[X] Halfway There - Reach Level 5", 0
-str_107 db "[ ] Halfway There - Reach Level 5", 0
-str_108 db "[X] Master Collector - Reach Level 10", 0
-str_109 db "[ ] Master Collector - Reach Level 10", 0
-str_110 db "[X] Grand Master - Reach Level 20", 0
-str_111 db "[ ] Grand Master - Reach Level 20", 0
-str_112 db "[X] Legendary Collector - Reach Level 50", 0
-str_113 db "[ ] Legendary Collector - Reach Level 50", 0
-str_114 db "[X] Resource Baron - Collect 100+ total resources", 0
-str_115 db "[ ] Resource Baron - Collect 100+ total resources", 0
-str_116 db "[X] Wealthy Magnate - Collect 1,000+ total resources", 0
-str_117 db "[ ] Wealthy Magnate - Collect 1,000+ total resources", 0
-str_118 db "[X] Resource Millionaire - Collect 10,000+ total resources", 0
-str_119 db "[ ] Resource Millionaire - Collect 10,000+ total resources", 0
-str_120 db "[X] Lumberjack - Collect 50+ wood", 0
-str_121 db "[ ] Lumberjack - Collect 50+ wood", 0
-str_122 db "[X] Quarry King - Collect 50+ stone", 0
-str_123 db "[ ] Quarry King - Collect 50+ stone", 0
-str_124 db "[X] Gold Digger - Collect 50+ gold", 0
-str_125 db "[ ] Gold Digger - Collect 50+ gold", 0
-str_126 db "[X] Wood Tycoon - Collect 500+ wood", 0
-str_127 db "[ ] Wood Tycoon - Collect 500+ wood", 0
-str_128 db "[X] Stone Tycoon - Collect 500+ stone", 0
-str_129 db "[ ] Stone Tycoon - Collect 500+ stone", 0
-str_130 db "[X] Gold Tycoon - Collect 500+ gold", 0
-str_131 db "[ ] Gold Tycoon - Collect 500+ gold", 0
-str_132 db "[X] Speedrunner - Reach Level 5 in under 20 turns", 0
-str_133 db "[ ] Speedrunner - Reach Level 5 in under 20 turns", 0
-str_134 db "[X] Shopaholic - Reach Level 3", 0
-str_135 db "[ ] Shopaholic - Reach Level 3", 0
-str_136 db "[X] Minigame Master - Win 10 minigames", 0
-str_137 db "[ ] Minigame Master - Win 10 minigames", 0
-str_138 db "[X] Event Explorer - Experience 20 random events", 0
-str_139 db "[ ] Event Explorer - Experience 20 random events", 0
-str_140 db "[X] Turn Veteran - Play 100 turns", 0
-str_141 db "[ ] Turn Veteran - Play 100 turns", 0
-str_142 db "[X] Collector Addict - Make 200 collections", 0
-str_143 db "[ ] Collector Addict - Make 200 collections", 0
-str_144 db "[X] Iron Fist - Reach Level 100", 0
-str_145 db "[ ] Iron Fist - Reach Level 100", 0
-str_146 db "[X] Collector Pro - Make 500 collections", 0
-str_147 db "[ ] Collector Pro - Make 500 collections", 0
-str_148 db "[X] Ultra Rich - Collect 100,000+ total resources", 0
-str_149 db "[ ] Ultra Rich - Collect 100,000+ total resources", 0
-str_150 db "[X] Grinder - Play 500 turns", 0
-str_151 db "[ ] Grinder - Play 500 turns", 0
-str_152 db "[X] Hoarder - Reach 5,000 of any resource", 0
-str_153 db "[ ] Hoarder - Reach 5,000 of any resource", 0
-str_154 db "[X] Unstoppable - Win 25 minigames", 0
-str_155 db "[ ] Unstoppable - Win 25 minigames", 0
-str_156 db "[X] Event Legend - Experience 100 random events", 0
-str_157 db "[ ] Event Legend - Experience 100 random events", 0
-str_158 db "[X] Jackpot - Win 15 minigames", 0
-str_159 db "[ ] Jackpot - Win 15 minigames", 0
-str_160 db "[X] Dedicated - Play 1,000 turns", 0
-str_161 db "[ ] Dedicated - Play 1,000 turns", 0
-str_162 db "[X] Maxed Out - Reach Level 200", 0
-str_163 db "[ ] Maxed Out - Reach Level 200", 0
-str_164 db "[X] Trader - Make 10 market trades", 0
-str_165 db "[ ] Trader - Make 10 market trades", 0
-str_166 db "[X] Speculator - Make 5 market bets", 0
-str_167 db "[ ] Speculator - Make 5 market bets", 0
-str_168 db "[X] Market Tycoon - Make 50 market trades", 0
-str_169 db "[ ] Market Tycoon - Make 50 market trades", 0
-str_170 db "[X] Lucky - Find a rare event", 0
-str_171 db "[ ] Lucky - Find a rare event", 0
-str_172 db "=== MINIGAME ARCADE ===", 0
-str_173 db "Choose a minigame:", 0
-str_174 db "1: Guess the Number (1-5)", 0
-str_175 db "2: Card Guessing (Higher/Lower)", 0
-str_176 db "3: Math Quiz", 0
-str_177 db "4: Rock Paper Scissors", 0
-str_178 db "5: Dice Duel", 0
-str_179 db "6: Coin Flip", 0
-str_180 db "7: Higher Or Lower", 0
-str_181 db "8: Resource Slots", 0
-str_182 db "Enter choice (1-6): ", 0
-scanf_fmt_183 db "%d", 0
-str_184 db "=== GUESS THE NUMBER MINIGAME ===", 0
-str_185 db "Guess a number between 1 and 5!", 0
-str_186 db "Win big rewards if you guess correctly!", 0
-str_187 db "Enter your guess (1-5): ", 0
-scanf_fmt_188 db "%d", 0
-str_189 db "Congratulations! You guessed it!", 0
-str_190 db "You won %d of each resource!", 0
-str_191 db "Wrong! The number was %d", 0
-str_192 db "Better luck next time!", 0
-str_193 db "=== CARD GUESSING GAME ===", 0
-str_194 db "Guess if the next card is HIGHER or LOWER!", 0
-str_195 db "Win streak increases rewards!", 0
-str_196 db "Cards are numbered 1-13", 0
-str_197 db "First card: %d", 0
-str_198 db "Round %d of 5", 0
-str_199 db "Current streak: %d", 0
-str_200 db "========================", 0
-str_201 db "Current card: %d", 0
-str_202 db "Guess next card:", 0
-str_203 db "1 = HIGHER", 0
-str_204 db " 2 = LOWER", 0
-scanf_fmt_205 db "%d", 0
-str_206 db "Next card: %d", 0
-str_207 db "Same card! No change to streak.", 0
-str_208 db "Correct! Streak: %d", 0
-str_209 db "Wrong! Streak broken.", 0
-str_210 db "Continue to next round?", 0
-str_211 db "1 = YES", 0
-str_212 db " 2 = NO (Cash out now)", 0
-scanf_fmt_213 db "%d", 0
-str_214 db "=== CARD GAME RESULTS ===", 0
-str_215 db "Maximum Streak: %d", 0
-str_216 db "Reward Multiplier: x%d", 0
-str_217 db "No winning streaks this game.", 0
-str_218 db "Try again for better luck!", 0
-str_219 db "=== MATH QUIZ CHALLENGE ===", 0
-str_220 db "Solve math problems for bonuses!", 0
-str_221 db "Difficulty increases with your level!", 0
-str_222 db "--- Question %d of %d ---", 0
-str_223 db "What is %d + %d?", 0
-str_224 db "What is %d - %d?", 0
-str_225 db "What is %d * %d?", 0
-str_226 db "What is %d / %d?", 0
-str_227 db "Enter your answer: ", 0
-scanf_fmt_228 db "%d", 0
-str_229 db "Correct! +1 point", 0
-str_230 db "Wrong! The answer was %d", 0
-str_231 db "Quiz Complete! Score: %d/%d", 0
-str_232 db "Quiz Complete! Score: 0/%d", 0
-str_233 db "Study up and try again!", 0
-str_234 db "=== ROCK PAPER SCISSORS ===", 0
-str_235 db "Best of 3 rounds!", 0
-str_236 db "1 = ROCK (beats scissors)", 0
-str_237 db " 2 = PAPER (beats rock)", 0
-str_238 db " 3 = SCISSORS (beats paper)", 0
-str_239 db "Win all 3 rounds for maximum reward!", 0
-str_240 db "===========================", 0
-str_241 db "--- Round %d ---", 0
-str_242 db "Choose: 1=Rock, 2=Paper, 3=Scissors", 0
-str_243 db "Your choice: ", 0
-scanf_fmt_244 db "%d", 0
-str_245 db "You chose: ", 0
-str_246 db "ROCK", 0
-str_247 db "PAPER", 0
-str_248 db "SCISSORS", 0
-str_249 db "Bot chose: ", 0
-str_250 db "It's a TIE!", 0
-str_251 db "Replaying round...", 0
-str_252 db "You WIN this round!", 0
-str_253 db "Bot WINS this round!", 0
-str_254 db "Score: You %d - %d Bot", 0
-str_255 db "=== ROCK PAPER SCISSORS RESULTS ===", 0
-str_256 db "Final Score: You %d - %d Bot", 0
-str_257 db "PERFECT VICTORY! 3-0 SWEEP!", 0
-str_258 db "JACKPOT! You won %d of each resource!", 0
-str_259 db "VICTORY! You beat the bot!", 0
-str_260 db "Close match! You won!", 0
-str_261 db "DRAW! No winner this time.", 0
-str_262 db "Consolation prize: %d of each resource", 0
-str_263 db "DEFEAT! The bot was too strong!", 0
-str_264 db "Participation reward: %d of each resource", 0
-str_265 db "=== DICE DUEL ===", 0
-str_266 db "Roll dice against the computer!", 0
-str_267 db " Higher total wins. Doubles = 2x reward!", 0
-str_268 db "Enter bet amount (minimum 10): ", 0
-scanf_fmt_269 db "%d", 0
-str_270 db "Rolling your dice...", 0
-str_271 db "You rolled: %d and %d = %d", 0
-str_272 db "Computer rolling...", 0
-str_273 db "Computer: %d and %d = %d", 0
-str_274 db "DOUBLES! Your roll is special!", 0
-str_275 db "Computer got DOUBLES!", 0
-str_276 db "DOUBLES BONUS! Reward doubled again!", 0
-str_277 db "=== YOU WIN! ===", 0
-str_278 db "Won %d of each resource!", 0
-str_279 db "=== IT'S A TIE! ===", 0
-str_280 db "No winner, no loser. Bet returned.", 0
-str_281 db "=== COMPUTER WINS! ===", 0
-str_282 db "Computer doubles! You lose double!", 0
-str_283 db "Lost %d of each resource.", 0
-str_284 db "Not enough resources for that bet!", 0
-str_285 db "Need at least %d of each resource.", 0
-str_286 db "=== COIN FLIP ===", 0
-str_287 db "Heads or Tails? Double or nothing!", 0
-str_288 db "Enter bet amount: ", 0
-scanf_fmt_289 db "%d", 0
-str_290 db "1. Heads", 0
-str_291 db "2. Tails", 0
-str_292 db "Choose: ", 0
-scanf_fmt_293 db "%d", 0
-str_294 db "Coin: HEADS!", 0
-str_295 db "Coin: TAILS!", 0
-str_296 db "You WIN %d resources!", 0
-str_297 db "You LOSE the bet.", 0
-str_298 db "=== HIGHER OR LOWER ===", 0
-str_299 db "Is next number higher or lower?", 0
-str_300 db "Starting number: %d", 0
-str_301 db "Current: %d", 0
-str_302 db "1. Higher", 0
-str_303 db "2. Lower", 0
-str_304 db "Guess: ", 0
-scanf_fmt_305 db "%d", 0
-str_306 db "Next number: %d", 0
-str_307 db "Wrong!", 0
-str_308 db "Final score: %d/5", 0
-str_309 db "You win %d resources!", 0
-str_310 db "=== LUCKY 7s SLOT MACHINE ===", 0
-str_311 db "Match symbols to win big!", 0
-str_312 db "Symbols: 7=JACKPOT, $=BIG, *=GOOD, C=SMALL", 0
-str_313 db "Three matching = BIG WIN!", 0
-str_314 db "Two matching = Small win", 0
-str_315 db "Enter bet amount (10-100): ", 0
+str_80 db "Lumber Mills: %d (+%d wood/turn)", 0
+str_81 db "Quarries: %d (+%d stone/turn)", 0
+str_82 db "Gold Mines: %d (+%d gold/turn)", 0
+str_83 db "Warehouses: %d (+%d%% collection)", 0
+str_84 db "Next Upgrade Needs: Wood %d, Stone %d, Gold %d", 0
+str_85 db "Multiplier: %d", 0
+str_86 db "Achievements: %d/30", 0
+str_87 db "=== RESOURCE SHOP ===", 0
+str_88 db "Your Resources:", 0
+str_89 db "Wood: %d | Stone: %d | Gold: %d", 0
+str_90 db "Buildings:", 0
+str_91 db "========================", 0
+str_92 db "1: Multiplier Boost (+1) - %d Gold", 0
+str_93 db "2: Wood Cutter - %d Stone, %d Gold", 0
+str_94 db "3: Stone Mason - %d Wood, %d Gold", 0
+str_95 db "--- BUILDINGS ---", 0
+str_96 db "4: Lumber Mill (+1 wood/turn)", 0
+str_97 db "   Cost: %d Wood, %d Stone", 0
+str_98 db "5: Stone Quarry (+1 stone/turn)", 0
+str_99 db "6: Gold Mine (+1 gold/turn)", 0
+str_100 db "7: Warehouse (+10%% collection rate)", 0
+str_101 db "   Cost: %d of each resource", 0
+str_102 db "--- PRESTIGE ---", 0
+str_103 db "8: Prestige (Reset for x2 bonus)", 0
+str_104 db "   Cost: %d total resources", 0
+str_105 db "   Current: %d/%d", 0
+str_106 db "9: Exit Shop", 0
+str_107 db "Enter choice (1-9): ", 0
+scanf_fmt_108 db "%d", 0
+str_109 db "Multiplier boosted to %d!", 0
+str_110 db "Not enough gold! Need %d", 0
+str_111 db "Wood Cutter hired! +%d wood", 0
+str_112 db "Need %d gold!", 0
+str_113 db "Need %d stone!", 0
+str_114 db "Stone Mason hired! +%d stone", 0
+str_115 db "Need %d wood!", 0
+str_116 db "Lumber Mill built! (+1 wood/turn)", 0
+str_117 db "Total Lumber Mills: %d", 0
+str_118 db "Stone Quarry built! (+1 stone/turn)", 0
+str_119 db "Total Quarries: %d", 0
+str_120 db "Gold Mine built! (+1 gold/turn)", 0
+str_121 db "Total Gold Mines: %d", 0
+str_122 db "Warehouse built! (+10%% collection rate)", 0
+str_123 db "Total Warehouses: %d (+%d%%)", 0
+str_124 db "PRESTIGE ACHIEVED! Level %d", 0
+str_125 db "All resources converted to x%d bonus!", 0
+str_126 db "Need %d total resources (have %d)", 0
+str_127 db "Leaving shop...", 0
+str_128 db "=== ACHIEVEMENTS (%d/30) ===", 0
+str_129 db "[X] First Steps - Collect your first resource", 0
+str_130 db "[ ] First Steps - Collect your first resource", 0
+str_131 db "[X] Halfway There - Reach Level 5", 0
+str_132 db "[ ] Halfway There - Reach Level 5", 0
+str_133 db "[X] Master Collector - Reach Level 10", 0
+str_134 db "[ ] Master Collector - Reach Level 10", 0
+str_135 db "[X] Grand Master - Reach Level 20", 0
+str_136 db "[ ] Grand Master - Reach Level 20", 0
+str_137 db "[X] Legendary Collector - Reach Level 50", 0
+str_138 db "[ ] Legendary Collector - Reach Level 50", 0
+str_139 db "[X] Resource Baron - Collect 100+ total resources", 0
+str_140 db "[ ] Resource Baron - Collect 100+ total resources", 0
+str_141 db "[X] Wealthy Magnate - Collect 1,000+ total resources", 0
+str_142 db "[ ] Wealthy Magnate - Collect 1,000+ total resources", 0
+str_143 db "[X] Resource Millionaire - Collect 10,000+ total resources", 0
+str_144 db "[ ] Resource Millionaire - Collect 10,000+ total resources", 0
+str_145 db "[X] Lumberjack - Collect 50+ wood", 0
+str_146 db "[ ] Lumberjack - Collect 50+ wood", 0
+str_147 db "[X] Quarry King - Collect 50+ stone", 0
+str_148 db "[ ] Quarry King - Collect 50+ stone", 0
+str_149 db "[X] Gold Digger - Collect 50+ gold", 0
+str_150 db "[ ] Gold Digger - Collect 50+ gold", 0
+str_151 db "[X] Wood Tycoon - Collect 500+ wood", 0
+str_152 db "[ ] Wood Tycoon - Collect 500+ wood", 0
+str_153 db "[X] Stone Tycoon - Collect 500+ stone", 0
+str_154 db "[ ] Stone Tycoon - Collect 500+ stone", 0
+str_155 db "[X] Gold Tycoon - Collect 500+ gold", 0
+str_156 db "[ ] Gold Tycoon - Collect 500+ gold", 0
+str_157 db "[X] Speedrunner - Reach Level 5 in under 20 turns", 0
+str_158 db "[ ] Speedrunner - Reach Level 5 in under 20 turns", 0
+str_159 db "[X] Shopaholic - Reach Level 3", 0
+str_160 db "[ ] Shopaholic - Reach Level 3", 0
+str_161 db "[X] Minigame Master - Win 10 minigames", 0
+str_162 db "[ ] Minigame Master - Win 10 minigames", 0
+str_163 db "[X] Event Explorer - Experience 20 random events", 0
+str_164 db "[ ] Event Explorer - Experience 20 random events", 0
+str_165 db "[X] Turn Veteran - Play 100 turns", 0
+str_166 db "[ ] Turn Veteran - Play 100 turns", 0
+str_167 db "[X] Collector Addict - Make 200 collections", 0
+str_168 db "[ ] Collector Addict - Make 200 collections", 0
+str_169 db "[X] Iron Fist - Reach Level 100", 0
+str_170 db "[ ] Iron Fist - Reach Level 100", 0
+str_171 db "[X] Collector Pro - Make 500 collections", 0
+str_172 db "[ ] Collector Pro - Make 500 collections", 0
+str_173 db "[X] Ultra Rich - Collect 100,000+ total resources", 0
+str_174 db "[ ] Ultra Rich - Collect 100,000+ total resources", 0
+str_175 db "[X] Grinder - Play 500 turns", 0
+str_176 db "[ ] Grinder - Play 500 turns", 0
+str_177 db "[X] Hoarder - Reach 5,000 of any resource", 0
+str_178 db "[ ] Hoarder - Reach 5,000 of any resource", 0
+str_179 db "[X] Unstoppable - Win 25 minigames", 0
+str_180 db "[ ] Unstoppable - Win 25 minigames", 0
+str_181 db "[X] Event Legend - Experience 100 random events", 0
+str_182 db "[ ] Event Legend - Experience 100 random events", 0
+str_183 db "[X] Jackpot - Win 15 minigames", 0
+str_184 db "[ ] Jackpot - Win 15 minigames", 0
+str_185 db "[X] Dedicated - Play 1,000 turns", 0
+str_186 db "[ ] Dedicated - Play 1,000 turns", 0
+str_187 db "[X] Maxed Out - Reach Level 200", 0
+str_188 db "[ ] Maxed Out - Reach Level 200", 0
+str_189 db "[X] Trader - Make 10 market trades", 0
+str_190 db "[ ] Trader - Make 10 market trades", 0
+str_191 db "[X] Speculator - Make 5 market bets", 0
+str_192 db "[ ] Speculator - Make 5 market bets", 0
+str_193 db "[X] Market Tycoon - Make 50 market trades", 0
+str_194 db "[ ] Market Tycoon - Make 50 market trades", 0
+str_195 db "[X] Lucky - Find a rare event", 0
+str_196 db "[ ] Lucky - Find a rare event", 0
+str_197 db "[X] Master Builder - Build 5 buildings", 0
+str_198 db "[ ] Master Builder - Build 5 buildings", 0
+str_199 db "=== MINIGAME ARCADE ===", 0
+str_200 db "Choose a minigame:", 0
+str_201 db "1: Guess the Number (1-5)", 0
+str_202 db "2: Card Guessing (Higher/Lower)", 0
+str_203 db "3: Math Quiz", 0
+str_204 db "4: Rock Paper Scissors", 0
+str_205 db "5: Dice Duel", 0
+str_206 db "6: Coin Flip", 0
+str_207 db "7: Higher Or Lower", 0
+str_208 db "8: Resource Slots", 0
+str_209 db "Enter choice (1-6): ", 0
+scanf_fmt_210 db "%d", 0
+str_211 db "=== GUESS THE NUMBER MINIGAME ===", 0
+str_212 db "Guess a number between 1 and 5!", 0
+str_213 db "Win big rewards if you guess correctly!", 0
+str_214 db "Enter your guess (1-5): ", 0
+scanf_fmt_215 db "%d", 0
+str_216 db "Congratulations! You guessed it!", 0
+str_217 db "You won %d of each resource!", 0
+str_218 db "Wrong! The number was %d", 0
+str_219 db "Better luck next time!", 0
+str_220 db "=== CARD GUESSING GAME ===", 0
+str_221 db "Guess if the next card is HIGHER or LOWER!", 0
+str_222 db "Win streak increases rewards!", 0
+str_223 db "Cards are numbered 1-13", 0
+str_224 db "First card: %d", 0
+str_225 db "Round %d of 5", 0
+str_226 db "Current streak: %d", 0
+str_227 db "Current card: %d", 0
+str_228 db "Guess next card:", 0
+str_229 db "1 = HIGHER", 0
+str_230 db " 2 = LOWER", 0
+str_231 db "Enter choice: ", 0
+scanf_fmt_232 db "%d", 0
+str_233 db "Next card: %d", 0
+str_234 db "Same card! No change to streak.", 0
+str_235 db "Correct! Streak: %d", 0
+str_236 db "Wrong! Streak broken.", 0
+str_237 db "Continue to next round?", 0
+str_238 db "1 = YES", 0
+str_239 db " 2 = NO (Cash out now)", 0
+scanf_fmt_240 db "%d", 0
+str_241 db "=== CARD GAME RESULTS ===", 0
+str_242 db "Maximum Streak: %d", 0
+str_243 db "Reward Multiplier: x%d", 0
+str_244 db "No winning streaks this game.", 0
+str_245 db "Try again for better luck!", 0
+str_246 db "=== MATH QUIZ CHALLENGE ===", 0
+str_247 db "Solve math problems for bonuses!", 0
+str_248 db "Difficulty increases with your level!", 0
+str_249 db "--- Question %d of %d ---", 0
+str_250 db "What is %d + %d?", 0
+str_251 db "What is %d - %d?", 0
+str_252 db "What is %d * %d?", 0
+str_253 db "What is %d / %d?", 0
+str_254 db "Enter your answer: ", 0
+scanf_fmt_255 db "%d", 0
+str_256 db "Correct! +1 point", 0
+str_257 db "Wrong! The answer was %d", 0
+str_258 db "Quiz Complete! Score: %d/%d", 0
+str_259 db "Quiz Complete! Score: 0/%d", 0
+str_260 db "Study up and try again!", 0
+str_261 db "=== ROCK PAPER SCISSORS ===", 0
+str_262 db "Best of 3 rounds!", 0
+str_263 db "1 = ROCK (beats scissors)", 0
+str_264 db " 2 = PAPER (beats rock)", 0
+str_265 db " 3 = SCISSORS (beats paper)", 0
+str_266 db "Win all 3 rounds for maximum reward!", 0
+str_267 db "===========================", 0
+str_268 db "--- Round %d ---", 0
+str_269 db "Choose: 1=Rock, 2=Paper, 3=Scissors", 0
+str_270 db "Your choice: ", 0
+scanf_fmt_271 db "%d", 0
+str_272 db "You chose: ", 0
+str_273 db "ROCK", 0
+str_274 db "PAPER", 0
+str_275 db "SCISSORS", 0
+str_276 db "Bot chose: ", 0
+str_277 db "It's a TIE!", 0
+str_278 db "Replaying round...", 0
+str_279 db "You WIN this round!", 0
+str_280 db "Bot WINS this round!", 0
+str_281 db "Score: You %d - %d Bot", 0
+str_282 db "=== ROCK PAPER SCISSORS RESULTS ===", 0
+str_283 db "Final Score: You %d - %d Bot", 0
+str_284 db "PERFECT VICTORY! 3-0 SWEEP!", 0
+str_285 db "JACKPOT! You won %d of each resource!", 0
+str_286 db "VICTORY! You beat the bot!", 0
+str_287 db "Close match! You won!", 0
+str_288 db "DRAW! No winner this time.", 0
+str_289 db "Consolation prize: %d of each resource", 0
+str_290 db "DEFEAT! The bot was too strong!", 0
+str_291 db "Participation reward: %d of each resource", 0
+str_292 db "=== DICE DUEL ===", 0
+str_293 db "Roll dice against the computer!", 0
+str_294 db " Higher total wins. Doubles = 2x reward!", 0
+str_295 db "Enter bet amount (minimum 10): ", 0
+scanf_fmt_296 db "%d", 0
+str_297 db "Rolling your dice...", 0
+str_298 db "You rolled: %d and %d = %d", 0
+str_299 db "Computer rolling...", 0
+str_300 db "Computer: %d and %d = %d", 0
+str_301 db "DOUBLES! Your roll is special!", 0
+str_302 db "Computer got DOUBLES!", 0
+str_303 db "DOUBLES BONUS! Reward doubled again!", 0
+str_304 db "=== YOU WIN! ===", 0
+str_305 db "Won %d of each resource!", 0
+str_306 db "=== IT'S A TIE! ===", 0
+str_307 db "No winner, no loser. Bet returned.", 0
+str_308 db "=== COMPUTER WINS! ===", 0
+str_309 db "Computer doubles! You lose double!", 0
+str_310 db "Lost %d of each resource.", 0
+str_311 db "Not enough resources for that bet!", 0
+str_312 db "Need at least %d of each resource.", 0
+str_313 db "=== COIN FLIP ===", 0
+str_314 db "Heads or Tails? Double or nothing!", 0
+str_315 db "Enter bet amount: ", 0
 scanf_fmt_316 db "%d", 0
-str_317 db "Bet set to minimum: 10", 0
-str_318 db "Bet capped at maximum: 100", 0
-str_319 db "Not enough resources! Need %d of each.", 0
-str_320 db "Bet placed: %d of each resource", 0
-str_321 db "Spinning...", 0
-str_322 db ".", 0
-str_323 db "=== SLOT RESULTS ===", 0
-temp_str_324 db "?", 0
-temp_str_325 db "?", 0
-temp_str_326 db "7", 0
-temp_str_327 db "SEVEN", 0
-temp_str_328 db "$", 0
-temp_str_329 db "DOLLAR", 0
-temp_str_330 db "*", 0
-temp_str_331 db "STAR", 0
-temp_str_332 db "C", 0
-temp_str_333 db "CHERRY", 0
-temp_str_334 db "?", 0
-temp_str_335 db "?", 0
-temp_str_336 db "7", 0
-temp_str_337 db "SEVEN", 0
-temp_str_338 db "$", 0
-temp_str_339 db "DOLLAR", 0
-temp_str_340 db "*", 0
-temp_str_341 db "STAR", 0
-temp_str_342 db "C", 0
-temp_str_343 db "CHERRY", 0
-temp_str_344 db "?", 0
-temp_str_345 db "?", 0
-temp_str_346 db "7", 0
-temp_str_347 db "SEVEN", 0
-temp_str_348 db "$", 0
-temp_str_349 db "DOLLAR", 0
-temp_str_350 db "*", 0
-temp_str_351 db "STAR", 0
-temp_str_352 db "C", 0
-temp_str_353 db "CHERRY", 0
-str_354 db "     [ ? ]   [ ? ]   [ ? ]", 0
-str_355 db "     [ %s ]   [ ? ]   [ ? ]", 0
-str_356 db "     [ %s ]   [ %s ]   [ ? ]", 0
-str_357 db "     [ %s ]   [ %s ]   [ %s ]", 0
-str_358 db "Symbols: %s  %s  %s", 0
-str_359 db "JACKPOT! THREE 7s!", 0
-str_360 db "BIG WIN! Three dollars!", 0
-str_361 db "NICE! Three stars!", 0
-str_362 db "Good win! Three cherries!", 0
-str_363 db "Two matching! Small win.", 0
-str_364 db "No matching symbols. Better luck next time!", 0
-str_365 db "YOU WIN: %d of each resource!", 0
-str_366 db "(Profit: +%d each)", 0
-str_367 db "(Break even)", 0
-str_368 db "(Loss: %d each)", 0
-str_369 db "You lost your bet of %d each.", 0
-str_370 db "PAYOUTS:", 0
-str_371 db "Three 7s:       20x bet", 0
-str_372 db "Three $:         8x bet", 0
-str_373 db "Three *:         5x bet", 0
-str_374 db "Three C:         3x bet", 0
-str_375 db "Two matching:    2x bet", 0
-str_376 db "+%d wood", 0
-str_377 db "+%d stone", 0
-str_378 db "+%d gold", 0
-str_379 db "Daily reward collected!", 0
-str_380 db "Daily reward already collected.", 0
-str_381 db "No boss right now.", 0
-str_382 db "You deal %d damage!", 0
-str_383 db "Boss defeated! Massive resource drop!", 0
-str_384 db "Boss HP: %d", 0
-str_385 db "=== MARKETPLACE ===", 0
-str_386 db "Exchange rates fluctuate! (Refreshes when you leave)", 0
-str_387 db "Your Resources:", 0
-str_388 db "Wood: %d | Stone: %d | Gold: %d", 0
-str_389 db "1. Wood -> Stone (rate: 1:%d)", 0
-str_390 db "   Exchange %d wood for %d stone", 0
-str_391 db "2. Stone -> Gold (rate: 1:%d)", 0
-str_392 db "   Exchange %d stone for %d gold", 0
-str_393 db "3. Gold -> Wood (rate: 1:%d)", 0
-str_394 db "   Exchange %d gold for %d wood", 0
-str_395 db "4. Bulk Exchange (10x amount)", 0
-str_396 db "   Requires 10x resources but better rate!", 0
-str_397 db "5. Speculate (Risk/Reward)", 0
-str_398 db "   Bet resources on market movement", 0
-str_399 db "6. Refresh Rates (cost: 10 gold)", 0
-str_400 db "   Get new exchange rates", 0
-str_401 db "7. Exit Marketplace", 0
-str_402 db "Enter choice (1-7): ", 0
-scanf_fmt_403 db "%d", 0
-str_404 db "Traded %d wood for %d stone!", 0
-str_405 db "Not enough wood! Need %d, have %d", 0
-str_406 db "Traded %d stone for %d gold!", 0
-str_407 db "Not enough stone! Need %d, have %d", 0
-str_408 db "Traded %d gold for %d wood!", 0
-str_409 db "Not enough gold! Need %d, have %d", 0
-str_410 db "=== BULK EXCHANGE ===", 0
-str_411 db "Exchange 10x resources for bonus rate!", 0
-str_412 db "1. Wood -> Stone (rate: 1:%d + %d bonus)", 0
-str_413 db "2. Stone -> Gold (rate: 1:%d + %d bonus)", 0
-str_414 db "3. Gold -> Wood (rate: 1:%d + %d bonus)", 0
-str_415 db "4. Back", 0
-str_416 db "Enter bulk choice: ", 0
-scanf_fmt_417 db "%d", 0
-str_418 db "(Bonus rate: 1:%d)", 0
-str_419 db "=== MARKET SPECULATION ===", 0
-str_420 db "Bet resources on market movement!", 0
-str_421 db "Choose resource to bet:", 0
-str_422 db "1. Bet on WOOD price increase", 0
-str_423 db "   (Win: 2x wood, Lose: lose bet)", 0
-str_424 db "2. Bet on STONE price increase", 0
-str_425 db "   (Win: 2x stone, Lose: lose bet)", 0
-str_426 db "3. Bet on GOLD price increase", 0
-str_427 db "   (Win: 2x gold, Lose: lose bet)", 0
-str_428 db "Enter speculation choice: ", 0
-scanf_fmt_429 db "%d", 0
-str_430 db "Enter amount to bet (min 10): ", 0
-scanf_fmt_431 db "%d", 0
-str_432 db "=== MARKET MOVES IN YOUR FAVOR! ===", 0
-str_433 db "Wood price soared! You win %d wood!", 0
-str_434 db "Stone price soared! You win %d stone!", 0
-str_435 db "Gold price soared! You win %d gold!", 0
-str_436 db "=== MARKET CRASH! ===", 0
-str_437 db "Wood price crashed! Lost %d wood!", 0
-str_438 db "Stone price crashed! Lost %d stone!", 0
-str_439 db "Gold price crashed! Lost %d gold!", 0
-str_440 db "Market rates refreshed! (-10 gold)", 0
-str_441 db "Need 10 gold to refresh rates!", 0
-str_442 db "Leaving marketplace...", 0
-str_443 db "Exiting game...", 0
-str_444 db "Total Resources: %d", 0
-str_445 db "Turns Played: %d", 0
-str_446 db "Collections Made: %d", 0
-str_447 db "=== ACHIEVEMENT UNLOCKED: Resource Baron! (100+ total resources) ===", 0
-str_448 db "=== ACHIEVEMENT UNLOCKED: Wealthy Magnate! (1,000+ total resources) ===", 0
-str_449 db "=== ACHIEVEMENT UNLOCKED: Resource Millionaire! (10,000+ total resources) ===", 0
-str_450 db "=== ACHIEVEMENT UNLOCKED: Lumberjack! (50+ wood) ===", 0
-str_451 db "=== ACHIEVEMENT UNLOCKED: Quarry King! (50+ stone) ===", 0
-str_452 db "=== ACHIEVEMENT UNLOCKED: Gold Digger! (50+ gold) ===", 0
-str_453 db "=== ACHIEVEMENT UNLOCKED: Wood Tycoon! (500+ wood) ===", 0
-str_454 db "=== ACHIEVEMENT UNLOCKED: Stone Tycoon! (500+ stone) ===", 0
-str_455 db "=== ACHIEVEMENT UNLOCKED: Gold Tycoon! (500+ gold) ===", 0
-str_456 db "=== ACHIEVEMENT UNLOCKED: Minigame Master! (10 minigame wins) ===", 0
-str_457 db "=== ACHIEVEMENT UNLOCKED: Event Explorer! (20 random events) ===", 0
-str_458 db "=== ACHIEVEMENT UNLOCKED: Turn Veteran! (100 turns played) ===", 0
-str_459 db "=== ACHIEVEMENT UNLOCKED: Collector Addict! (200 collections made) ===", 0
-str_460 db "=== ACHIEVEMENT UNLOCKED: Iron Fist! (Level 100) ===", 0
-str_461 db "=== ACHIEVEMENT UNLOCKED: Collector Pro! (500 collections) ===", 0
-str_462 db "=== ACHIEVEMENT UNLOCKED: Ultra Rich! (100,000+ total resources) ===", 0
-str_463 db "=== ACHIEVEMENT UNLOCKED: Grinder! (500 turns played) ===", 0
-str_464 db "=== ACHIEVEMENT UNLOCKED: Hoarder! (5,000+ of a resource) ===", 0
-str_465 db "=== ACHIEVEMENT UNLOCKED: Unstoppable! (25 minigame wins) ===", 0
-str_466 db "=== ACHIEVEMENT UNLOCKED: Event Legend! (100 random events) ===", 0
-str_467 db "=== ACHIEVEMENT UNLOCKED: Jackpot! (15 minigame wins) ===", 0
-str_468 db "=== ACHIEVEMENT UNLOCKED: Dedicated! (1,000 turns played) ===", 0
-str_469 db "=== ACHIEVEMENT UNLOCKED: Maxed Out! (Level 200) ===", 0
-str_470 db "=== ACHIEVEMENT UNLOCKED: Trader! (10 trades made) ===", 0
-str_471 db "=== ACHIEVEMENT UNLOCKED: Speculator! (5 market bets made) ===", 0
-str_472 db "=== ACHIEVEMENT UNLOCKED: Market Tycoon! (50 trades made) ===", 0
-cmd_473 db "cls", 0
-str_474 db "Turn: %d", 0
-str_475 db "Auto Collect Rate: %d", 0
-str_476 db "Prestige: Level %d (x%d bonus)", 0
-str_477 db "A wild RESOURCE GOLEM appears!", 0
+str_317 db "1. Heads", 0
+str_318 db "2. Tails", 0
+str_319 db "Choose: ", 0
+scanf_fmt_320 db "%d", 0
+str_321 db "Coin: HEADS!", 0
+str_322 db "Coin: TAILS!", 0
+str_323 db "You WIN %d resources!", 0
+str_324 db "You LOSE the bet.", 0
+str_325 db "=== HIGHER OR LOWER ===", 0
+str_326 db "Is next number higher or lower?", 0
+str_327 db "Starting number: %d", 0
+str_328 db "Current: %d", 0
+str_329 db "1. Higher", 0
+str_330 db "2. Lower", 0
+str_331 db "Guess: ", 0
+scanf_fmt_332 db "%d", 0
+str_333 db "Next number: %d", 0
+str_334 db "Wrong!", 0
+str_335 db "Final score: %d/5", 0
+str_336 db "You win %d resources!", 0
+str_337 db "=== LUCKY 7s SLOT MACHINE ===", 0
+str_338 db "Match symbols to win big!", 0
+str_339 db "Symbols: 7=JACKPOT, $=BIG, *=GOOD, C=SMALL", 0
+str_340 db "Three matching = BIG WIN!", 0
+str_341 db "Two matching = Small win", 0
+str_342 db "Enter bet amount (10-100): ", 0
+scanf_fmt_343 db "%d", 0
+str_344 db "Bet set to minimum: 10", 0
+str_345 db "Bet capped at maximum: 100", 0
+str_346 db "Not enough resources! Need %d of each.", 0
+str_347 db "Bet placed: %d of each resource", 0
+str_348 db "Spinning...", 0
+str_349 db ".", 0
+str_350 db "=== SLOT RESULTS ===", 0
+temp_str_351 db "?", 0
+temp_str_352 db "?", 0
+temp_str_353 db "7", 0
+temp_str_354 db "SEVEN", 0
+temp_str_355 db "$", 0
+temp_str_356 db "DOLLAR", 0
+temp_str_357 db "*", 0
+temp_str_358 db "STAR", 0
+temp_str_359 db "C", 0
+temp_str_360 db "CHERRY", 0
+temp_str_361 db "?", 0
+temp_str_362 db "?", 0
+temp_str_363 db "7", 0
+temp_str_364 db "SEVEN", 0
+temp_str_365 db "$", 0
+temp_str_366 db "DOLLAR", 0
+temp_str_367 db "*", 0
+temp_str_368 db "STAR", 0
+temp_str_369 db "C", 0
+temp_str_370 db "CHERRY", 0
+temp_str_371 db "?", 0
+temp_str_372 db "?", 0
+temp_str_373 db "7", 0
+temp_str_374 db "SEVEN", 0
+temp_str_375 db "$", 0
+temp_str_376 db "DOLLAR", 0
+temp_str_377 db "*", 0
+temp_str_378 db "STAR", 0
+temp_str_379 db "C", 0
+temp_str_380 db "CHERRY", 0
+str_381 db "     [ ? ]   [ ? ]   [ ? ]", 0
+str_382 db "     [ %s ]   [ ? ]   [ ? ]", 0
+str_383 db "     [ %s ]   [ %s ]   [ ? ]", 0
+str_384 db "     [ %s ]   [ %s ]   [ %s ]", 0
+str_385 db "Symbols: %s  %s  %s", 0
+str_386 db "JACKPOT! THREE 7s!", 0
+str_387 db "BIG WIN! Three dollars!", 0
+str_388 db "NICE! Three stars!", 0
+str_389 db "Good win! Three cherries!", 0
+str_390 db "Two matching! Small win.", 0
+str_391 db "No matching symbols. Better luck next time!", 0
+str_392 db "YOU WIN: %d of each resource!", 0
+str_393 db "(Profit: +%d each)", 0
+str_394 db "(Break even)", 0
+str_395 db "(Loss: %d each)", 0
+str_396 db "You lost your bet of %d each.", 0
+str_397 db "PAYOUTS:", 0
+str_398 db "Three 7s:       20x bet", 0
+str_399 db "Three $:         8x bet", 0
+str_400 db "Three *:         5x bet", 0
+str_401 db "Three C:         3x bet", 0
+str_402 db "Two matching:    2x bet", 0
+str_403 db "+%d wood", 0
+str_404 db "+%d stone", 0
+str_405 db "+%d gold", 0
+str_406 db "Daily reward collected!", 0
+str_407 db "Daily reward already collected.", 0
+str_408 db "No boss right now.", 0
+str_409 db "You deal %d damage!", 0
+str_410 db "Boss defeated! Massive resource drop!", 0
+str_411 db "Boss HP: %d", 0
+str_412 db "=== MARKETPLACE ===", 0
+str_413 db "Exchange rates fluctuate! (Refreshes when you leave)", 0
+str_414 db "1. Wood -> Stone (rate: 1:%d)", 0
+str_415 db "   Exchange %d wood for %d stone", 0
+str_416 db "2. Stone -> Gold (rate: 1:%d)", 0
+str_417 db "   Exchange %d stone for %d gold", 0
+str_418 db "3. Gold -> Wood (rate: 1:%d)", 0
+str_419 db "   Exchange %d gold for %d wood", 0
+str_420 db "4. Bulk Exchange (10x amount)", 0
+str_421 db "   Requires 10x resources but better rate!", 0
+str_422 db "5. Speculate (Risk/Reward)", 0
+str_423 db "   Bet resources on market movement", 0
+str_424 db "6. Refresh Rates (cost: 10 gold)", 0
+str_425 db "   Get new exchange rates", 0
+str_426 db "7. Exit Marketplace", 0
+str_427 db "Enter choice (1-7): ", 0
+scanf_fmt_428 db "%d", 0
+str_429 db "Traded %d wood for %d stone!", 0
+str_430 db "Not enough wood! Need %d, have %d", 0
+str_431 db "Traded %d stone for %d gold!", 0
+str_432 db "Not enough stone! Need %d, have %d", 0
+str_433 db "Traded %d gold for %d wood!", 0
+str_434 db "Not enough gold! Need %d, have %d", 0
+str_435 db "=== BULK EXCHANGE ===", 0
+str_436 db "Exchange 10x resources for bonus rate!", 0
+str_437 db "1. Wood -> Stone (rate: 1:%d + %d bonus)", 0
+str_438 db "2. Stone -> Gold (rate: 1:%d + %d bonus)", 0
+str_439 db "3. Gold -> Wood (rate: 1:%d + %d bonus)", 0
+str_440 db "4. Back", 0
+str_441 db "Enter bulk choice: ", 0
+scanf_fmt_442 db "%d", 0
+str_443 db "(Bonus rate: 1:%d)", 0
+str_444 db "=== MARKET SPECULATION ===", 0
+str_445 db "Bet resources on market movement!", 0
+str_446 db "Choose resource to bet:", 0
+str_447 db "1. Bet on WOOD price increase", 0
+str_448 db "   (Win: 2x wood, Lose: lose bet)", 0
+str_449 db "2. Bet on STONE price increase", 0
+str_450 db "   (Win: 2x stone, Lose: lose bet)", 0
+str_451 db "3. Bet on GOLD price increase", 0
+str_452 db "   (Win: 2x gold, Lose: lose bet)", 0
+str_453 db "Enter speculation choice: ", 0
+scanf_fmt_454 db "%d", 0
+str_455 db "Enter amount to bet (min 10): ", 0
+scanf_fmt_456 db "%d", 0
+str_457 db "=== MARKET MOVES IN YOUR FAVOR! ===", 0
+str_458 db "Wood price soared! You win %d wood!", 0
+str_459 db "Stone price soared! You win %d stone!", 0
+str_460 db "Gold price soared! You win %d gold!", 0
+str_461 db "=== MARKET CRASH! ===", 0
+str_462 db "Wood price crashed! Lost %d wood!", 0
+str_463 db "Stone price crashed! Lost %d stone!", 0
+str_464 db "Gold price crashed! Lost %d gold!", 0
+str_465 db "Market rates refreshed! (-10 gold)", 0
+str_466 db "Need 10 gold to refresh rates!", 0
+str_467 db "Leaving marketplace...", 0
+str_468 db "Exiting game...", 0
+str_469 db "Total Resources: %d", 0
+str_470 db "Turns Played: %d", 0
+str_471 db "Collections Made: %d", 0
+str_472 db "=== ACHIEVEMENT UNLOCKED: Resource Baron! (100+ total resources) ===", 0
+str_473 db "=== ACHIEVEMENT UNLOCKED: Wealthy Magnate! (1,000+ total resources) ===", 0
+str_474 db "=== ACHIEVEMENT UNLOCKED: Resource Millionaire! (10,000+ total resources) ===", 0
+str_475 db "=== ACHIEVEMENT UNLOCKED: Lumberjack! (50+ wood) ===", 0
+str_476 db "=== ACHIEVEMENT UNLOCKED: Quarry King! (50+ stone) ===", 0
+str_477 db "=== ACHIEVEMENT UNLOCKED: Gold Digger! (50+ gold) ===", 0
+str_478 db "=== ACHIEVEMENT UNLOCKED: Wood Tycoon! (500+ wood) ===", 0
+str_479 db "=== ACHIEVEMENT UNLOCKED: Stone Tycoon! (500+ stone) ===", 0
+str_480 db "=== ACHIEVEMENT UNLOCKED: Gold Tycoon! (500+ gold) ===", 0
+str_481 db "=== ACHIEVEMENT UNLOCKED: Minigame Master! (10 minigame wins) ===", 0
+str_482 db "=== ACHIEVEMENT UNLOCKED: Event Explorer! (20 random events) ===", 0
+str_483 db "=== ACHIEVEMENT UNLOCKED: Turn Veteran! (100 turns played) ===", 0
+str_484 db "=== ACHIEVEMENT UNLOCKED: Collector Addict! (200 collections made) ===", 0
+str_485 db "=== ACHIEVEMENT UNLOCKED: Iron Fist! (Level 100) ===", 0
+str_486 db "=== ACHIEVEMENT UNLOCKED: Collector Pro! (500 collections) ===", 0
+str_487 db "=== ACHIEVEMENT UNLOCKED: Ultra Rich! (100,000+ total resources) ===", 0
+str_488 db "=== ACHIEVEMENT UNLOCKED: Grinder! (500 turns played) ===", 0
+str_489 db "=== ACHIEVEMENT UNLOCKED: Hoarder! (5,000+ of a resource) ===", 0
+str_490 db "=== ACHIEVEMENT UNLOCKED: Unstoppable! (25 minigame wins) ===", 0
+str_491 db "=== ACHIEVEMENT UNLOCKED: Event Legend! (100 random events) ===", 0
+str_492 db "=== ACHIEVEMENT UNLOCKED: Jackpot! (15 minigame wins) ===", 0
+str_493 db "=== ACHIEVEMENT UNLOCKED: Dedicated! (1,000 turns played) ===", 0
+str_494 db "=== ACHIEVEMENT UNLOCKED: Maxed Out! (Level 200) ===", 0
+str_495 db "=== ACHIEVEMENT UNLOCKED: Trader! (10 trades made) ===", 0
+str_496 db "=== ACHIEVEMENT UNLOCKED: Speculator! (5 market bets made) ===", 0
+str_497 db "=== ACHIEVEMENT UNLOCKED: Market Tycoon! (50 trades made) ===", 0
+str_498 db "=== ACHIEVEMENT UNLOCKED: Master Builder! (5 buildings built) ===", 0
+cmd_499 db "cls", 0
+str_500 db "Turn: %d", 0
+str_501 db "Auto Collect Rate: %d", 0
+str_502 db "Prestige: Level %d (x%d bonus)", 0
+str_503 db "Achievements: %d/31", 0
+str_504 db "A wild RESOURCE GOLEM appears!", 0
 
 section .bss
 var_wood resd 1
@@ -806,6 +920,19 @@ var_bosshp resd 1
 var_rpschoice resd 1
 var_tradesmade resd 1
 var_speculationsmade resd 1
+var_lumbermill resd 1
+var_quarry resd 1
+var_goldmine resd 1
+var_warehouse resd 1
+var_lumbermillcostwood resd 1
+var_lumbermillcoststone resd 1
+var_quarrycostwood resd 1
+var_quarrycoststone resd 1
+var_goldminecostwood resd 1
+var_goldminecoststone resd 1
+var_warehousecost resd 1
+var_buildingachievement resd 1
+var_totalbuildings resd 1
 var_result resd 1
 var_hnd_user32_dll resd 1
 var_ptr_MessageBoxA resd 1
@@ -830,29 +957,29 @@ var_canupgrade resd 1
 var_nextwood resd 1
 var_nextstone resd 1
 var_nextgold resd 1
-var_boostcost resd 1
-var_shopstone resd 1
-var_shopgold resd 1
-var_shopwood resd 1
+var_shopopen resd 1
 var_currenttotal resd 1
 var_choice resd 1
-var_canbuy resd 1
+var_boostcost resd 1
+var_coststone resd 1
+var_costgold resd 1
 var_woodbonus resd 1
+var_costwood resd 1
 var_stonebonus resd 1
 var_totalresources resd 1
 var_gamechoice resd 1
 var_secretnumber resd 1
-var_rand_state_122 resd 1
+var_rand_state_130 resd 1
 var_guess resd 1
 var_reward resd 1
 var_currentcard resd 1
-var_rand_state_125 resd 1
+var_rand_state_133 resd 1
 var_streak resd 1
 var_maxstreak resd 1
 var_round resd 1
 var_playerguess resd 1
 var_nextcard resd 1
-var_rand_state_127 resd 1
+var_rand_state_135 resd 1
 var_correct resd 1
 var_continue resd 1
 var_correctanswers resd 1
@@ -860,49 +987,49 @@ var_totalquestions resd 1
 var_maxnumber resd 1
 var_question resd 1
 var_num1 resd 1
-var_rand_state_143 resd 1
+var_rand_state_151 resd 1
 var_num2 resd 1
-var_rand_state_144 resd 1
+var_rand_state_152 resd 1
 var_operation resd 1
-var_rand_state_145 resd 1
+var_rand_state_153 resd 1
 var_temp123124 resd 1
-var_rand_state_147 resd 1
+var_rand_state_155 resd 1
 var_correctanswer resd 1
 var_playeranswer resd 1
 var_playerwins resd 1
 var_botwins resd 1
 var_botchoice resd 1
-var_rand_state_158 resd 1
+var_rand_state_166 resd 1
 var_playerwinsround resd 1
 var_betamount resd 1
 var_canbet resd 1
 var_die1 resd 1
-var_rand_state_184 resd 1
+var_rand_state_192 resd 1
 var_die2 resd 1
-var_rand_state_185 resd 1
+var_rand_state_193 resd 1
 var_playertotal resd 1
 var_compdie1 resd 1
-var_rand_state_186 resd 1
+var_rand_state_194 resd 1
 var_compdie2 resd 1
-var_rand_state_187 resd 1
+var_rand_state_195 resd 1
 var_comptotal resd 1
 var_playerdoubles resd 1
 var_compdoubles resd 1
 var_loss resd 1
 var_coin resd 1
-var_rand_state_201 resd 1
+var_rand_state_209 resd 1
 var_score resd 1
 var_currentnum resd 1
-var_rand_state_205 resd 1
+var_rand_state_213 resd 1
 var_nextnum resd 1
-var_rand_state_207 resd 1
+var_rand_state_215 resd 1
 var_canplay resd 1
 var_reel1 resd 1
-var_rand_state_220 resd 1
+var_rand_state_228 resd 1
 var_reel2 resd 1
-var_rand_state_221 resd 1
+var_rand_state_229 resd 1
 var_reel3 resd 1
-var_rand_state_222 resd 1
+var_rand_state_230 resd 1
 var_symbol1 resb 256
 var_symbolname1 resb 256
 var_symbol2 resb 256
@@ -918,27 +1045,29 @@ var_damage resd 1
 var_leveltimes50 resd 1
 var_marketopen resd 1
 var_woodexchangerate resd 1
-var_rand_state_254 resd 1
+var_rand_state_262 resd 1
 var_stoneexchangerate resd 1
-var_rand_state_255 resd 1
+var_rand_state_263 resd 1
 var_goldexchangerate resd 1
-var_rand_state_256 resd 1
+var_rand_state_264 resd 1
 var_baseamount resd 1
 var_stonegain resd 1
 var_goldgain resd 1
 var_woodgain resd 1
 var_bulksamount resd 1
 var_bulkbonus resd 1
-var_rand_state_269 resd 1
+var_rand_state_277 resd 1
 var_bulkchoice resd 1
 var_specchoice resd 1
 var_specresult resd 1
-var_rand_state_286 resd 1
+var_rand_state_294 resd 1
 var_winnings resd 1
-var_rand_state_296 resd 1
-var_rand_state_297 resd 1
-var_rand_state_298 resd 1
+var_rand_state_304 resd 1
+var_rand_state_305 resd 1
+var_rand_state_306 resd 1
 var_total resd 1
+var_buildingbonus resd 1
+var_warehousebonus resd 1
 var_freq resd 1
 
 section .text
@@ -1068,6 +1197,32 @@ _main:
     mov dword [var_tradesmade], eax
     mov eax, 0
     mov dword [var_speculationsmade], eax
+    mov eax, 0
+    mov dword [var_lumbermill], eax
+    mov eax, 0
+    mov dword [var_quarry], eax
+    mov eax, 0
+    mov dword [var_goldmine], eax
+    mov eax, 0
+    mov dword [var_warehouse], eax
+    mov eax, 50
+    mov dword [var_lumbermillcostwood], eax
+    mov eax, 20
+    mov dword [var_lumbermillcoststone], eax
+    mov eax, 30
+    mov dword [var_quarrycostwood], eax
+    mov eax, 60
+    mov dword [var_quarrycoststone], eax
+    mov eax, 100
+    mov dword [var_goldminecostwood], eax
+    mov eax, 100
+    mov dword [var_goldminecoststone], eax
+    mov eax, 200
+    mov dword [var_warehousecost], eax
+    mov eax, 0
+    mov dword [var_buildingachievement], eax
+    mov eax, 0
+    mov dword [var_totalbuildings], eax
     mov eax, 4
     push eax
     mov eax, str_0
@@ -1401,6 +1556,10 @@ if_then_13:
     jmp if_end_13
 if_else_13:
 if_end_13:
+    push dword [var_warehouse]
+    push dword [var_goldmine]
+    push dword [var_quarry]
+    push dword [var_lumbermill]
     push dword [var_totalcollect]
     push dword [var_gold]
     push dword [var_stone]
@@ -1410,7 +1569,7 @@ if_end_13:
     push dword [var_multiplier]
     push dword [var_autocollect]
     call _autocollectresources
-    add esp, 32
+    add esp, 48
     push dword [var_achievements]
     push dword [var_prestigebonus]
     push dword [var_prestigelevel]
@@ -2246,6 +2405,9 @@ if_then_35:
     push str_53
     call _printf
     add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
     mov eax, dword [var_wood]
     push eax
     mov eax, 420
@@ -2387,6 +2549,9 @@ if_then_39:
     push str_56
     call _printf
     add esp, 8
+    push str_3
+    call _printf
+    add esp, 4
     jmp if_end_39
 if_else_39:
 if_end_39:
@@ -2419,6 +2584,9 @@ if_then_40:
     push str_57
     call _printf
     add esp, 8
+    push str_3
+    call _printf
+    add esp, 4
     jmp if_end_40
 if_else_40:
 if_end_40:
@@ -2451,6 +2619,9 @@ if_then_41:
     push str_58
     call _printf
     add esp, 8
+    push str_3
+    call _printf
+    add esp, 4
     jmp if_end_41
 if_else_41:
 if_end_41:
@@ -2966,6 +3137,38 @@ if_then_65:
     push str_3
     call _printf
     add esp, 4
+    push dword [var_lumbermill]
+    push dword [var_lumbermill]
+    push str_80
+    call _printf
+    add esp, 12
+    push str_3
+    call _printf
+    add esp, 4
+    push dword [var_quarry]
+    push dword [var_quarry]
+    push str_81
+    call _printf
+    add esp, 12
+    push str_3
+    call _printf
+    add esp, 4
+    push dword [var_goldmine]
+    push dword [var_goldmine]
+    push str_82
+    call _printf
+    add esp, 12
+    push str_3
+    call _printf
+    add esp, 4
+    push dword [var_warehouse]
+    push dword [var_warehouse]
+    push str_83
+    call _printf
+    add esp, 12
+    push str_3
+    call _printf
+    add esp, 4
     mov eax, dword [var_level]
     push eax
     mov eax, 2
@@ -2985,21 +3188,21 @@ if_then_65:
     push dword [var_nextgold]
     push dword [var_nextstone]
     push dword [var_nextwood]
-    push str_80
+    push str_84
     call _printf
     add esp, 16
     push str_3
     call _printf
     add esp, 4
     push dword [var_multiplier]
-    push str_81
+    push str_85
     call _printf
     add esp, 8
     push str_3
     call _printf
     add esp, 4
     push dword [var_achievements]
-    push str_82
+    push str_86
     call _printf
     add esp, 8
     push str_3
@@ -3016,35 +3219,160 @@ if_end_65:
     je if_then_66
     jmp if_else_66
 if_then_66:
+    mov eax, 1
+    mov dword [var_shopopen], eax
+while_start_67:
+    mov eax, dword [var_shopopen]
+    mov ebx, 1
+    cmp eax, ebx
+    jne while_end_67
     call _clearscreen
-    push str_83
+    push str_87
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_upgradecost]
-    push eax
-    mov eax, 2
-    pop ebx
-    imul ebx, eax
-    mov eax, ebx
-    mov dword [var_boostcost], eax
-    mov eax, dword [var_upgradecost]
-    mov dword [var_shopstone], eax
-    mov eax, dword [var_upgradecost]
-    push eax
-    mov eax, 2
-    pop ebx
-    mov eax, ebx
-    mov ebx, eax
-    mov eax, ebx
-    mov ebx, 2
-    cdq
-    idiv ebx
-    mov dword [var_shopgold], eax
-    mov eax, dword [var_upgradecost]
-    mov dword [var_shopwood], eax
+    push str_88
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push dword [var_gold]
+    push dword [var_stone]
+    push dword [var_wood]
+    push str_89
+    call _printf
+    add esp, 16
+    push str_3
+    call _printf
+    add esp, 4
+    push str_90
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push dword [var_lumbermill]
+    push dword [var_lumbermill]
+    push str_80
+    call _printf
+    add esp, 12
+    push str_3
+    call _printf
+    add esp, 4
+    push dword [var_quarry]
+    push dword [var_quarry]
+    push str_81
+    call _printf
+    add esp, 12
+    push str_3
+    call _printf
+    add esp, 4
+    push dword [var_goldmine]
+    push dword [var_goldmine]
+    push str_82
+    call _printf
+    add esp, 12
+    push str_3
+    call _printf
+    add esp, 4
+    push dword [var_warehouse]
+    push dword [var_warehouse]
+    push str_83
+    call _printf
+    add esp, 12
+    push str_3
+    call _printf
+    add esp, 4
+    push str_91
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push dword [var_upgradecost]
+    push str_92
+    call _printf
+    add esp, 8
+    push str_3
+    call _printf
+    add esp, 4
+    push dword [var_upgradecost]
+    push dword [var_upgradecost]
+    push str_93
+    call _printf
+    add esp, 12
+    push str_3
+    call _printf
+    add esp, 4
+    push dword [var_upgradecost]
+    push dword [var_upgradecost]
+    push str_94
+    call _printf
+    add esp, 12
+    push str_3
+    call _printf
+    add esp, 4
+    push str_95
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push str_96
+    call _printf
+    add esp, 4
+    push dword [var_lumbermillcoststone]
+    push dword [var_lumbermillcostwood]
+    push str_97
+    call _printf
+    add esp, 12
+    push str_3
+    call _printf
+    add esp, 4
+    push str_98
+    call _printf
+    add esp, 4
+    push dword [var_quarrycoststone]
+    push dword [var_quarrycostwood]
+    push str_97
+    call _printf
+    add esp, 12
+    push str_3
+    call _printf
+    add esp, 4
+    push str_99
+    call _printf
+    add esp, 4
+    push dword [var_goldminecoststone]
+    push dword [var_goldminecostwood]
+    push str_97
+    call _printf
+    add esp, 12
+    push str_3
+    call _printf
+    add esp, 4
+    push str_100
+    call _printf
+    add esp, 4
+    push dword [var_warehousecost]
+    push str_101
+    call _printf
+    add esp, 8
+    push str_3
+    call _printf
+    add esp, 4
+    push str_102
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push str_103
+    call _printf
+    add esp, 4
     mov eax, dword [var_wood]
     push eax
     mov eax, dword [var_stone]
@@ -3059,92 +3387,54 @@ if_then_66:
     add ebx, dword [var_gold]
     mov eax, ebx
     mov dword [var_currenttotal], eax
-    push dword [var_boostcost]
-    push str_84
-    call _printf
-    add esp, 8
-    push str_3
-    call _printf
-    add esp, 4
-    push dword [var_shopgold]
-    push dword [var_shopstone]
-    push str_85
-    call _printf
-    add esp, 12
-    push str_3
-    call _printf
-    add esp, 4
-    push dword [var_shopgold]
-    push dword [var_shopwood]
-    push str_86
-    call _printf
-    add esp, 12
-    push str_3
-    call _printf
-    add esp, 4
-    push str_87
-    call _printf
-    add esp, 4
     push dword [var_prestigecost]
-    push str_88
+    push str_104
     call _printf
     add esp, 8
     push dword [var_prestigecost]
     push dword [var_currenttotal]
-    push str_89
+    push str_105
     call _printf
     add esp, 12
     push str_3
     call _printf
     add esp, 4
-    push str_90
+    push str_106
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push str_91
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push str_107
     call _printf
     add esp, 4
     push var_choice
-    push scanf_fmt_91
+    push scanf_fmt_108
     call _scanf
     add esp, 8
     mov eax, dword [var_choice]
     mov ebx, 1
     cmp eax, ebx
-    je if_then_67
-    jmp if_else_67
-if_then_67:
-    mov eax, dword [var_gold]
-    mov ebx, dword [var_boostcost]
-    cmp eax, ebx
-    jg if_then_68
+    je if_then_68
     jmp if_else_68
 if_then_68:
-    mov eax, dword [var_gold]
+    mov eax, dword [var_upgradecost]
     push eax
-    mov eax, dword [var_boostcost]
+    mov eax, 2
     pop ebx
-    sub ebx, dword [var_boostcost]
+    imul ebx, eax
     mov eax, ebx
-    mov dword [var_gold], eax
-    mov eax, dword [var_multiplier]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_multiplier], eax
-    push str_92
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    jmp if_end_68
-if_else_68:
+    mov dword [var_boostcost], eax
     mov eax, dword [var_gold]
     mov ebx, dword [var_boostcost]
     cmp eax, ebx
-    je if_then_69
+    jg if_then_69
     jmp if_else_69
 if_then_69:
     mov eax, dword [var_gold]
@@ -3161,94 +3451,71 @@ if_then_69:
     add ebx, eax
     mov eax, ebx
     mov dword [var_multiplier], eax
-    push str_92
+    push dword [var_multiplier]
+    push str_109
     call _printf
-    add esp, 4
+    add esp, 8
     push 300
     call _boop
     add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
     jmp if_end_69
 if_else_69:
-    push str_93
+    push dword [var_boostcost]
+    push str_110
     call _printf
-    add esp, 4
-    push str_3
-    call _printf
+    add esp, 8
+    push 100
+    call _boop
     add esp, 4
 if_end_69:
+    push 1000
+    call _Sleep@4
+    jmp if_end_68
+if_else_68:
 if_end_68:
-    jmp if_end_67
-if_else_67:
-if_end_67:
     mov eax, dword [var_choice]
     mov ebx, 2
     cmp eax, ebx
     je if_then_70
     jmp if_else_70
 if_then_70:
-    mov eax, 0
-    mov dword [var_canbuy], eax
+    mov eax, dword [var_upgradecost]
+    mov dword [var_coststone], eax
+    mov eax, dword [var_upgradecost]
+    push eax
+    mov eax, 2
+    pop ebx
+    mov eax, ebx
+    mov ebx, eax
+    mov eax, ebx
+    mov ebx, 2
+    cdq
+    idiv ebx
+    mov dword [var_costgold], eax
     mov eax, dword [var_stone]
-    mov ebx, dword [var_shopstone]
+    mov ebx, dword [var_coststone]
     cmp eax, ebx
     jg if_then_71
     jmp if_else_71
 if_then_71:
     mov eax, dword [var_gold]
-    mov ebx, dword [var_shopgold]
+    mov ebx, dword [var_costgold]
     cmp eax, ebx
     jg if_then_72
     jmp if_else_72
 if_then_72:
-    mov eax, 1
-    mov dword [var_canbuy], eax
-    jmp if_end_72
-if_else_72:
-if_end_72:
-    jmp if_end_71
-if_else_71:
-if_end_71:
-    mov eax, dword [var_stone]
-    mov ebx, dword [var_shopstone]
-    cmp eax, ebx
-    je if_then_73
-    jmp if_else_73
-if_then_73:
-    mov eax, dword [var_gold]
-    mov ebx, dword [var_shopgold]
-    cmp eax, ebx
-    je if_then_74
-    jmp if_else_74
-if_then_74:
-    mov eax, 1
-    mov dword [var_canbuy], eax
-    jmp if_end_74
-if_else_74:
-if_end_74:
-    jmp if_end_73
-if_else_73:
-if_end_73:
-    mov eax, dword [var_canbuy]
-    mov ebx, 1
-    cmp eax, ebx
-    je if_then_75
-    jmp if_else_75
-if_then_75:
     mov eax, dword [var_stone]
     push eax
-    mov eax, dword [var_shopstone]
+    mov eax, dword [var_coststone]
     pop ebx
-    sub ebx, dword [var_shopstone]
+    sub ebx, dword [var_coststone]
     mov eax, ebx
     mov dword [var_stone], eax
     mov eax, dword [var_gold]
     push eax
-    mov eax, dword [var_shopgold]
+    mov eax, dword [var_costgold]
     pop ebx
-    sub ebx, dword [var_shopgold]
+    sub ebx, dword [var_costgold]
     mov eax, ebx
     mov dword [var_gold], eax
     mov eax, dword [var_level]
@@ -3266,95 +3533,80 @@ if_then_75:
     mov eax, ebx
     mov dword [var_wood], eax
     push dword [var_woodbonus]
-    push str_94
+    push str_111
     call _printf
     add esp, 8
     push 300
     call _boop
     add esp, 4
-    push str_3
+    jmp if_end_72
+if_else_72:
+    push dword [var_costgold]
+    push str_112
     call _printf
+    add esp, 8
+    push 100
+    call _boop
     add esp, 4
-    jmp if_end_75
-if_else_75:
-    push dword [var_shopgold]
-    push dword [var_shopstone]
-    push str_95
+if_end_72:
+    jmp if_end_71
+if_else_71:
+    push dword [var_coststone]
+    push str_113
     call _printf
-    add esp, 12
-    push str_3
-    call _printf
+    add esp, 8
+    push 100
+    call _boop
     add esp, 4
-if_end_75:
+if_end_71:
+    push 1000
+    call _Sleep@4
     jmp if_end_70
 if_else_70:
 if_end_70:
     mov eax, dword [var_choice]
     mov ebx, 3
     cmp eax, ebx
-    je if_then_76
-    jmp if_else_76
-if_then_76:
-    mov eax, 0
-    mov dword [var_canbuy], eax
+    je if_then_73
+    jmp if_else_73
+if_then_73:
+    mov eax, dword [var_upgradecost]
+    mov dword [var_costwood], eax
+    mov eax, dword [var_upgradecost]
+    push eax
+    mov eax, 2
+    pop ebx
+    mov eax, ebx
+    mov ebx, eax
+    mov eax, ebx
+    mov ebx, 2
+    cdq
+    idiv ebx
+    mov dword [var_costgold], eax
     mov eax, dword [var_wood]
-    mov ebx, dword [var_shopwood]
+    mov ebx, dword [var_costwood]
     cmp eax, ebx
-    jg if_then_77
-    jmp if_else_77
-if_then_77:
+    jg if_then_74
+    jmp if_else_74
+if_then_74:
     mov eax, dword [var_gold]
-    mov ebx, dword [var_shopgold]
+    mov ebx, dword [var_costgold]
     cmp eax, ebx
-    jg if_then_78
-    jmp if_else_78
-if_then_78:
-    mov eax, 1
-    mov dword [var_canbuy], eax
-    jmp if_end_78
-if_else_78:
-if_end_78:
-    jmp if_end_77
-if_else_77:
-if_end_77:
-    mov eax, dword [var_wood]
-    mov ebx, dword [var_shopwood]
-    cmp eax, ebx
-    je if_then_79
-    jmp if_else_79
-if_then_79:
-    mov eax, dword [var_gold]
-    mov ebx, dword [var_shopgold]
-    cmp eax, ebx
-    je if_then_80
-    jmp if_else_80
-if_then_80:
-    mov eax, 1
-    mov dword [var_canbuy], eax
-    jmp if_end_80
-if_else_80:
-if_end_80:
-    jmp if_end_79
-if_else_79:
-if_end_79:
-    mov eax, dword [var_canbuy]
-    mov ebx, 1
-    cmp eax, ebx
-    je if_then_81
-    jmp if_else_81
-if_then_81:
+    jg if_then_75
+    jmp if_else_75
+if_then_75:
     mov eax, dword [var_wood]
     push eax
-    mov eax, dword [var_shopwood]
+    mov eax, dword [var_costwood]
     pop ebx
-    sub ebx, dword [var_shopwood]
+    sub ebx, dword [var_costwood]
     mov eax, ebx
     mov dword [var_wood], eax
     mov eax, dword [var_gold]
     push eax
-    mov eax, dword [var_shopgold]
+    mov eax, dword [var_costgold]
     pop ebx
-    sub ebx, dword [var_shopgold]
+    sub ebx, dword [var_costgold]
     mov eax, ebx
     mov dword [var_gold], eax
     mov eax, dword [var_level]
@@ -3372,35 +3624,452 @@ if_then_81:
     mov eax, ebx
     mov dword [var_stone], eax
     push dword [var_stonebonus]
-    push str_96
+    push str_114
     call _printf
     add esp, 8
     push 300
     call _boop
     add esp, 4
+    jmp if_end_75
+if_else_75:
+    push dword [var_costgold]
+    push str_112
+    call _printf
+    add esp, 8
+    push 100
+    call _boop
+    add esp, 4
+if_end_75:
+    jmp if_end_74
+if_else_74:
+    push dword [var_costwood]
+    push str_115
+    call _printf
+    add esp, 8
+    push 100
+    call _boop
+    add esp, 4
+if_end_74:
+    push 1000
+    call _Sleep@4
+    jmp if_end_73
+if_else_73:
+if_end_73:
+    mov eax, dword [var_choice]
+    mov ebx, 4
+    cmp eax, ebx
+    je if_then_76
+    jmp if_else_76
+if_then_76:
+    mov eax, dword [var_wood]
+    mov ebx, dword [var_lumbermillcostwood]
+    cmp eax, ebx
+    jg if_then_77
+    jmp if_else_77
+if_then_77:
+    mov eax, dword [var_stone]
+    mov ebx, dword [var_lumbermillcoststone]
+    cmp eax, ebx
+    jg if_then_78
+    jmp if_else_78
+if_then_78:
+    mov eax, dword [var_wood]
+    push eax
+    mov eax, dword [var_lumbermillcostwood]
+    pop ebx
+    sub ebx, dword [var_lumbermillcostwood]
+    mov eax, ebx
+    mov dword [var_wood], eax
+    mov eax, dword [var_stone]
+    push eax
+    mov eax, dword [var_lumbermillcoststone]
+    pop ebx
+    sub ebx, dword [var_lumbermillcoststone]
+    mov eax, ebx
+    mov dword [var_stone], eax
+    mov eax, dword [var_lumbermill]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_lumbermill], eax
+    mov eax, dword [var_totalbuildings]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_totalbuildings], eax
+    push str_116
+    call _printf
+    add esp, 4
     push str_3
     call _printf
     add esp, 4
-    jmp if_end_81
-if_else_81:
-    push dword [var_shopgold]
-    push dword [var_shopwood]
-    push str_97
+    push dword [var_lumbermill]
+    push str_117
     call _printf
-    add esp, 12
-    push str_3
-    call _printf
+    add esp, 8
+    push 400
+    call _boop
     add esp, 4
-if_end_81:
+    mov eax, dword [var_lumbermillcostwood]
+    push eax
+    mov eax, 20
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_lumbermillcostwood], eax
+    mov eax, dword [var_lumbermillcoststone]
+    push eax
+    mov eax, 10
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_lumbermillcoststone], eax
+    jmp if_end_78
+if_else_78:
+    push dword [var_lumbermillcoststone]
+    push str_113
+    call _printf
+    add esp, 8
+    push 100
+    call _boop
+    add esp, 4
+if_end_78:
+    jmp if_end_77
+if_else_77:
+    push dword [var_lumbermillcostwood]
+    push str_115
+    call _printf
+    add esp, 8
+    push 100
+    call _boop
+    add esp, 4
+if_end_77:
+    push 1000
+    call _Sleep@4
     jmp if_end_76
 if_else_76:
 if_end_76:
     mov eax, dword [var_choice]
-    mov ebx, 4
+    mov ebx, 5
+    cmp eax, ebx
+    je if_then_79
+    jmp if_else_79
+if_then_79:
+    mov eax, dword [var_wood]
+    mov ebx, dword [var_quarrycostwood]
+    cmp eax, ebx
+    jg if_then_80
+    jmp if_else_80
+if_then_80:
+    mov eax, dword [var_stone]
+    mov ebx, dword [var_quarrycoststone]
+    cmp eax, ebx
+    jg if_then_81
+    jmp if_else_81
+if_then_81:
+    mov eax, dword [var_wood]
+    push eax
+    mov eax, dword [var_quarrycostwood]
+    pop ebx
+    sub ebx, dword [var_quarrycostwood]
+    mov eax, ebx
+    mov dword [var_wood], eax
+    mov eax, dword [var_stone]
+    push eax
+    mov eax, dword [var_quarrycoststone]
+    pop ebx
+    sub ebx, dword [var_quarrycoststone]
+    mov eax, ebx
+    mov dword [var_stone], eax
+    mov eax, dword [var_quarry]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_quarry], eax
+    mov eax, dword [var_totalbuildings]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_totalbuildings], eax
+    push str_118
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push dword [var_quarry]
+    push str_119
+    call _printf
+    add esp, 8
+    push 400
+    call _boop
+    add esp, 4
+    mov eax, dword [var_quarrycostwood]
+    push eax
+    mov eax, 15
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_quarrycostwood], eax
+    mov eax, dword [var_quarrycoststone]
+    push eax
+    mov eax, 30
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_quarrycoststone], eax
+    jmp if_end_81
+if_else_81:
+    push dword [var_quarrycoststone]
+    push str_113
+    call _printf
+    add esp, 8
+    push 100
+    call _boop
+    add esp, 4
+if_end_81:
+    jmp if_end_80
+if_else_80:
+    push dword [var_quarrycostwood]
+    push str_115
+    call _printf
+    add esp, 8
+    push 100
+    call _boop
+    add esp, 4
+if_end_80:
+    push 1000
+    call _Sleep@4
+    jmp if_end_79
+if_else_79:
+if_end_79:
+    mov eax, dword [var_choice]
+    mov ebx, 6
     cmp eax, ebx
     je if_then_82
     jmp if_else_82
 if_then_82:
+    mov eax, dword [var_wood]
+    mov ebx, dword [var_goldminecostwood]
+    cmp eax, ebx
+    jg if_then_83
+    jmp if_else_83
+if_then_83:
+    mov eax, dword [var_stone]
+    mov ebx, dword [var_goldminecoststone]
+    cmp eax, ebx
+    jg if_then_84
+    jmp if_else_84
+if_then_84:
+    mov eax, dword [var_wood]
+    push eax
+    mov eax, dword [var_goldminecostwood]
+    pop ebx
+    sub ebx, dword [var_goldminecostwood]
+    mov eax, ebx
+    mov dword [var_wood], eax
+    mov eax, dword [var_stone]
+    push eax
+    mov eax, dword [var_goldminecoststone]
+    pop ebx
+    sub ebx, dword [var_goldminecoststone]
+    mov eax, ebx
+    mov dword [var_stone], eax
+    mov eax, dword [var_goldmine]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_goldmine], eax
+    mov eax, dword [var_totalbuildings]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_totalbuildings], eax
+    push str_120
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push dword [var_goldmine]
+    push str_121
+    call _printf
+    add esp, 8
+    push 400
+    call _boop
+    add esp, 4
+    mov eax, dword [var_goldminecostwood]
+    push eax
+    mov eax, 50
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_goldminecostwood], eax
+    mov eax, dword [var_goldminecoststone]
+    push eax
+    mov eax, 50
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_goldminecoststone], eax
+    jmp if_end_84
+if_else_84:
+    push dword [var_goldminecoststone]
+    push str_113
+    call _printf
+    add esp, 8
+    push 100
+    call _boop
+    add esp, 4
+if_end_84:
+    jmp if_end_83
+if_else_83:
+    push dword [var_goldminecostwood]
+    push str_115
+    call _printf
+    add esp, 8
+    push 100
+    call _boop
+    add esp, 4
+if_end_83:
+    push 1000
+    call _Sleep@4
+    jmp if_end_82
+if_else_82:
+if_end_82:
+    mov eax, dword [var_choice]
+    mov ebx, 7
+    cmp eax, ebx
+    je if_then_85
+    jmp if_else_85
+if_then_85:
+    mov eax, dword [var_wood]
+    mov ebx, dword [var_warehousecost]
+    cmp eax, ebx
+    jg if_then_86
+    jmp if_else_86
+if_then_86:
+    mov eax, dword [var_stone]
+    mov ebx, dword [var_warehousecost]
+    cmp eax, ebx
+    jg if_then_87
+    jmp if_else_87
+if_then_87:
+    mov eax, dword [var_gold]
+    mov ebx, dword [var_warehousecost]
+    cmp eax, ebx
+    jg if_then_88
+    jmp if_else_88
+if_then_88:
+    mov eax, dword [var_wood]
+    push eax
+    mov eax, dword [var_warehousecost]
+    pop ebx
+    sub ebx, dword [var_warehousecost]
+    mov eax, ebx
+    mov dword [var_wood], eax
+    mov eax, dword [var_stone]
+    push eax
+    mov eax, dword [var_warehousecost]
+    pop ebx
+    sub ebx, dword [var_warehousecost]
+    mov eax, ebx
+    mov dword [var_stone], eax
+    mov eax, dword [var_gold]
+    push eax
+    mov eax, dword [var_warehousecost]
+    pop ebx
+    sub ebx, dword [var_warehousecost]
+    mov eax, ebx
+    mov dword [var_gold], eax
+    mov eax, dword [var_warehouse]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_warehouse], eax
+    mov eax, dword [var_totalbuildings]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_totalbuildings], eax
+    push str_122
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push dword [var_warehouse]
+    push dword [var_warehouse]
+    push str_123
+    call _printf
+    add esp, 12
+    push 400
+    call _boop
+    add esp, 4
+    mov eax, dword [var_warehousecost]
+    push eax
+    mov eax, 2
+    pop ebx
+    imul ebx, eax
+    mov eax, ebx
+    mov dword [var_warehousecost], eax
+    jmp if_end_88
+if_else_88:
+    push dword [var_warehousecost]
+    push str_112
+    call _printf
+    add esp, 8
+    push 100
+    call _boop
+    add esp, 4
+if_end_88:
+    jmp if_end_87
+if_else_87:
+    push dword [var_warehousecost]
+    push str_113
+    call _printf
+    add esp, 8
+    push 100
+    call _boop
+    add esp, 4
+if_end_87:
+    jmp if_end_86
+if_else_86:
+    push dword [var_warehousecost]
+    push str_115
+    call _printf
+    add esp, 8
+    push 100
+    call _boop
+    add esp, 4
+if_end_86:
+    push 1000
+    call _Sleep@4
+    jmp if_end_85
+if_else_85:
+if_end_85:
+    mov eax, dword [var_choice]
+    mov ebx, 8
+    cmp eax, ebx
+    je if_then_89
+    jmp if_else_89
+if_then_89:
     mov eax, dword [var_wood]
     push eax
     mov eax, dword [var_stone]
@@ -3418,9 +4087,9 @@ if_then_82:
     mov eax, dword [var_totalresources]
     mov ebx, dword [var_prestigecost]
     cmp eax, ebx
-    jg if_then_83
-    jmp if_else_83
-if_then_83:
+    jg if_then_90
+    jmp if_else_90
+if_then_90:
     mov eax, dword [var_prestigelevel]
     push eax
     mov eax, 1
@@ -3458,152 +4127,91 @@ if_then_83:
     mov dword [var_multiplier], eax
     mov eax, 0
     mov dword [var_turn], eax
-    push str_98
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
+    mov eax, 0
+    mov dword [var_lumbermill], eax
+    mov eax, 0
+    mov dword [var_quarry], eax
+    mov eax, 0
+    mov dword [var_goldmine], eax
+    mov eax, 0
+    mov dword [var_warehouse], eax
+    mov eax, 50
+    mov dword [var_lumbermillcostwood], eax
+    mov eax, 20
+    mov dword [var_lumbermillcoststone], eax
+    mov eax, 30
+    mov dword [var_quarrycostwood], eax
+    mov eax, 60
+    mov dword [var_quarrycoststone], eax
+    mov eax, 100
+    mov dword [var_goldminecostwood], eax
+    mov eax, 100
+    mov dword [var_goldminecoststone], eax
+    mov eax, 200
+    mov dword [var_warehousecost], eax
     push dword [var_prestigelevel]
-    push str_77
+    push str_124
     call _printf
     add esp, 8
     push str_3
     call _printf
     add esp, 4
     push dword [var_prestigebonus]
-    push str_78
+    push str_125
     call _printf
     add esp, 8
-    push str_3
-    call _printf
+    push 500
+    call _boop
     add esp, 4
-    push str_99
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push dword [var_prestigebonus]
-    push str_100
-    call _printf
-    add esp, 8
-    push str_3
-    call _printf
-    add esp, 4
-    jmp if_end_83
-if_else_83:
-    mov eax, dword [var_totalresources]
-    mov ebx, dword [var_prestigecost]
-    cmp eax, ebx
-    je if_then_84
-    jmp if_else_84
-if_then_84:
-    mov eax, dword [var_prestigelevel]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_prestigelevel], eax
-    mov eax, dword [var_prestigebonus]
-    push eax
-    mov eax, 2
-    pop ebx
-    imul ebx, eax
-    mov eax, ebx
-    mov dword [var_prestigebonus], eax
-    mov eax, dword [var_prestigecost]
-    push eax
-    mov eax, 3
-    pop ebx
-    imul ebx, eax
-    mov eax, ebx
-    mov dword [var_prestigecost], eax
-    mov eax, 0
-    mov dword [var_wood], eax
-    mov eax, 0
-    mov dword [var_stone], eax
-    mov eax, 0
-    mov dword [var_gold], eax
-    mov eax, 1
-    mov dword [var_level], eax
-    mov eax, 5
-    mov dword [var_upgradecost], eax
-    mov eax, 0
-    mov dword [var_autocollect], eax
-    mov eax, 1
-    mov dword [var_multiplier], eax
-    mov eax, 0
-    mov dword [var_turn], eax
-    push str_98
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push dword [var_prestigelevel]
-    push str_77
-    call _printf
-    add esp, 8
-    push str_3
-    call _printf
-    add esp, 4
-    push dword [var_prestigebonus]
-    push str_78
-    call _printf
-    add esp, 8
-    push str_3
-    call _printf
-    add esp, 4
-    push str_99
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push dword [var_prestigebonus]
-    push str_100
-    call _printf
-    add esp, 8
-    push str_3
-    call _printf
-    add esp, 4
-    jmp if_end_84
-if_else_84:
-    push str_101
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
+    jmp if_end_90
+if_else_90:
     push dword [var_totalresources]
     push dword [var_prestigecost]
-    push str_102
+    push str_126
     call _printf
     add esp, 12
+    push 100
+    call _boop
+    add esp, 4
+if_end_90:
+    push 1500
+    call _Sleep@4
+    jmp if_end_89
+if_else_89:
+if_end_89:
+    mov eax, dword [var_choice]
+    mov ebx, 9
+    cmp eax, ebx
+    je if_then_91
+    jmp if_else_91
+if_then_91:
+    mov eax, 0
+    mov dword [var_shopopen], eax
+    push str_127
+    call _printf
+    add esp, 4
     push str_3
     call _printf
     add esp, 4
-if_end_84:
-if_end_83:
-    jmp if_end_82
-if_else_82:
-if_end_82:
-    push 1000
+    push 500
     call _Sleep@4
+    jmp if_end_91
+if_else_91:
+if_end_91:
+    jmp while_start_67
+while_end_67:
     jmp if_end_66
 if_else_66:
 if_end_66:
     mov eax, dword [var_cmd]
     mov ebx, 5
     cmp eax, ebx
-    je if_then_85
-    jmp if_else_85
-if_then_85:
+    je if_then_92
+    jmp if_else_92
+if_then_92:
     call _clearscreen
     push dword [var_achievements]
-    push str_103
+    push str_128
     call _printf
     add esp, 8
     push str_3
@@ -3612,735 +4220,753 @@ if_then_85:
     mov eax, dword [var_firstcollect]
     mov ebx, 1
     cmp eax, ebx
-    je if_then_86
-    jmp if_else_86
-if_then_86:
-    push str_104
-    call _printf
-    add esp, 4
-    jmp if_end_86
-if_else_86:
-    push str_105
-    call _printf
-    add esp, 4
-if_end_86:
-    push str_3
-    call _printf
-    add esp, 4
-    mov eax, dword [var_level5]
-    mov ebx, 1
-    cmp eax, ebx
-    je if_then_87
-    jmp if_else_87
-if_then_87:
-    push str_106
-    call _printf
-    add esp, 4
-    jmp if_end_87
-if_else_87:
-    push str_107
-    call _printf
-    add esp, 4
-if_end_87:
-    push str_3
-    call _printf
-    add esp, 4
-    mov eax, dword [var_level10]
-    mov ebx, 1
-    cmp eax, ebx
-    je if_then_88
-    jmp if_else_88
-if_then_88:
-    push str_108
-    call _printf
-    add esp, 4
-    jmp if_end_88
-if_else_88:
-    push str_109
-    call _printf
-    add esp, 4
-if_end_88:
-    push str_3
-    call _printf
-    add esp, 4
-    mov eax, dword [var_level20]
-    mov ebx, 1
-    cmp eax, ebx
-    je if_then_89
-    jmp if_else_89
-if_then_89:
-    push str_110
-    call _printf
-    add esp, 4
-    jmp if_end_89
-if_else_89:
-    push str_111
-    call _printf
-    add esp, 4
-if_end_89:
-    push str_3
-    call _printf
-    add esp, 4
-    mov eax, dword [var_level50]
-    mov ebx, 1
-    cmp eax, ebx
-    je if_then_90
-    jmp if_else_90
-if_then_90:
-    push str_112
-    call _printf
-    add esp, 4
-    jmp if_end_90
-if_else_90:
-    push str_113
-    call _printf
-    add esp, 4
-if_end_90:
-    push str_3
-    call _printf
-    add esp, 4
-    mov eax, dword [var_rich]
-    mov ebx, 1
-    cmp eax, ebx
-    je if_then_91
-    jmp if_else_91
-if_then_91:
-    push str_114
-    call _printf
-    add esp, 4
-    jmp if_end_91
-if_else_91:
-    push str_115
-    call _printf
-    add esp, 4
-if_end_91:
-    push str_3
-    call _printf
-    add esp, 4
-    mov eax, dword [var_wealthy]
-    mov ebx, 1
-    cmp eax, ebx
-    je if_then_92
-    jmp if_else_92
-if_then_92:
-    push str_116
-    call _printf
-    add esp, 4
-    jmp if_end_92
-if_else_92:
-    push str_117
-    call _printf
-    add esp, 4
-if_end_92:
-    push str_3
-    call _printf
-    add esp, 4
-    mov eax, dword [var_millionaire]
-    mov ebx, 1
-    cmp eax, ebx
     je if_then_93
     jmp if_else_93
 if_then_93:
-    push str_118
+    push str_129
     call _printf
     add esp, 4
     jmp if_end_93
 if_else_93:
-    push str_119
+    push str_130
     call _printf
     add esp, 4
 if_end_93:
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_woodmaster]
+    mov eax, dword [var_level5]
     mov ebx, 1
     cmp eax, ebx
     je if_then_94
     jmp if_else_94
 if_then_94:
-    push str_120
+    push str_131
     call _printf
     add esp, 4
     jmp if_end_94
 if_else_94:
-    push str_121
+    push str_132
     call _printf
     add esp, 4
 if_end_94:
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_stonemaster]
+    mov eax, dword [var_level10]
     mov ebx, 1
     cmp eax, ebx
     je if_then_95
     jmp if_else_95
 if_then_95:
-    push str_122
+    push str_133
     call _printf
     add esp, 4
     jmp if_end_95
 if_else_95:
-    push str_123
+    push str_134
     call _printf
     add esp, 4
 if_end_95:
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_goldmaster]
+    mov eax, dword [var_level20]
     mov ebx, 1
     cmp eax, ebx
     je if_then_96
     jmp if_else_96
 if_then_96:
-    push str_124
+    push str_135
     call _printf
     add esp, 4
     jmp if_end_96
 if_else_96:
-    push str_125
+    push str_136
     call _printf
     add esp, 4
 if_end_96:
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_woodtycoon]
+    mov eax, dword [var_level50]
     mov ebx, 1
     cmp eax, ebx
     je if_then_97
     jmp if_else_97
 if_then_97:
-    push str_126
+    push str_137
     call _printf
     add esp, 4
     jmp if_end_97
 if_else_97:
-    push str_127
+    push str_138
     call _printf
     add esp, 4
 if_end_97:
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_stonetycoon]
+    mov eax, dword [var_rich]
     mov ebx, 1
     cmp eax, ebx
     je if_then_98
     jmp if_else_98
 if_then_98:
-    push str_128
+    push str_139
     call _printf
     add esp, 4
     jmp if_end_98
 if_else_98:
-    push str_129
+    push str_140
     call _printf
     add esp, 4
 if_end_98:
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_goldtycoon]
+    mov eax, dword [var_wealthy]
     mov ebx, 1
     cmp eax, ebx
     je if_then_99
     jmp if_else_99
 if_then_99:
-    push str_130
+    push str_141
     call _printf
     add esp, 4
     jmp if_end_99
 if_else_99:
-    push str_131
+    push str_142
     call _printf
     add esp, 4
 if_end_99:
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_speedrunner]
+    mov eax, dword [var_millionaire]
     mov ebx, 1
     cmp eax, ebx
     je if_then_100
     jmp if_else_100
 if_then_100:
-    push str_132
+    push str_143
     call _printf
     add esp, 4
     jmp if_end_100
 if_else_100:
-    push str_133
+    push str_144
     call _printf
     add esp, 4
 if_end_100:
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_shopaholic]
+    mov eax, dword [var_woodmaster]
     mov ebx, 1
     cmp eax, ebx
     je if_then_101
     jmp if_else_101
 if_then_101:
-    push str_134
+    push str_145
     call _printf
     add esp, 4
     jmp if_end_101
 if_else_101:
-    push str_135
+    push str_146
     call _printf
     add esp, 4
 if_end_101:
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_minigamemaster]
+    mov eax, dword [var_stonemaster]
     mov ebx, 1
     cmp eax, ebx
     je if_then_102
     jmp if_else_102
 if_then_102:
-    push str_136
+    push str_147
     call _printf
     add esp, 4
     jmp if_end_102
 if_else_102:
-    push str_137
+    push str_148
     call _printf
     add esp, 4
 if_end_102:
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_eventexplorer]
+    mov eax, dword [var_goldmaster]
     mov ebx, 1
     cmp eax, ebx
     je if_then_103
     jmp if_else_103
 if_then_103:
-    push str_138
+    push str_149
     call _printf
     add esp, 4
     jmp if_end_103
 if_else_103:
-    push str_139
+    push str_150
     call _printf
     add esp, 4
 if_end_103:
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_turnveteran]
+    mov eax, dword [var_woodtycoon]
     mov ebx, 1
     cmp eax, ebx
     je if_then_104
     jmp if_else_104
 if_then_104:
-    push str_140
+    push str_151
     call _printf
     add esp, 4
     jmp if_end_104
 if_else_104:
-    push str_141
+    push str_152
     call _printf
     add esp, 4
 if_end_104:
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_collectoraddict]
+    mov eax, dword [var_stonetycoon]
     mov ebx, 1
     cmp eax, ebx
     je if_then_105
     jmp if_else_105
 if_then_105:
-    push str_142
+    push str_153
     call _printf
     add esp, 4
     jmp if_end_105
 if_else_105:
-    push str_143
+    push str_154
     call _printf
     add esp, 4
 if_end_105:
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_ironfist]
+    mov eax, dword [var_goldtycoon]
     mov ebx, 1
     cmp eax, ebx
     je if_then_106
     jmp if_else_106
 if_then_106:
-    push str_144
+    push str_155
     call _printf
     add esp, 4
     jmp if_end_106
 if_else_106:
-    push str_145
+    push str_156
     call _printf
     add esp, 4
 if_end_106:
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_collectorpro]
+    mov eax, dword [var_speedrunner]
     mov ebx, 1
     cmp eax, ebx
     je if_then_107
     jmp if_else_107
 if_then_107:
-    push str_146
+    push str_157
     call _printf
     add esp, 4
     jmp if_end_107
 if_else_107:
-    push str_147
+    push str_158
     call _printf
     add esp, 4
 if_end_107:
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_ultrarich]
+    mov eax, dword [var_shopaholic]
     mov ebx, 1
     cmp eax, ebx
     je if_then_108
     jmp if_else_108
 if_then_108:
-    push str_148
+    push str_159
     call _printf
     add esp, 4
     jmp if_end_108
 if_else_108:
-    push str_149
+    push str_160
     call _printf
     add esp, 4
 if_end_108:
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_grinder]
+    mov eax, dword [var_minigamemaster]
     mov ebx, 1
     cmp eax, ebx
     je if_then_109
     jmp if_else_109
 if_then_109:
-    push str_150
+    push str_161
     call _printf
     add esp, 4
     jmp if_end_109
 if_else_109:
-    push str_151
+    push str_162
     call _printf
     add esp, 4
 if_end_109:
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_hoarder]
+    mov eax, dword [var_eventexplorer]
     mov ebx, 1
     cmp eax, ebx
     je if_then_110
     jmp if_else_110
 if_then_110:
-    push str_152
+    push str_163
     call _printf
     add esp, 4
     jmp if_end_110
 if_else_110:
-    push str_153
+    push str_164
     call _printf
     add esp, 4
 if_end_110:
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_unstoppable]
+    mov eax, dword [var_turnveteran]
     mov ebx, 1
     cmp eax, ebx
     je if_then_111
     jmp if_else_111
 if_then_111:
-    push str_154
+    push str_165
     call _printf
     add esp, 4
     jmp if_end_111
 if_else_111:
-    push str_155
+    push str_166
     call _printf
     add esp, 4
 if_end_111:
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_eventlegend]
+    mov eax, dword [var_collectoraddict]
     mov ebx, 1
     cmp eax, ebx
     je if_then_112
     jmp if_else_112
 if_then_112:
-    push str_156
+    push str_167
     call _printf
     add esp, 4
     jmp if_end_112
 if_else_112:
-    push str_157
+    push str_168
     call _printf
     add esp, 4
 if_end_112:
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_jackpot]
+    mov eax, dword [var_ironfist]
     mov ebx, 1
     cmp eax, ebx
     je if_then_113
     jmp if_else_113
 if_then_113:
-    push str_158
+    push str_169
     call _printf
     add esp, 4
     jmp if_end_113
 if_else_113:
-    push str_159
+    push str_170
     call _printf
     add esp, 4
 if_end_113:
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_dedicated]
+    mov eax, dword [var_collectorpro]
     mov ebx, 1
     cmp eax, ebx
     je if_then_114
     jmp if_else_114
 if_then_114:
-    push str_160
+    push str_171
     call _printf
     add esp, 4
     jmp if_end_114
 if_else_114:
-    push str_161
+    push str_172
     call _printf
     add esp, 4
 if_end_114:
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_maxedout]
+    mov eax, dword [var_ultrarich]
     mov ebx, 1
     cmp eax, ebx
     je if_then_115
     jmp if_else_115
 if_then_115:
-    push str_162
+    push str_173
     call _printf
     add esp, 4
     jmp if_end_115
 if_else_115:
-    push str_163
+    push str_174
     call _printf
     add esp, 4
 if_end_115:
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_traderachievement]
+    mov eax, dword [var_grinder]
     mov ebx, 1
     cmp eax, ebx
     je if_then_116
     jmp if_else_116
 if_then_116:
-    push str_164
+    push str_175
     call _printf
     add esp, 4
     jmp if_end_116
 if_else_116:
-    push str_165
+    push str_176
     call _printf
     add esp, 4
 if_end_116:
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_speculatorachievement]
+    mov eax, dword [var_hoarder]
     mov ebx, 1
     cmp eax, ebx
     je if_then_117
     jmp if_else_117
 if_then_117:
-    push str_166
+    push str_177
     call _printf
     add esp, 4
     jmp if_end_117
 if_else_117:
-    push str_167
+    push str_178
     call _printf
     add esp, 4
 if_end_117:
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_markettycoon]
+    mov eax, dword [var_unstoppable]
     mov ebx, 1
     cmp eax, ebx
     je if_then_118
     jmp if_else_118
 if_then_118:
-    push str_168
+    push str_179
     call _printf
     add esp, 4
     jmp if_end_118
 if_else_118:
-    push str_169
+    push str_180
     call _printf
     add esp, 4
 if_end_118:
     push str_3
     call _printf
     add esp, 4
-    mov eax, dword [var_lucky]
+    mov eax, dword [var_eventlegend]
     mov ebx, 1
     cmp eax, ebx
     je if_then_119
     jmp if_else_119
 if_then_119:
-    push str_170
+    push str_181
     call _printf
     add esp, 4
     jmp if_end_119
 if_else_119:
-    push str_171
+    push str_182
     call _printf
     add esp, 4
 if_end_119:
     push str_3
     call _printf
     add esp, 4
-    push 3000
-    call _Sleep@4
-    jmp if_end_85
-if_else_85:
-if_end_85:
-    mov eax, dword [var_cmd]
-    mov ebx, 6
+    mov eax, dword [var_jackpot]
+    mov ebx, 1
     cmp eax, ebx
     je if_then_120
     jmp if_else_120
 if_then_120:
-    call _clearscreen
-    push str_172
+    push str_183
     call _printf
     add esp, 4
+    jmp if_end_120
+if_else_120:
+    push str_184
+    call _printf
+    add esp, 4
+if_end_120:
     push str_3
     call _printf
     add esp, 4
-    push str_173
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push str_174
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push str_175
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push str_176
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push str_177
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push str_178
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push str_179
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push str_180
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push str_181
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push str_182
-    call _printf
-    add esp, 4
-    push var_gamechoice
-    push scanf_fmt_183
-    call _scanf
-    add esp, 8
-    mov eax, dword [var_gamechoice]
+    mov eax, dword [var_dedicated]
     mov ebx, 1
     cmp eax, ebx
     je if_then_121
     jmp if_else_121
 if_then_121:
-    call _clearscreen
-    push str_184
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
     push str_185
     call _printf
     add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
+    jmp if_end_121
+if_else_121:
     push str_186
     call _printf
     add esp, 4
+if_end_121:
     push str_3
     call _printf
     add esp, 4
-    cmp dword [var_rand_state_122], 0
-    jne rand_init_122
+    mov eax, dword [var_maxedout]
+    mov ebx, 1
+    cmp eax, ebx
+    je if_then_122
+    jmp if_else_122
+if_then_122:
+    push str_187
+    call _printf
+    add esp, 4
+    jmp if_end_122
+if_else_122:
+    push str_188
+    call _printf
+    add esp, 4
+if_end_122:
+    push str_3
+    call _printf
+    add esp, 4
+    mov eax, dword [var_traderachievement]
+    mov ebx, 1
+    cmp eax, ebx
+    je if_then_123
+    jmp if_else_123
+if_then_123:
+    push str_189
+    call _printf
+    add esp, 4
+    jmp if_end_123
+if_else_123:
+    push str_190
+    call _printf
+    add esp, 4
+if_end_123:
+    push str_3
+    call _printf
+    add esp, 4
+    mov eax, dword [var_speculatorachievement]
+    mov ebx, 1
+    cmp eax, ebx
+    je if_then_124
+    jmp if_else_124
+if_then_124:
+    push str_191
+    call _printf
+    add esp, 4
+    jmp if_end_124
+if_else_124:
+    push str_192
+    call _printf
+    add esp, 4
+if_end_124:
+    push str_3
+    call _printf
+    add esp, 4
+    mov eax, dword [var_markettycoon]
+    mov ebx, 1
+    cmp eax, ebx
+    je if_then_125
+    jmp if_else_125
+if_then_125:
+    push str_193
+    call _printf
+    add esp, 4
+    jmp if_end_125
+if_else_125:
+    push str_194
+    call _printf
+    add esp, 4
+if_end_125:
+    push str_3
+    call _printf
+    add esp, 4
+    mov eax, dword [var_lucky]
+    mov ebx, 1
+    cmp eax, ebx
+    je if_then_126
+    jmp if_else_126
+if_then_126:
+    push str_195
+    call _printf
+    add esp, 4
+    jmp if_end_126
+if_else_126:
+    push str_196
+    call _printf
+    add esp, 4
+if_end_126:
+    push str_3
+    call _printf
+    add esp, 4
+    mov eax, dword [var_buildingachievement]
+    mov ebx, 1
+    cmp eax, ebx
+    je if_then_127
+    jmp if_else_127
+if_then_127:
+    push str_197
+    call _printf
+    add esp, 4
+    jmp if_end_127
+if_else_127:
+    push str_198
+    call _printf
+    add esp, 4
+if_end_127:
+    push str_3
+    call _printf
+    add esp, 4
+    push 3000
+    call _Sleep@4
+    jmp if_end_92
+if_else_92:
+if_end_92:
+    mov eax, dword [var_cmd]
+    mov ebx, 6
+    cmp eax, ebx
+    je if_then_128
+    jmp if_else_128
+if_then_128:
+    call _clearscreen
+    push str_199
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push str_200
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push str_201
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push str_202
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push str_203
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push str_204
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push str_205
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push str_206
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push str_207
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push str_208
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push str_209
+    call _printf
+    add esp, 4
+    push var_gamechoice
+    push scanf_fmt_210
+    call _scanf
+    add esp, 8
+    mov eax, dword [var_gamechoice]
+    mov ebx, 1
+    cmp eax, ebx
+    je if_then_129
+    jmp if_else_129
+if_then_129:
+    call _clearscreen
+    push str_211
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push str_212
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push str_213
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    cmp dword [var_rand_state_130], 0
+    jne rand_init_130
     push 0
     call _time
     add esp, 4
-    mov dword [var_rand_state_122], eax
-rand_init_122:
-    mov eax, dword [var_rand_state_122]
+    mov dword [var_rand_state_130], eax
+rand_init_130:
+    mov eax, dword [var_rand_state_130]
     xor eax, eax
     rdtsc
     xor edx, edx
-    mov ecx, dword [var_rand_state_122]
+    mov ecx, dword [var_rand_state_130]
     add eax, ecx
     rol eax, 7
-    add dword [var_rand_state_122], eax
-    mov dword [var_rand_state_122], eax
+    add dword [var_rand_state_130], eax
+    mov dword [var_rand_state_130], eax
     mov ecx, 1
     mov ebx, 5
     sub ebx, ecx
@@ -4357,19 +4983,19 @@ rand_init_122:
     add ebx, eax
     mov eax, ebx
     mov dword [var_minigameplays], eax
-    push str_187
+    push str_214
     call _printf
     add esp, 4
     push var_guess
-    push scanf_fmt_188
+    push scanf_fmt_215
     call _scanf
     add esp, 8
     mov eax, dword [var_guess]
     mov ebx, dword [var_secretnumber]
     cmp eax, ebx
-    je if_then_123
-    jmp if_else_123
-if_then_123:
+    je if_then_131
+    jmp if_else_131
+if_then_131:
     mov eax, dword [var_level]
     push eax
     mov eax, 20
@@ -4410,7 +5036,7 @@ if_then_123:
     add ebx, eax
     mov eax, ebx
     mov dword [var_minigamewins], eax
-    push str_189
+    push str_216
     call _printf
     add esp, 4
     push str_3
@@ -4420,7 +5046,7 @@ if_then_123:
     call _boop
     add esp, 4
     push dword [var_reward]
-    push str_190
+    push str_217
     call _printf
     add esp, 8
     push str_3
@@ -4429,53 +5055,53 @@ if_then_123:
     push 300
     call _boop
     add esp, 4
-    jmp if_end_123
-if_else_123:
+    jmp if_end_131
+if_else_131:
     push dword [var_secretnumber]
-    push str_191
+    push str_218
     call _printf
     add esp, 8
     push str_3
     call _printf
     add esp, 4
-    push str_192
+    push str_219
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-if_end_123:
+if_end_131:
     push 1500
     call _Sleep@4
-    jmp if_end_121
-if_else_121:
-if_end_121:
+    jmp if_end_129
+if_else_129:
+if_end_129:
     mov eax, dword [var_gamechoice]
     mov ebx, 2
     cmp eax, ebx
-    je if_then_124
-    jmp if_else_124
-if_then_124:
+    je if_then_132
+    jmp if_else_132
+if_then_132:
     call _clearscreen
-    push str_193
+    push str_220
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_194
+    push str_221
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_195
+    push str_222
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_196
+    push str_223
     call _printf
     add esp, 4
     push str_3
@@ -4488,22 +5114,22 @@ if_then_124:
     add ebx, eax
     mov eax, ebx
     mov dword [var_minigameplays], eax
-    cmp dword [var_rand_state_125], 0
-    jne rand_init_125
+    cmp dword [var_rand_state_133], 0
+    jne rand_init_133
     push 0
     call _time
     add esp, 4
-    mov dword [var_rand_state_125], eax
-rand_init_125:
-    mov eax, dword [var_rand_state_125]
+    mov dword [var_rand_state_133], eax
+rand_init_133:
+    mov eax, dword [var_rand_state_133]
     xor eax, eax
     rdtsc
     xor edx, edx
-    mov ecx, dword [var_rand_state_125]
+    mov ecx, dword [var_rand_state_133]
     add eax, ecx
     rol eax, 7
-    add dword [var_rand_state_125], eax
-    mov dword [var_rand_state_125], eax
+    add dword [var_rand_state_133], eax
+    mov dword [var_rand_state_133], eax
     mov ecx, 1
     mov ebx, 13
     sub ebx, ecx
@@ -4518,7 +5144,7 @@ rand_init_125:
     mov eax, 0
     mov dword [var_maxstreak], eax
     push dword [var_currentcard]
-    push str_197
+    push str_224
     call _printf
     add esp, 8
     push str_3
@@ -4528,40 +5154,40 @@ rand_init_125:
     call _Sleep@4
     mov eax, 1
     mov dword [var_round], eax
-while_start_126:
+while_start_134:
     mov eax, dword [var_round]
     mov ebx, 6
     cmp eax, ebx
-    jge while_end_126
+    jge while_end_134
     call _clearscreen
-    push str_193
+    push str_220
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
     push dword [var_round]
-    push str_198
+    push str_225
     call _printf
     add esp, 8
     push str_3
     call _printf
     add esp, 4
     push dword [var_streak]
-    push str_199
+    push str_226
     call _printf
     add esp, 8
     push str_3
     call _printf
     add esp, 4
-    push str_200
+    push str_91
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
     push dword [var_currentcard]
-    push str_201
+    push str_227
     call _printf
     add esp, 8
     push str_3
@@ -4570,71 +5196,71 @@ while_start_126:
     push str_3
     call _printf
     add esp, 4
-    push str_202
+    push str_228
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_203
+    push str_229
     call _printf
     add esp, 4
-    push str_204
+    push str_230
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_90
+    push str_231
     call _printf
     add esp, 4
     push var_playerguess
-    push scanf_fmt_205
+    push scanf_fmt_232
     call _scanf
     add esp, 8
     call _clearscreen
-    push str_193
+    push str_220
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
     push dword [var_round]
-    push str_198
+    push str_225
     call _printf
     add esp, 8
     push str_3
     call _printf
     add esp, 4
-    push str_200
+    push str_91
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
     push dword [var_currentcard]
-    push str_201
+    push str_227
     call _printf
     add esp, 8
     push str_3
     call _printf
     add esp, 4
-    cmp dword [var_rand_state_127], 0
-    jne rand_init_127
+    cmp dword [var_rand_state_135], 0
+    jne rand_init_135
     push 0
     call _time
     add esp, 4
-    mov dword [var_rand_state_127], eax
-rand_init_127:
-    mov eax, dword [var_rand_state_127]
+    mov dword [var_rand_state_135], eax
+rand_init_135:
+    mov eax, dword [var_rand_state_135]
     xor eax, eax
     rdtsc
     xor edx, edx
-    mov ecx, dword [var_rand_state_127]
+    mov ecx, dword [var_rand_state_135]
     add eax, ecx
     rol eax, 7
-    add dword [var_rand_state_127], eax
-    mov dword [var_rand_state_127], eax
+    add dword [var_rand_state_135], eax
+    mov dword [var_rand_state_135], eax
     mov ecx, 1
     mov ebx, 13
     sub ebx, ecx
@@ -4645,7 +5271,7 @@ rand_init_127:
     add eax, ecx
     mov dword [var_nextcard], eax
     push dword [var_nextcard]
-    push str_206
+    push str_233
     call _printf
     add esp, 8
     push str_3
@@ -4656,63 +5282,63 @@ rand_init_127:
     mov eax, dword [var_playerguess]
     mov ebx, 1
     cmp eax, ebx
-    je if_then_128
-    jmp if_else_128
-if_then_128:
+    je if_then_136
+    jmp if_else_136
+if_then_136:
     mov eax, dword [var_nextcard]
     mov ebx, dword [var_currentcard]
     cmp eax, ebx
-    jg if_then_129
-    jmp if_else_129
-if_then_129:
+    jg if_then_137
+    jmp if_else_137
+if_then_137:
     mov eax, 1
     mov dword [var_correct], eax
-    jmp if_end_129
-if_else_129:
-if_end_129:
-    jmp if_end_128
-if_else_128:
-if_end_128:
+    jmp if_end_137
+if_else_137:
+if_end_137:
+    jmp if_end_136
+if_else_136:
+if_end_136:
     mov eax, dword [var_playerguess]
     mov ebx, 2
     cmp eax, ebx
-    je if_then_130
-    jmp if_else_130
-if_then_130:
+    je if_then_138
+    jmp if_else_138
+if_then_138:
     mov eax, dword [var_nextcard]
     mov ebx, dword [var_currentcard]
     cmp eax, ebx
-    jl if_then_131
-    jmp if_else_131
-if_then_131:
+    jl if_then_139
+    jmp if_else_139
+if_then_139:
     mov eax, 1
     mov dword [var_correct], eax
-    jmp if_end_131
-if_else_131:
-if_end_131:
-    jmp if_end_130
-if_else_130:
-if_end_130:
+    jmp if_end_139
+if_else_139:
+if_end_139:
+    jmp if_end_138
+if_else_138:
+if_end_138:
     mov eax, dword [var_nextcard]
     mov ebx, dword [var_currentcard]
     cmp eax, ebx
-    je if_then_132
-    jmp if_else_132
-if_then_132:
-    push str_207
+    je if_then_140
+    jmp if_else_140
+if_then_140:
+    push str_234
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    jmp if_end_132
-if_else_132:
+    jmp if_end_140
+if_else_140:
     mov eax, dword [var_correct]
     mov ebx, 1
     cmp eax, ebx
-    je if_then_133
-    jmp if_else_133
-if_then_133:
+    je if_then_141
+    jmp if_else_141
+if_then_141:
     mov eax, dword [var_streak]
     push eax
     mov eax, 1
@@ -4723,24 +5349,24 @@ if_then_133:
     mov eax, dword [var_streak]
     mov ebx, dword [var_maxstreak]
     cmp eax, ebx
-    jg if_then_134
-    jmp if_else_134
-if_then_134:
+    jg if_then_142
+    jmp if_else_142
+if_then_142:
     mov eax, dword [var_streak]
     mov dword [var_maxstreak], eax
-    jmp if_end_134
-if_else_134:
-if_end_134:
+    jmp if_end_142
+if_else_142:
+if_end_142:
     push dword [var_streak]
-    push str_208
+    push str_235
     call _printf
     add esp, 8
     push str_3
     call _printf
     add esp, 4
-    jmp if_end_133
-if_else_133:
-    push str_209
+    jmp if_end_141
+if_else_141:
+    push str_236
     call _printf
     add esp, 4
     push str_3
@@ -4748,8 +5374,8 @@ if_else_133:
     add esp, 4
     mov eax, 0
     mov dword [var_streak], eax
-if_end_133:
-if_end_132:
+if_end_141:
+if_end_140:
     mov eax, dword [var_nextcard]
     mov dword [var_currentcard], eax
     mov eax, dword [var_round]
@@ -4762,52 +5388,52 @@ if_end_132:
     mov eax, dword [var_round]
     mov ebx, 6
     cmp eax, ebx
-    jl if_then_135
-    jmp if_else_135
-if_then_135:
+    jl if_then_143
+    jmp if_else_143
+if_then_143:
     push str_3
     call _printf
     add esp, 4
-    push str_210
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push str_211
-    call _printf
-    add esp, 4
-    push str_212
+    push str_237
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_90
+    push str_238
+    call _printf
+    add esp, 4
+    push str_239
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push str_231
     call _printf
     add esp, 4
     push var_continue
-    push scanf_fmt_213
+    push scanf_fmt_240
     call _scanf
     add esp, 8
     mov eax, dword [var_continue]
     mov ebx, 2
     cmp eax, ebx
-    je if_then_136
-    jmp if_else_136
-if_then_136:
+    je if_then_144
+    jmp if_else_144
+if_then_144:
     mov eax, 6
     mov dword [var_round], eax
-    jmp if_end_136
-if_else_136:
-if_end_136:
-    jmp if_end_135
-if_else_135:
-if_end_135:
-    jmp while_start_126
-while_end_126:
+    jmp if_end_144
+if_else_144:
+if_end_144:
+    jmp if_end_143
+if_else_143:
+if_end_143:
+    jmp while_start_134
+while_end_134:
     call _clearscreen
-    push str_214
+    push str_241
     call _printf
     add esp, 4
     push str_3
@@ -4819,9 +5445,9 @@ while_end_126:
     mov eax, dword [var_maxstreak]
     mov ebx, 0
     cmp eax, ebx
-    jg if_then_137
-    jmp if_else_137
-if_then_137:
+    jg if_then_145
+    jmp if_else_145
+if_then_145:
     mov eax, dword [var_level]
     push eax
     mov eax, 10
@@ -4868,14 +5494,14 @@ if_then_137:
     mov eax, ebx
     mov dword [var_minigamewins], eax
     push dword [var_maxstreak]
-    push str_215
+    push str_242
     call _printf
     add esp, 8
     push str_3
     call _printf
     add esp, 4
     push dword [var_maxstreak]
-    push str_216
+    push str_243
     call _printf
     add esp, 8
     push str_3
@@ -4885,7 +5511,7 @@ if_then_137:
     call _printf
     add esp, 4
     push dword [var_reward]
-    push str_190
+    push str_217
     call _printf
     add esp, 8
     push str_3
@@ -4894,49 +5520,49 @@ if_then_137:
     push 300
     call _boop
     add esp, 4
-    jmp if_end_137
-if_else_137:
-    push str_217
+    jmp if_end_145
+if_else_145:
+    push str_244
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_218
+    push str_245
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-if_end_137:
+if_end_145:
     push str_3
     call _printf
     add esp, 4
     push 1500
     call _Sleep@4
-    jmp if_end_124
-if_else_124:
-if_end_124:
+    jmp if_end_132
+if_else_132:
+if_end_132:
     mov eax, dword [var_gamechoice]
     mov ebx, 3
     cmp eax, ebx
-    je if_then_138
-    jmp if_else_138
-if_then_138:
+    je if_then_146
+    jmp if_else_146
+if_then_146:
     call _clearscreen
-    push str_219
+    push str_246
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_220
+    push str_247
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_221
+    push str_248
     call _printf
     add esp, 4
     push str_3
@@ -4958,67 +5584,67 @@ if_then_138:
     mov eax, dword [var_level]
     mov ebx, 10
     cmp eax, ebx
-    jg if_then_139
-    jmp if_else_139
-if_then_139:
+    jg if_then_147
+    jmp if_else_147
+if_then_147:
     mov eax, 25
     mov dword [var_maxnumber], eax
-    jmp if_end_139
-if_else_139:
-if_end_139:
+    jmp if_end_147
+if_else_147:
+if_end_147:
     mov eax, dword [var_level]
     mov ebx, 25
     cmp eax, ebx
-    jg if_then_140
-    jmp if_else_140
-if_then_140:
+    jg if_then_148
+    jmp if_else_148
+if_then_148:
     mov eax, 50
     mov dword [var_maxnumber], eax
-    jmp if_end_140
-if_else_140:
-if_end_140:
+    jmp if_end_148
+if_else_148:
+if_end_148:
     mov eax, dword [var_level]
     mov ebx, 50
     cmp eax, ebx
-    jg if_then_141
-    jmp if_else_141
-if_then_141:
+    jg if_then_149
+    jmp if_else_149
+if_then_149:
     mov eax, 100
     mov dword [var_maxnumber], eax
-    jmp if_end_141
-if_else_141:
-if_end_141:
+    jmp if_end_149
+if_else_149:
+if_end_149:
     mov eax, 1
     mov dword [var_question], eax
-while_start_142:
+while_start_150:
     mov eax, dword [var_question]
     mov ebx, 6
     cmp eax, ebx
-    jge while_end_142
+    jge while_end_150
     push dword [var_totalquestions]
     push dword [var_question]
-    push str_222
+    push str_249
     call _printf
     add esp, 12
     push str_3
     call _printf
     add esp, 4
-    cmp dword [var_rand_state_143], 0
-    jne rand_init_143
+    cmp dword [var_rand_state_151], 0
+    jne rand_init_151
     push 0
     call _time
     add esp, 4
-    mov dword [var_rand_state_143], eax
-rand_init_143:
-    mov eax, dword [var_rand_state_143]
+    mov dword [var_rand_state_151], eax
+rand_init_151:
+    mov eax, dword [var_rand_state_151]
     xor eax, eax
     rdtsc
     xor edx, edx
-    mov ecx, dword [var_rand_state_143]
+    mov ecx, dword [var_rand_state_151]
     add eax, ecx
     rol eax, 7
-    add dword [var_rand_state_143], eax
-    mov dword [var_rand_state_143], eax
+    add dword [var_rand_state_151], eax
+    mov dword [var_rand_state_151], eax
     mov ecx, 1
     mov ebx, dword [var_maxnumber]
     sub ebx, ecx
@@ -5028,22 +5654,22 @@ rand_init_143:
     mov eax, edx
     add eax, ecx
     mov dword [var_num1], eax
-    cmp dword [var_rand_state_144], 0
-    jne rand_init_144
+    cmp dword [var_rand_state_152], 0
+    jne rand_init_152
     push 0
     call _time
     add esp, 4
-    mov dword [var_rand_state_144], eax
-rand_init_144:
-    mov eax, dword [var_rand_state_144]
+    mov dword [var_rand_state_152], eax
+rand_init_152:
+    mov eax, dword [var_rand_state_152]
     xor eax, eax
     rdtsc
     xor edx, edx
-    mov ecx, dword [var_rand_state_144]
+    mov ecx, dword [var_rand_state_152]
     add eax, ecx
     rol eax, 7
-    add dword [var_rand_state_144], eax
-    mov dword [var_rand_state_144], eax
+    add dword [var_rand_state_152], eax
+    mov dword [var_rand_state_152], eax
     mov ecx, 1
     mov ebx, dword [var_maxnumber]
     sub ebx, ecx
@@ -5053,22 +5679,22 @@ rand_init_144:
     mov eax, edx
     add eax, ecx
     mov dword [var_num2], eax
-    cmp dword [var_rand_state_145], 0
-    jne rand_init_145
+    cmp dword [var_rand_state_153], 0
+    jne rand_init_153
     push 0
     call _time
     add esp, 4
-    mov dword [var_rand_state_145], eax
-rand_init_145:
-    mov eax, dword [var_rand_state_145]
+    mov dword [var_rand_state_153], eax
+rand_init_153:
+    mov eax, dword [var_rand_state_153]
     xor eax, eax
     rdtsc
     xor edx, edx
-    mov ecx, dword [var_rand_state_145]
+    mov ecx, dword [var_rand_state_153]
     add eax, ecx
     rol eax, 7
-    add dword [var_rand_state_145], eax
-    mov dword [var_rand_state_145], eax
+    add dword [var_rand_state_153], eax
+    mov dword [var_rand_state_153], eax
     mov ecx, 1
     mov ebx, 4
     sub ebx, ecx
@@ -5081,25 +5707,25 @@ rand_init_145:
     mov eax, dword [var_operation]
     mov ebx, 4
     cmp eax, ebx
-    je if_then_146
-    jmp if_else_146
-if_then_146:
-    cmp dword [var_rand_state_147], 0
-    jne rand_init_147
+    je if_then_154
+    jmp if_else_154
+if_then_154:
+    cmp dword [var_rand_state_155], 0
+    jne rand_init_155
     push 0
     call _time
     add esp, 4
-    mov dword [var_rand_state_147], eax
-rand_init_147:
-    mov eax, dword [var_rand_state_147]
+    mov dword [var_rand_state_155], eax
+rand_init_155:
+    mov eax, dword [var_rand_state_155]
     xor eax, eax
     rdtsc
     xor edx, edx
-    mov ecx, dword [var_rand_state_147]
+    mov ecx, dword [var_rand_state_155]
     add eax, ecx
     rol eax, 7
-    add dword [var_rand_state_147], eax
-    mov dword [var_rand_state_147], eax
+    add dword [var_rand_state_155], eax
+    mov dword [var_rand_state_155], eax
     mov ecx, 1
     mov ebx, 10
     sub ebx, ecx
@@ -5116,17 +5742,17 @@ rand_init_147:
     imul ebx, dword [var_temp123124]
     mov eax, ebx
     mov dword [var_num1], eax
-    jmp if_end_146
-if_else_146:
-if_end_146:
+    jmp if_end_154
+if_else_154:
+if_end_154:
     mov eax, 0
     mov dword [var_correctanswer], eax
     mov eax, dword [var_operation]
     mov ebx, 1
     cmp eax, ebx
-    je if_then_148
-    jmp if_else_148
-if_then_148:
+    je if_then_156
+    jmp if_else_156
+if_then_156:
     mov eax, dword [var_num1]
     push eax
     mov eax, dword [var_num2]
@@ -5136,18 +5762,18 @@ if_then_148:
     mov dword [var_correctanswer], eax
     push dword [var_num2]
     push dword [var_num1]
-    push str_223
+    push str_250
     call _printf
     add esp, 12
-    jmp if_end_148
-if_else_148:
-if_end_148:
+    jmp if_end_156
+if_else_156:
+if_end_156:
     mov eax, dword [var_operation]
     mov ebx, 2
     cmp eax, ebx
-    je if_then_149
-    jmp if_else_149
-if_then_149:
+    je if_then_157
+    jmp if_else_157
+if_then_157:
     mov eax, dword [var_num1]
     push eax
     mov eax, dword [var_num2]
@@ -5157,18 +5783,18 @@ if_then_149:
     mov dword [var_correctanswer], eax
     push dword [var_num2]
     push dword [var_num1]
-    push str_224
+    push str_251
     call _printf
     add esp, 12
-    jmp if_end_149
-if_else_149:
-if_end_149:
+    jmp if_end_157
+if_else_157:
+if_end_157:
     mov eax, dword [var_operation]
     mov ebx, 3
     cmp eax, ebx
-    je if_then_150
-    jmp if_else_150
-if_then_150:
+    je if_then_158
+    jmp if_else_158
+if_then_158:
     mov eax, dword [var_num1]
     push eax
     mov eax, dword [var_num2]
@@ -5178,18 +5804,18 @@ if_then_150:
     mov dword [var_correctanswer], eax
     push dword [var_num2]
     push dword [var_num1]
-    push str_225
+    push str_252
     call _printf
     add esp, 12
-    jmp if_end_150
-if_else_150:
-if_end_150:
+    jmp if_end_158
+if_else_158:
+if_end_158:
     mov eax, dword [var_operation]
     mov ebx, 4
     cmp eax, ebx
-    je if_then_151
-    jmp if_else_151
-if_then_151:
+    je if_then_159
+    jmp if_else_159
+if_then_159:
     mov eax, dword [var_num1]
     push eax
     mov eax, dword [var_num2]
@@ -5201,29 +5827,29 @@ if_then_151:
     mov dword [var_correctanswer], eax
     push dword [var_num2]
     push dword [var_num1]
-    push str_226
+    push str_253
     call _printf
     add esp, 12
-    jmp if_end_151
-if_else_151:
-if_end_151:
+    jmp if_end_159
+if_else_159:
+if_end_159:
     push str_3
     call _printf
     add esp, 4
-    push str_227
+    push str_254
     call _printf
     add esp, 4
     push var_playeranswer
-    push scanf_fmt_228
+    push scanf_fmt_255
     call _scanf
     add esp, 8
     mov eax, dword [var_playeranswer]
     mov ebx, dword [var_correctanswer]
     cmp eax, ebx
-    je if_then_152
-    jmp if_else_152
-if_then_152:
-    push str_229
+    je if_then_160
+    jmp if_else_160
+if_then_160:
+    push str_256
     call _printf
     add esp, 4
     push str_3
@@ -5239,16 +5865,16 @@ if_then_152:
     push 300
     call _boop
     add esp, 4
-    jmp if_end_152
-if_else_152:
+    jmp if_end_160
+if_else_160:
     push dword [var_correctanswer]
-    push str_230
+    push str_257
     call _printf
     add esp, 8
     push str_3
     call _printf
     add esp, 4
-if_end_152:
+if_end_160:
     mov eax, dword [var_question]
     push eax
     mov eax, 1
@@ -5258,14 +5884,14 @@ if_end_152:
     mov dword [var_question], eax
     push 500
     call _Sleep@4
-    jmp while_start_142
-while_end_142:
+    jmp while_start_150
+while_end_150:
     mov eax, dword [var_correctanswers]
     mov ebx, 0
     cmp eax, ebx
-    jg if_then_153
-    jmp if_else_153
-if_then_153:
+    jg if_then_161
+    jmp if_else_161
+if_then_161:
     mov eax, dword [var_level]
     push eax
     mov eax, 8
@@ -5313,14 +5939,14 @@ if_then_153:
     mov dword [var_minigamewins], eax
     push dword [var_totalquestions]
     push dword [var_correctanswers]
-    push str_231
+    push str_258
     call _printf
     add esp, 12
     push str_3
     call _printf
     add esp, 4
     push dword [var_reward]
-    push str_190
+    push str_217
     call _printf
     add esp, 8
     push str_3
@@ -5329,65 +5955,65 @@ if_then_153:
     push 300
     call _boop
     add esp, 4
-    jmp if_end_153
-if_else_153:
+    jmp if_end_161
+if_else_161:
     push dword [var_totalquestions]
-    push str_232
+    push str_259
     call _printf
     add esp, 8
     push str_3
     call _printf
     add esp, 4
-    push str_233
+    push str_260
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-if_end_153:
+if_end_161:
     push 1500
     call _Sleep@4
-    jmp if_end_138
-if_else_138:
-if_end_138:
+    jmp if_end_146
+if_else_146:
+if_end_146:
     mov eax, dword [var_gamechoice]
     mov ebx, 4
     cmp eax, ebx
-    je if_then_154
-    jmp if_else_154
-if_then_154:
+    je if_then_162
+    jmp if_else_162
+if_then_162:
     call _clearscreen
-    push str_234
+    push str_261
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_235
+    push str_262
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_236
+    push str_263
     call _printf
     add esp, 4
-    push str_237
+    push str_264
     call _printf
     add esp, 4
-    push str_238
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push str_239
+    push str_265
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_240
+    push str_266
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push str_267
     call _printf
     add esp, 4
     push str_3
@@ -5406,69 +6032,69 @@ if_then_154:
     mov dword [var_botwins], eax
     mov eax, 1
     mov dword [var_round], eax
-while_start_155:
+while_start_163:
     mov eax, dword [var_round]
     mov ebx, 4
     cmp eax, ebx
-    jge while_end_155
+    jge while_end_163
     push dword [var_round]
-    push str_241
+    push str_268
     call _printf
     add esp, 8
     push str_3
     call _printf
     add esp, 4
-    push str_242
+    push str_269
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_243
+    push str_270
     call _printf
     add esp, 4
     push var_rpschoice
-    push scanf_fmt_244
+    push scanf_fmt_271
     call _scanf
     add esp, 8
     mov eax, dword [var_rpschoice]
     mov ebx, 1
     cmp eax, ebx
-    jl if_then_156
-    jmp if_else_156
-if_then_156:
+    jl if_then_164
+    jmp if_else_164
+if_then_164:
     mov eax, 1
     mov dword [var_rpschoice], eax
-    jmp if_end_156
-if_else_156:
-if_end_156:
+    jmp if_end_164
+if_else_164:
+if_end_164:
     mov eax, dword [var_rpschoice]
     mov ebx, 3
     cmp eax, ebx
-    jg if_then_157
-    jmp if_else_157
-if_then_157:
+    jg if_then_165
+    jmp if_else_165
+if_then_165:
     mov eax, 3
     mov dword [var_rpschoice], eax
-    jmp if_end_157
-if_else_157:
-if_end_157:
-    cmp dword [var_rand_state_158], 0
-    jne rand_init_158
+    jmp if_end_165
+if_else_165:
+if_end_165:
+    cmp dword [var_rand_state_166], 0
+    jne rand_init_166
     push 0
     call _time
     add esp, 4
-    mov dword [var_rand_state_158], eax
-rand_init_158:
-    mov eax, dword [var_rand_state_158]
+    mov dword [var_rand_state_166], eax
+rand_init_166:
+    mov eax, dword [var_rand_state_166]
     xor eax, eax
     rdtsc
     xor edx, edx
-    mov ecx, dword [var_rand_state_158]
+    mov ecx, dword [var_rand_state_166]
     add eax, ecx
     rol eax, 7
-    add dword [var_rand_state_158], eax
-    mov dword [var_rand_state_158], eax
+    add dword [var_rand_state_166], eax
+    mov dword [var_rand_state_166], eax
     mov ecx, 1
     mov ebx, 3
     sub ebx, ecx
@@ -5478,103 +6104,103 @@ rand_init_158:
     mov eax, edx
     add eax, ecx
     mov dword [var_botchoice], eax
-    push str_245
+    push str_272
     call _printf
     add esp, 4
     mov eax, dword [var_rpschoice]
     mov ebx, 1
     cmp eax, ebx
-    je if_then_159
-    jmp if_else_159
-if_then_159:
-    push str_246
+    je if_then_167
+    jmp if_else_167
+if_then_167:
+    push str_273
     call _printf
     add esp, 4
-    jmp if_end_159
-if_else_159:
-if_end_159:
+    jmp if_end_167
+if_else_167:
+if_end_167:
     mov eax, dword [var_rpschoice]
     mov ebx, 2
     cmp eax, ebx
-    je if_then_160
-    jmp if_else_160
-if_then_160:
-    push str_247
+    je if_then_168
+    jmp if_else_168
+if_then_168:
+    push str_274
     call _printf
     add esp, 4
-    jmp if_end_160
-if_else_160:
-if_end_160:
+    jmp if_end_168
+if_else_168:
+if_end_168:
     mov eax, dword [var_rpschoice]
     mov ebx, 3
     cmp eax, ebx
-    je if_then_161
-    jmp if_else_161
-if_then_161:
-    push str_248
+    je if_then_169
+    jmp if_else_169
+if_then_169:
+    push str_275
     call _printf
     add esp, 4
-    jmp if_end_161
-if_else_161:
-if_end_161:
+    jmp if_end_169
+if_else_169:
+if_end_169:
     push str_3
     call _printf
     add esp, 4
-    push str_249
+    push str_276
     call _printf
     add esp, 4
     mov eax, dword [var_botchoice]
     mov ebx, 1
     cmp eax, ebx
-    je if_then_162
-    jmp if_else_162
-if_then_162:
-    push str_246
+    je if_then_170
+    jmp if_else_170
+if_then_170:
+    push str_273
     call _printf
     add esp, 4
-    jmp if_end_162
-if_else_162:
-if_end_162:
+    jmp if_end_170
+if_else_170:
+if_end_170:
     mov eax, dword [var_botchoice]
     mov ebx, 2
     cmp eax, ebx
-    je if_then_163
-    jmp if_else_163
-if_then_163:
-    push str_247
+    je if_then_171
+    jmp if_else_171
+if_then_171:
+    push str_274
     call _printf
     add esp, 4
-    jmp if_end_163
-if_else_163:
-if_end_163:
+    jmp if_end_171
+if_else_171:
+if_end_171:
     mov eax, dword [var_botchoice]
     mov ebx, 3
     cmp eax, ebx
-    je if_then_164
-    jmp if_else_164
-if_then_164:
-    push str_248
+    je if_then_172
+    jmp if_else_172
+if_then_172:
+    push str_275
     call _printf
     add esp, 4
-    jmp if_end_164
-if_else_164:
-if_end_164:
+    jmp if_end_172
+if_else_172:
+if_end_172:
     push str_3
     call _printf
     add esp, 4
     mov eax, dword [var_rpschoice]
     mov ebx, dword [var_botchoice]
     cmp eax, ebx
-    je if_then_165
-    jmp if_else_165
-if_then_165:
-    push str_250
+    je if_then_173
+    jmp if_else_173
+if_then_173:
+    push str_277
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_251
+    push str_278
     call _printf
     add esp, 4
     push str_3
@@ -5582,76 +6208,76 @@ if_then_165:
     add esp, 4
     push 800
     call _Sleep@4
-    jmp if_end_165
-if_else_165:
+    jmp if_end_173
+if_else_173:
     mov eax, 0
     mov dword [var_playerwinsround], eax
     mov eax, dword [var_rpschoice]
     mov ebx, 1
     cmp eax, ebx
-    je if_then_166
-    jmp if_else_166
-if_then_166:
+    je if_then_174
+    jmp if_else_174
+if_then_174:
     mov eax, dword [var_botchoice]
     mov ebx, 3
     cmp eax, ebx
-    je if_then_167
-    jmp if_else_167
-if_then_167:
+    je if_then_175
+    jmp if_else_175
+if_then_175:
     mov eax, 1
     mov dword [var_playerwinsround], eax
-    jmp if_end_167
-if_else_167:
-if_end_167:
-    jmp if_end_166
-if_else_166:
-if_end_166:
+    jmp if_end_175
+if_else_175:
+if_end_175:
+    jmp if_end_174
+if_else_174:
+if_end_174:
     mov eax, dword [var_rpschoice]
     mov ebx, 2
     cmp eax, ebx
-    je if_then_168
-    jmp if_else_168
-if_then_168:
+    je if_then_176
+    jmp if_else_176
+if_then_176:
     mov eax, dword [var_botchoice]
     mov ebx, 1
     cmp eax, ebx
-    je if_then_169
-    jmp if_else_169
-if_then_169:
+    je if_then_177
+    jmp if_else_177
+if_then_177:
     mov eax, 1
     mov dword [var_playerwinsround], eax
-    jmp if_end_169
-if_else_169:
-if_end_169:
-    jmp if_end_168
-if_else_168:
-if_end_168:
+    jmp if_end_177
+if_else_177:
+if_end_177:
+    jmp if_end_176
+if_else_176:
+if_end_176:
     mov eax, dword [var_rpschoice]
     mov ebx, 3
     cmp eax, ebx
-    je if_then_170
-    jmp if_else_170
-if_then_170:
+    je if_then_178
+    jmp if_else_178
+if_then_178:
     mov eax, dword [var_botchoice]
     mov ebx, 2
     cmp eax, ebx
-    je if_then_171
-    jmp if_else_171
-if_then_171:
+    je if_then_179
+    jmp if_else_179
+if_then_179:
     mov eax, 1
     mov dword [var_playerwinsround], eax
-    jmp if_end_171
-if_else_171:
-if_end_171:
-    jmp if_end_170
-if_else_170:
-if_end_170:
+    jmp if_end_179
+if_else_179:
+if_end_179:
+    jmp if_end_178
+if_else_178:
+if_end_178:
     mov eax, dword [var_playerwinsround]
     mov ebx, 1
     cmp eax, ebx
-    je if_then_172
-    jmp if_else_172
-if_then_172:
+    je if_then_180
+    jmp if_else_180
+if_then_180:
     mov eax, dword [var_playerwins]
     push eax
     mov eax, 1
@@ -5659,7 +6285,7 @@ if_then_172:
     add ebx, eax
     mov eax, ebx
     mov dword [var_playerwins], eax
-    push str_252
+    push str_279
     call _printf
     add esp, 4
     push str_3
@@ -5668,8 +6294,8 @@ if_then_172:
     push 300
     call _boop
     add esp, 4
-    jmp if_end_172
-if_else_172:
+    jmp if_end_180
+if_else_180:
     mov eax, dword [var_botwins]
     push eax
     mov eax, 1
@@ -5677,7 +6303,7 @@ if_else_172:
     add ebx, eax
     mov eax, ebx
     mov dword [var_botwins], eax
-    push str_253
+    push str_280
     call _printf
     add esp, 4
     push str_3
@@ -5686,7 +6312,7 @@ if_else_172:
     push 100
     call _boop
     add esp, 4
-if_end_172:
+if_end_180:
     mov eax, dword [var_round]
     push eax
     mov eax, 1
@@ -5696,16 +6322,16 @@ if_end_172:
     mov dword [var_round], eax
     push 800
     call _Sleep@4
-if_end_165:
+if_end_173:
     push dword [var_botwins]
     push dword [var_playerwins]
-    push str_254
+    push str_281
     call _printf
     add esp, 12
     push str_3
     call _printf
     add esp, 4
-    push str_200
+    push str_91
     call _printf
     add esp, 4
     push str_3
@@ -5713,10 +6339,10 @@ if_end_165:
     add esp, 4
     push 500
     call _Sleep@4
-    jmp while_start_155
-while_end_155:
+    jmp while_start_163
+while_end_163:
     call _clearscreen
-    push str_255
+    push str_282
     call _printf
     add esp, 4
     push str_3
@@ -5727,7 +6353,7 @@ while_end_155:
     add esp, 4
     push dword [var_botwins]
     push dword [var_playerwins]
-    push str_256
+    push str_283
     call _printf
     add esp, 12
     push str_3
@@ -5739,9 +6365,9 @@ while_end_155:
     mov eax, dword [var_playerwins]
     mov ebx, dword [var_botwins]
     cmp eax, ebx
-    jg if_then_173
-    jmp if_else_173
-if_then_173:
+    jg if_then_181
+    jmp if_else_181
+if_then_181:
     mov eax, dword [var_minigamewins]
     push eax
     mov eax, 1
@@ -5752,16 +6378,16 @@ if_then_173:
     mov eax, dword [var_playerwins]
     mov ebx, 3
     cmp eax, ebx
-    je if_then_174
-    jmp if_else_174
-if_then_174:
+    je if_then_182
+    jmp if_else_182
+if_then_182:
     mov eax, dword [var_botwins]
     mov ebx, 0
     cmp eax, ebx
-    je if_then_175
-    jmp if_else_175
-if_then_175:
-    push str_257
+    je if_then_183
+    jmp if_else_183
+if_then_183:
+    push str_284
     call _printf
     add esp, 4
     push str_3
@@ -5801,7 +6427,7 @@ if_then_175:
     mov eax, ebx
     mov dword [var_gold], eax
     push dword [var_reward]
-    push str_258
+    push str_285
     call _printf
     add esp, 8
     push str_3
@@ -5816,9 +6442,9 @@ if_then_175:
     push 500
     call _boop
     add esp, 4
-    jmp if_end_175
-if_else_175:
-    push str_259
+    jmp if_end_183
+if_else_183:
+    push str_286
     call _printf
     add esp, 4
     push str_3
@@ -5858,7 +6484,7 @@ if_else_175:
     mov eax, ebx
     mov dword [var_gold], eax
     push dword [var_reward]
-    push str_190
+    push str_217
     call _printf
     add esp, 8
     push str_3
@@ -5870,10 +6496,10 @@ if_else_175:
     push 300
     call _boop
     add esp, 4
-if_end_175:
-    jmp if_end_174
-if_else_174:
-    push str_260
+if_end_183:
+    jmp if_end_182
+if_else_182:
+    push str_287
     call _printf
     add esp, 4
     push str_3
@@ -5913,7 +6539,7 @@ if_else_174:
     mov eax, ebx
     mov dword [var_gold], eax
     push dword [var_reward]
-    push str_190
+    push str_217
     call _printf
     add esp, 8
     push str_3
@@ -5922,16 +6548,16 @@ if_else_174:
     push 300
     call _boop
     add esp, 4
-if_end_174:
-    jmp if_end_173
-if_else_173:
+if_end_182:
+    jmp if_end_181
+if_else_181:
     mov eax, dword [var_playerwins]
     mov ebx, dword [var_botwins]
     cmp eax, ebx
-    je if_then_176
-    jmp if_else_176
-if_then_176:
-    push str_261
+    je if_then_184
+    jmp if_else_184
+if_then_184:
+    push str_288
     call _printf
     add esp, 4
     push str_3
@@ -5971,7 +6597,7 @@ if_then_176:
     mov eax, ebx
     mov dword [var_gold], eax
     push dword [var_reward]
-    push str_262
+    push str_289
     call _printf
     add esp, 8
     push str_3
@@ -5980,15 +6606,15 @@ if_then_176:
     push 200
     call _boop
     add esp, 4
-    jmp if_end_176
-if_else_176:
-    push str_263
+    jmp if_end_184
+if_else_184:
+    push str_290
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_192
+    push str_219
     call _printf
     add esp, 4
     push str_3
@@ -5997,9 +6623,9 @@ if_else_176:
     mov eax, dword [var_level]
     mov ebx, 1
     cmp eax, ebx
-    jg if_then_177
-    jmp if_else_177
-if_then_177:
+    jg if_then_185
+    jmp if_else_185
+if_then_185:
     mov eax, dword [var_level]
     push eax
     mov eax, 2
@@ -6029,106 +6655,106 @@ if_then_177:
     mov eax, ebx
     mov dword [var_gold], eax
     push dword [var_reward]
-    push str_264
+    push str_291
     call _printf
     add esp, 8
     push str_3
     call _printf
     add esp, 4
-    jmp if_end_177
-if_else_177:
-if_end_177:
+    jmp if_end_185
+if_else_185:
+if_end_185:
     push 100
     call _boop
     add esp, 4
-if_end_176:
-if_end_173:
+if_end_184:
+if_end_181:
     push str_3
     call _printf
     add esp, 4
     push 1500
     call _Sleep@4
-    jmp if_end_154
-if_else_154:
-if_end_154:
+    jmp if_end_162
+if_else_162:
+if_end_162:
     mov eax, dword [var_gamechoice]
     mov ebx, 5
     cmp eax, ebx
-    je if_then_178
-    jmp if_else_178
-if_then_178:
+    je if_then_186
+    jmp if_else_186
+if_then_186:
     call _clearscreen
-    push str_265
+    push str_292
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_266
+    push str_293
     call _printf
     add esp, 4
-    push str_267
+    push str_294
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_268
+    push str_295
     call _printf
     add esp, 4
     push var_betamount
-    push scanf_fmt_269
+    push scanf_fmt_296
     call _scanf
     add esp, 8
     mov eax, dword [var_betamount]
     mov ebx, 10
     cmp eax, ebx
-    jl if_then_179
-    jmp if_else_179
-if_then_179:
+    jl if_then_187
+    jmp if_else_187
+if_then_187:
     mov eax, 10
     mov dword [var_betamount], eax
-    jmp if_end_179
-if_else_179:
-if_end_179:
+    jmp if_end_187
+if_else_187:
+if_end_187:
     mov eax, 0
     mov dword [var_canbet], eax
     mov eax, dword [var_wood]
     mov ebx, dword [var_betamount]
     cmp eax, ebx
-    jg if_then_180
-    jmp if_else_180
-if_then_180:
+    jg if_then_188
+    jmp if_else_188
+if_then_188:
     mov eax, dword [var_stone]
     mov ebx, dword [var_betamount]
     cmp eax, ebx
-    jg if_then_181
-    jmp if_else_181
-if_then_181:
+    jg if_then_189
+    jmp if_else_189
+if_then_189:
     mov eax, dword [var_gold]
     mov ebx, dword [var_betamount]
     cmp eax, ebx
-    jg if_then_182
-    jmp if_else_182
-if_then_182:
+    jg if_then_190
+    jmp if_else_190
+if_then_190:
     mov eax, 1
     mov dword [var_canbet], eax
-    jmp if_end_182
-if_else_182:
-if_end_182:
-    jmp if_end_181
-if_else_181:
-if_end_181:
-    jmp if_end_180
-if_else_180:
-if_end_180:
+    jmp if_end_190
+if_else_190:
+if_end_190:
+    jmp if_end_189
+if_else_189:
+if_end_189:
+    jmp if_end_188
+if_else_188:
+if_end_188:
     mov eax, dword [var_canbet]
     mov ebx, 1
     cmp eax, ebx
-    je if_then_183
-    jmp if_else_183
-if_then_183:
-    push str_270
+    je if_then_191
+    jmp if_else_191
+if_then_191:
+    push str_297
     call _printf
     add esp, 4
     push str_3
@@ -6136,22 +6762,22 @@ if_then_183:
     add esp, 4
     push 500
     call _Sleep@4
-    cmp dword [var_rand_state_184], 0
-    jne rand_init_184
+    cmp dword [var_rand_state_192], 0
+    jne rand_init_192
     push 0
     call _time
     add esp, 4
-    mov dword [var_rand_state_184], eax
-rand_init_184:
-    mov eax, dword [var_rand_state_184]
+    mov dword [var_rand_state_192], eax
+rand_init_192:
+    mov eax, dword [var_rand_state_192]
     xor eax, eax
     rdtsc
     xor edx, edx
-    mov ecx, dword [var_rand_state_184]
+    mov ecx, dword [var_rand_state_192]
     add eax, ecx
     rol eax, 7
-    add dword [var_rand_state_184], eax
-    mov dword [var_rand_state_184], eax
+    add dword [var_rand_state_192], eax
+    mov dword [var_rand_state_192], eax
     mov ecx, 1
     mov ebx, 6
     sub ebx, ecx
@@ -6161,22 +6787,22 @@ rand_init_184:
     mov eax, edx
     add eax, ecx
     mov dword [var_die1], eax
-    cmp dword [var_rand_state_185], 0
-    jne rand_init_185
+    cmp dword [var_rand_state_193], 0
+    jne rand_init_193
     push 0
     call _time
     add esp, 4
-    mov dword [var_rand_state_185], eax
-rand_init_185:
-    mov eax, dword [var_rand_state_185]
+    mov dword [var_rand_state_193], eax
+rand_init_193:
+    mov eax, dword [var_rand_state_193]
     xor eax, eax
     rdtsc
     xor edx, edx
-    mov ecx, dword [var_rand_state_185]
+    mov ecx, dword [var_rand_state_193]
     add eax, ecx
     rol eax, 7
-    add dword [var_rand_state_185], eax
-    mov dword [var_rand_state_185], eax
+    add dword [var_rand_state_193], eax
+    mov dword [var_rand_state_193], eax
     mov ecx, 1
     mov ebx, 6
     sub ebx, ecx
@@ -6196,7 +6822,7 @@ rand_init_185:
     push dword [var_playertotal]
     push dword [var_die2]
     push dword [var_die1]
-    push str_271
+    push str_298
     call _printf
     add esp, 16
     push str_3
@@ -6204,7 +6830,7 @@ rand_init_185:
     add esp, 4
     push 800
     call _Sleep@4
-    push str_272
+    push str_299
     call _printf
     add esp, 4
     push str_3
@@ -6212,22 +6838,22 @@ rand_init_185:
     add esp, 4
     push 500
     call _Sleep@4
-    cmp dword [var_rand_state_186], 0
-    jne rand_init_186
+    cmp dword [var_rand_state_194], 0
+    jne rand_init_194
     push 0
     call _time
     add esp, 4
-    mov dword [var_rand_state_186], eax
-rand_init_186:
-    mov eax, dword [var_rand_state_186]
+    mov dword [var_rand_state_194], eax
+rand_init_194:
+    mov eax, dword [var_rand_state_194]
     xor eax, eax
     rdtsc
     xor edx, edx
-    mov ecx, dword [var_rand_state_186]
+    mov ecx, dword [var_rand_state_194]
     add eax, ecx
     rol eax, 7
-    add dword [var_rand_state_186], eax
-    mov dword [var_rand_state_186], eax
+    add dword [var_rand_state_194], eax
+    mov dword [var_rand_state_194], eax
     mov ecx, 1
     mov ebx, 6
     sub ebx, ecx
@@ -6237,22 +6863,22 @@ rand_init_186:
     mov eax, edx
     add eax, ecx
     mov dword [var_compdie1], eax
-    cmp dword [var_rand_state_187], 0
-    jne rand_init_187
+    cmp dword [var_rand_state_195], 0
+    jne rand_init_195
     push 0
     call _time
     add esp, 4
-    mov dword [var_rand_state_187], eax
-rand_init_187:
-    mov eax, dword [var_rand_state_187]
+    mov dword [var_rand_state_195], eax
+rand_init_195:
+    mov eax, dword [var_rand_state_195]
     xor eax, eax
     rdtsc
     xor edx, edx
-    mov ecx, dword [var_rand_state_187]
+    mov ecx, dword [var_rand_state_195]
     add eax, ecx
     rol eax, 7
-    add dword [var_rand_state_187], eax
-    mov dword [var_rand_state_187], eax
+    add dword [var_rand_state_195], eax
+    mov dword [var_rand_state_195], eax
     mov ecx, 1
     mov ebx, 6
     sub ebx, ecx
@@ -6272,7 +6898,7 @@ rand_init_187:
     push dword [var_comptotal]
     push dword [var_compdie2]
     push dword [var_compdie1]
-    push str_273
+    push str_300
     call _printf
     add esp, 16
     push str_3
@@ -6287,43 +6913,43 @@ rand_init_187:
     mov eax, dword [var_die1]
     mov ebx, dword [var_die2]
     cmp eax, ebx
-    je if_then_188
-    jmp if_else_188
-if_then_188:
+    je if_then_196
+    jmp if_else_196
+if_then_196:
     mov eax, 1
     mov dword [var_playerdoubles], eax
-    push str_274
+    push str_301
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    jmp if_end_188
-if_else_188:
-if_end_188:
+    jmp if_end_196
+if_else_196:
+if_end_196:
     mov eax, dword [var_compdie1]
     mov ebx, dword [var_compdie2]
     cmp eax, ebx
-    je if_then_189
-    jmp if_else_189
-if_then_189:
+    je if_then_197
+    jmp if_else_197
+if_then_197:
     mov eax, 1
     mov dword [var_compdoubles], eax
-    push str_275
+    push str_302
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    jmp if_end_189
-if_else_189:
-if_end_189:
+    jmp if_end_197
+if_else_197:
+if_end_197:
     mov eax, dword [var_playertotal]
     mov ebx, dword [var_comptotal]
     cmp eax, ebx
-    jg if_then_190
-    jmp if_else_190
-if_then_190:
+    jg if_then_198
+    jmp if_else_198
+if_then_198:
     mov eax, dword [var_betamount]
     push eax
     mov eax, 2
@@ -6334,9 +6960,9 @@ if_then_190:
     mov eax, dword [var_playerdoubles]
     mov ebx, 1
     cmp eax, ebx
-    je if_then_191
-    jmp if_else_191
-if_then_191:
+    je if_then_199
+    jmp if_else_199
+if_then_199:
     mov eax, dword [var_reward]
     push eax
     mov eax, 2
@@ -6344,15 +6970,15 @@ if_then_191:
     imul ebx, eax
     mov eax, ebx
     mov dword [var_reward], eax
-    push str_276
+    push str_303
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    jmp if_end_191
-if_else_191:
-if_end_191:
+    jmp if_end_199
+if_else_199:
+if_end_199:
     mov eax, dword [var_reward]
     push eax
     mov eax, dword [var_prestigebonus]
@@ -6388,14 +7014,14 @@ if_end_191:
     add ebx, eax
     mov eax, ebx
     mov dword [var_minigamewins], eax
-    push str_277
+    push str_304
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
     push dword [var_reward]
-    push str_278
+    push str_305
     call _printf
     add esp, 8
     push str_3
@@ -6407,21 +7033,21 @@ if_end_191:
     push 500
     call _boop
     add esp, 4
-    jmp if_end_190
-if_else_190:
+    jmp if_end_198
+if_else_198:
     mov eax, dword [var_playertotal]
     mov ebx, dword [var_comptotal]
     cmp eax, ebx
-    je if_then_192
-    jmp if_else_192
-if_then_192:
-    push str_279
+    je if_then_200
+    jmp if_else_200
+if_then_200:
+    push str_306
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_280
+    push str_307
     call _printf
     add esp, 4
     push str_3
@@ -6430,9 +7056,9 @@ if_then_192:
     push 300
     call _boop
     add esp, 4
-    jmp if_end_192
-if_else_192:
-    push str_281
+    jmp if_end_200
+if_else_200:
+    push str_308
     call _printf
     add esp, 4
     push str_3
@@ -6441,9 +7067,9 @@ if_else_192:
     mov eax, dword [var_compdoubles]
     mov ebx, 1
     cmp eax, ebx
-    je if_then_193
-    jmp if_else_193
-if_then_193:
+    je if_then_201
+    jmp if_else_201
+if_then_201:
     mov eax, dword [var_betamount]
     push eax
     mov eax, 2
@@ -6451,17 +7077,17 @@ if_then_193:
     imul ebx, eax
     mov eax, ebx
     mov dword [var_loss], eax
-    push str_282
+    push str_309
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    jmp if_end_193
-if_else_193:
+    jmp if_end_201
+if_else_201:
     mov eax, dword [var_betamount]
     mov dword [var_loss], eax
-if_end_193:
+if_end_201:
     mov eax, dword [var_wood]
     push eax
     mov eax, dword [var_loss]
@@ -6486,38 +7112,38 @@ if_end_193:
     mov eax, dword [var_wood]
     mov ebx, 0
     cmp eax, ebx
-    jl if_then_194
-    jmp if_else_194
-if_then_194:
+    jl if_then_202
+    jmp if_else_202
+if_then_202:
     mov eax, 0
     mov dword [var_wood], eax
-    jmp if_end_194
-if_else_194:
-if_end_194:
+    jmp if_end_202
+if_else_202:
+if_end_202:
     mov eax, dword [var_stone]
     mov ebx, 0
     cmp eax, ebx
-    jl if_then_195
-    jmp if_else_195
-if_then_195:
+    jl if_then_203
+    jmp if_else_203
+if_then_203:
     mov eax, 0
     mov dword [var_stone], eax
-    jmp if_end_195
-if_else_195:
-if_end_195:
+    jmp if_end_203
+if_else_203:
+if_end_203:
     mov eax, dword [var_gold]
     mov ebx, 0
     cmp eax, ebx
-    jl if_then_196
-    jmp if_else_196
-if_then_196:
+    jl if_then_204
+    jmp if_else_204
+if_then_204:
     mov eax, 0
     mov dword [var_gold], eax
-    jmp if_end_196
-if_else_196:
-if_end_196:
+    jmp if_end_204
+if_else_204:
+if_end_204:
     push dword [var_loss]
-    push str_283
+    push str_310
     call _printf
     add esp, 8
     push str_3
@@ -6526,18 +7152,18 @@ if_end_196:
     push 100
     call _boop
     add esp, 4
-if_end_192:
-if_end_190:
-    jmp if_end_183
-if_else_183:
-    push str_284
+if_end_200:
+if_end_198:
+    jmp if_end_191
+if_else_191:
+    push str_311
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
     push dword [var_betamount]
-    push str_285
+    push str_312
     call _printf
     add esp, 8
     push str_3
@@ -6546,90 +7172,90 @@ if_else_183:
     push 100
     call _boop
     add esp, 4
-if_end_183:
+if_end_191:
     push 1500
     call _Sleep@4
-    jmp if_end_178
-if_else_178:
-if_end_178:
+    jmp if_end_186
+if_else_186:
+if_end_186:
     mov eax, dword [var_gamechoice]
     mov ebx, 6
     cmp eax, ebx
-    je if_then_197
-    jmp if_else_197
-if_then_197:
-    push str_286
+    je if_then_205
+    jmp if_else_205
+if_then_205:
+    push str_313
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_287
+    push str_314
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_288
+    push str_315
     call _printf
     add esp, 4
     push var_betamount
-    push scanf_fmt_289
+    push scanf_fmt_316
     call _scanf
     add esp, 8
     mov eax, dword [var_wood]
     mov ebx, dword [var_betamount]
     cmp eax, ebx
-    jg if_then_198
-    jmp if_else_198
-if_then_198:
+    jg if_then_206
+    jmp if_else_206
+if_then_206:
     mov eax, dword [var_stone]
     mov ebx, dword [var_betamount]
     cmp eax, ebx
-    jg if_then_199
-    jmp if_else_199
-if_then_199:
+    jg if_then_207
+    jmp if_else_207
+if_then_207:
     mov eax, dword [var_gold]
     mov ebx, dword [var_betamount]
     cmp eax, ebx
-    jg if_then_200
-    jmp if_else_200
-if_then_200:
-    push str_290
+    jg if_then_208
+    jmp if_else_208
+if_then_208:
+    push str_317
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_291
+    push str_318
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_292
+    push str_319
     call _printf
     add esp, 4
     push var_choice
-    push scanf_fmt_293
+    push scanf_fmt_320
     call _scanf
     add esp, 8
-    cmp dword [var_rand_state_201], 0
-    jne rand_init_201
+    cmp dword [var_rand_state_209], 0
+    jne rand_init_209
     push 0
     call _time
     add esp, 4
-    mov dword [var_rand_state_201], eax
-rand_init_201:
-    mov eax, dword [var_rand_state_201]
+    mov dword [var_rand_state_209], eax
+rand_init_209:
+    mov eax, dword [var_rand_state_209]
     xor eax, eax
     rdtsc
     xor edx, edx
-    mov ecx, dword [var_rand_state_201]
+    mov ecx, dword [var_rand_state_209]
     add eax, ecx
     rol eax, 7
-    add dword [var_rand_state_201], eax
-    mov dword [var_rand_state_201], eax
+    add dword [var_rand_state_209], eax
+    mov dword [var_rand_state_209], eax
     mov ecx, 1
     mov ebx, 2
     sub ebx, ecx
@@ -6663,30 +7289,30 @@ rand_init_201:
     mov eax, dword [var_coin]
     mov ebx, 1
     cmp eax, ebx
-    je if_then_202
-    jmp if_else_202
-if_then_202:
-    push str_294
+    je if_then_210
+    jmp if_else_210
+if_then_210:
+    push str_321
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    jmp if_end_202
-if_else_202:
-    push str_295
+    jmp if_end_210
+if_else_210:
+    push str_322
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-if_end_202:
+if_end_210:
     mov eax, dword [var_choice]
     mov ebx, dword [var_coin]
     cmp eax, ebx
-    je if_then_203
-    jmp if_else_203
-if_then_203:
+    je if_then_211
+    jmp if_else_211
+if_then_211:
     mov eax, dword [var_betamount]
     push eax
     mov eax, 2
@@ -6716,48 +7342,48 @@ if_then_203:
     mov eax, ebx
     mov dword [var_gold], eax
     push dword [var_reward]
-    push str_296
+    push str_323
     call _printf
     add esp, 8
     push str_3
     call _printf
     add esp, 4
-    jmp if_end_203
-if_else_203:
-    push str_297
+    jmp if_end_211
+if_else_211:
+    push str_324
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-if_end_203:
-    jmp if_end_200
-if_else_200:
-if_end_200:
-    jmp if_end_199
-if_else_199:
-if_end_199:
-    jmp if_end_198
-if_else_198:
-if_end_198:
+if_end_211:
+    jmp if_end_208
+if_else_208:
+if_end_208:
+    jmp if_end_207
+if_else_207:
+if_end_207:
+    jmp if_end_206
+if_else_206:
+if_end_206:
     push 1500
     call _Sleep@4
-    jmp if_end_197
-if_else_197:
-if_end_197:
+    jmp if_end_205
+if_else_205:
+if_end_205:
     mov eax, dword [var_gamechoice]
     mov ebx, 7
     cmp eax, ebx
-    je if_then_204
-    jmp if_else_204
-if_then_204:
-    push str_298
+    je if_then_212
+    jmp if_else_212
+if_then_212:
+    push str_325
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_299
+    push str_326
     call _printf
     add esp, 4
     push str_3
@@ -6765,22 +7391,22 @@ if_then_204:
     add esp, 4
     mov eax, 0
     mov dword [var_score], eax
-    cmp dword [var_rand_state_205], 0
-    jne rand_init_205
+    cmp dword [var_rand_state_213], 0
+    jne rand_init_213
     push 0
     call _time
     add esp, 4
-    mov dword [var_rand_state_205], eax
-rand_init_205:
-    mov eax, dword [var_rand_state_205]
+    mov dword [var_rand_state_213], eax
+rand_init_213:
+    mov eax, dword [var_rand_state_213]
     xor eax, eax
     rdtsc
     xor edx, edx
-    mov ecx, dword [var_rand_state_205]
+    mov ecx, dword [var_rand_state_213]
     add eax, ecx
     rol eax, 7
-    add dword [var_rand_state_205], eax
-    mov dword [var_rand_state_205], eax
+    add dword [var_rand_state_213], eax
+    mov dword [var_rand_state_213], eax
     mov ecx, 1
     mov ebx, 10
     sub ebx, ecx
@@ -6791,7 +7417,7 @@ rand_init_205:
     add eax, ecx
     mov dword [var_currentnum], eax
     push dword [var_currentnum]
-    push str_300
+    push str_327
     call _printf
     add esp, 8
     push str_3
@@ -6799,57 +7425,57 @@ rand_init_205:
     add esp, 4
     mov eax, 1
     mov dword [var_round], eax
-while_start_206:
+while_start_214:
     mov eax, dword [var_round]
     mov ebx, 6
     cmp eax, ebx
-    jge while_end_206
+    jge while_end_214
     push dword [var_round]
-    push str_241
+    push str_268
     call _printf
     add esp, 8
     push dword [var_currentnum]
-    push str_301
+    push str_328
     call _printf
     add esp, 8
     push str_3
     call _printf
     add esp, 4
-    push str_302
+    push str_329
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_303
+    push str_330
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_304
+    push str_331
     call _printf
     add esp, 4
     push var_guess
-    push scanf_fmt_305
+    push scanf_fmt_332
     call _scanf
     add esp, 8
-    cmp dword [var_rand_state_207], 0
-    jne rand_init_207
+    cmp dword [var_rand_state_215], 0
+    jne rand_init_215
     push 0
     call _time
     add esp, 4
-    mov dword [var_rand_state_207], eax
-rand_init_207:
-    mov eax, dword [var_rand_state_207]
+    mov dword [var_rand_state_215], eax
+rand_init_215:
+    mov eax, dword [var_rand_state_215]
     xor eax, eax
     rdtsc
     xor edx, edx
-    mov ecx, dword [var_rand_state_207]
+    mov ecx, dword [var_rand_state_215]
     add eax, ecx
     rol eax, 7
-    add dword [var_rand_state_207], eax
-    mov dword [var_rand_state_207], eax
+    add dword [var_rand_state_215], eax
+    mov dword [var_rand_state_215], eax
     mov ecx, 1
     mov ebx, 10
     sub ebx, ecx
@@ -6860,7 +7486,7 @@ rand_init_207:
     add eax, ecx
     mov dword [var_nextnum], eax
     push dword [var_nextnum]
-    push str_306
+    push str_333
     call _printf
     add esp, 8
     push str_3
@@ -6871,50 +7497,50 @@ rand_init_207:
     mov eax, dword [var_guess]
     mov ebx, 1
     cmp eax, ebx
-    je if_then_208
-    jmp if_else_208
-if_then_208:
+    je if_then_216
+    jmp if_else_216
+if_then_216:
     mov eax, dword [var_nextnum]
     mov ebx, dword [var_currentnum]
     cmp eax, ebx
-    jg if_then_209
-    jmp if_else_209
-if_then_209:
+    jg if_then_217
+    jmp if_else_217
+if_then_217:
     mov eax, 1
     mov dword [var_correct], eax
-    jmp if_end_209
-if_else_209:
-if_end_209:
-    jmp if_end_208
-if_else_208:
-if_end_208:
+    jmp if_end_217
+if_else_217:
+if_end_217:
+    jmp if_end_216
+if_else_216:
+if_end_216:
     mov eax, dword [var_guess]
     mov ebx, 2
     cmp eax, ebx
-    je if_then_210
-    jmp if_else_210
-if_then_210:
+    je if_then_218
+    jmp if_else_218
+if_then_218:
     mov eax, dword [var_nextnum]
     mov ebx, dword [var_currentnum]
     cmp eax, ebx
-    jl if_then_211
-    jmp if_else_211
-if_then_211:
+    jl if_then_219
+    jmp if_else_219
+if_then_219:
     mov eax, 1
     mov dword [var_correct], eax
-    jmp if_end_211
-if_else_211:
-if_end_211:
-    jmp if_end_210
-if_else_210:
-if_end_210:
+    jmp if_end_219
+if_else_219:
+if_end_219:
+    jmp if_end_218
+if_else_218:
+if_end_218:
     mov eax, dword [var_correct]
     mov ebx, 1
     cmp eax, ebx
-    je if_then_212
-    jmp if_else_212
-if_then_212:
-    push str_229
+    je if_then_220
+    jmp if_else_220
+if_then_220:
+    push str_256
     call _printf
     add esp, 4
     mov eax, dword [var_score]
@@ -6927,15 +7553,15 @@ if_then_212:
     push str_3
     call _printf
     add esp, 4
-    jmp if_end_212
-if_else_212:
-    push str_307
+    jmp if_end_220
+if_else_220:
+    push str_334
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-if_end_212:
+if_end_220:
     mov eax, dword [var_nextnum]
     mov dword [var_currentnum], eax
     mov eax, dword [var_round]
@@ -6947,8 +7573,8 @@ if_end_212:
     mov dword [var_round], eax
     push 800
     call _Sleep@4
-    jmp while_start_206
-while_end_206:
+    jmp while_start_214
+while_end_214:
     mov eax, dword [var_score]
     push eax
     mov eax, dword [var_level]
@@ -6983,14 +7609,14 @@ while_end_206:
     mov eax, ebx
     mov dword [var_gold], eax
     push dword [var_score]
-    push str_308
+    push str_335
     call _printf
     add esp, 8
     push str_3
     call _printf
     add esp, 4
     push dword [var_reward]
-    push str_309
+    push str_336
     call _printf
     add esp, 8
     push str_3
@@ -6998,41 +7624,41 @@ while_end_206:
     add esp, 4
     push 1500
     call _Sleep@4
-    jmp if_end_204
-if_else_204:
-if_end_204:
+    jmp if_end_212
+if_else_212:
+if_end_212:
     mov eax, dword [var_gamechoice]
     mov ebx, 8
     cmp eax, ebx
-    je if_then_213
-    jmp if_else_213
-if_then_213:
+    je if_then_221
+    jmp if_else_221
+if_then_221:
     call _clearscreen
-    push str_310
+    push str_337
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_311
+    push str_338
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_312
+    push str_339
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_313
+    push str_340
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_314
+    push str_341
     call _printf
     add esp, 4
     push str_3
@@ -7045,86 +7671,86 @@ if_then_213:
     add ebx, eax
     mov eax, ebx
     mov dword [var_minigameplays], eax
-    push str_315
+    push str_342
     call _printf
     add esp, 4
     push var_betamount
-    push scanf_fmt_316
+    push scanf_fmt_343
     call _scanf
     add esp, 8
     mov eax, dword [var_betamount]
     mov ebx, 10
     cmp eax, ebx
-    jl if_then_214
-    jmp if_else_214
-if_then_214:
+    jl if_then_222
+    jmp if_else_222
+if_then_222:
     mov eax, 10
     mov dword [var_betamount], eax
-    push str_317
+    push str_344
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    jmp if_end_214
-if_else_214:
-if_end_214:
+    jmp if_end_222
+if_else_222:
+if_end_222:
     mov eax, dword [var_betamount]
     mov ebx, 100
     cmp eax, ebx
-    jg if_then_215
-    jmp if_else_215
-if_then_215:
+    jg if_then_223
+    jmp if_else_223
+if_then_223:
     mov eax, 100
     mov dword [var_betamount], eax
-    push str_318
+    push str_345
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    jmp if_end_215
-if_else_215:
-if_end_215:
+    jmp if_end_223
+if_else_223:
+if_end_223:
     mov eax, 0
     mov dword [var_canplay], eax
     mov eax, dword [var_wood]
     mov ebx, dword [var_betamount]
     cmp eax, ebx
-    jg if_then_216
-    jmp if_else_216
-if_then_216:
+    jg if_then_224
+    jmp if_else_224
+if_then_224:
     mov eax, dword [var_stone]
     mov ebx, dword [var_betamount]
     cmp eax, ebx
-    jg if_then_217
-    jmp if_else_217
-if_then_217:
+    jg if_then_225
+    jmp if_else_225
+if_then_225:
     mov eax, dword [var_gold]
     mov ebx, dword [var_betamount]
     cmp eax, ebx
-    jg if_then_218
-    jmp if_else_218
-if_then_218:
+    jg if_then_226
+    jmp if_else_226
+if_then_226:
     mov eax, 1
     mov dword [var_canplay], eax
-    jmp if_end_218
-if_else_218:
-if_end_218:
-    jmp if_end_217
-if_else_217:
-if_end_217:
-    jmp if_end_216
-if_else_216:
-if_end_216:
+    jmp if_end_226
+if_else_226:
+if_end_226:
+    jmp if_end_225
+if_else_225:
+if_end_225:
+    jmp if_end_224
+if_else_224:
+if_end_224:
     mov eax, dword [var_canplay]
     mov ebx, 0
     cmp eax, ebx
-    je if_then_219
-    jmp if_else_219
-if_then_219:
+    je if_then_227
+    jmp if_else_227
+if_then_227:
     push dword [var_betamount]
-    push str_319
+    push str_346
     call _printf
     add esp, 8
     push str_3
@@ -7135,8 +7761,8 @@ if_then_219:
     add esp, 4
     push 1500
     call _Sleep@4
-    jmp if_end_219
-if_else_219:
+    jmp if_end_227
+if_else_227:
     mov eax, dword [var_wood]
     push eax
     mov eax, dword [var_betamount]
@@ -7159,13 +7785,13 @@ if_else_219:
     mov eax, ebx
     mov dword [var_gold], eax
     push dword [var_betamount]
-    push str_320
+    push str_347
     call _printf
     add esp, 8
     push str_3
     call _printf
     add esp, 4
-    push str_200
+    push str_91
     call _printf
     add esp, 4
     push str_3
@@ -7173,7 +7799,7 @@ if_else_219:
     add esp, 4
     push 800
     call _Sleep@4
-    push str_321
+    push str_348
     call _printf
     add esp, 4
     push 200
@@ -7181,17 +7807,17 @@ if_else_219:
     add esp, 4
     push 300
     call _Sleep@4
-    push str_322
+    push str_349
     call _printf
     add esp, 4
     push 300
     call _Sleep@4
-    push str_322
+    push str_349
     call _printf
     add esp, 4
     push 300
     call _Sleep@4
-    push str_322
+    push str_349
     call _printf
     add esp, 4
     push 300
@@ -7199,22 +7825,22 @@ if_else_219:
     add esp, 4
     push 300
     call _Sleep@4
-    cmp dword [var_rand_state_220], 0
-    jne rand_init_220
+    cmp dword [var_rand_state_228], 0
+    jne rand_init_228
     push 0
     call _time
     add esp, 4
-    mov dword [var_rand_state_220], eax
-rand_init_220:
-    mov eax, dword [var_rand_state_220]
+    mov dword [var_rand_state_228], eax
+rand_init_228:
+    mov eax, dword [var_rand_state_228]
     xor eax, eax
     rdtsc
     xor edx, edx
-    mov ecx, dword [var_rand_state_220]
+    mov ecx, dword [var_rand_state_228]
     add eax, ecx
     rol eax, 7
-    add dword [var_rand_state_220], eax
-    mov dword [var_rand_state_220], eax
+    add dword [var_rand_state_228], eax
+    mov dword [var_rand_state_228], eax
     mov ecx, 1
     mov ebx, 4
     sub ebx, ecx
@@ -7224,22 +7850,22 @@ rand_init_220:
     mov eax, edx
     add eax, ecx
     mov dword [var_reel1], eax
-    cmp dword [var_rand_state_221], 0
-    jne rand_init_221
+    cmp dword [var_rand_state_229], 0
+    jne rand_init_229
     push 0
     call _time
     add esp, 4
-    mov dword [var_rand_state_221], eax
-rand_init_221:
-    mov eax, dword [var_rand_state_221]
+    mov dword [var_rand_state_229], eax
+rand_init_229:
+    mov eax, dword [var_rand_state_229]
     xor eax, eax
     rdtsc
     xor edx, edx
-    mov ecx, dword [var_rand_state_221]
+    mov ecx, dword [var_rand_state_229]
     add eax, ecx
     rol eax, 7
-    add dword [var_rand_state_221], eax
-    mov dword [var_rand_state_221], eax
+    add dword [var_rand_state_229], eax
+    mov dword [var_rand_state_229], eax
     mov ecx, 1
     mov ebx, 4
     sub ebx, ecx
@@ -7249,22 +7875,22 @@ rand_init_221:
     mov eax, edx
     add eax, ecx
     mov dword [var_reel2], eax
-    cmp dword [var_rand_state_222], 0
-    jne rand_init_222
+    cmp dword [var_rand_state_230], 0
+    jne rand_init_230
     push 0
     call _time
     add esp, 4
-    mov dword [var_rand_state_222], eax
-rand_init_222:
-    mov eax, dword [var_rand_state_222]
+    mov dword [var_rand_state_230], eax
+rand_init_230:
+    mov eax, dword [var_rand_state_230]
     xor eax, eax
     rdtsc
     xor edx, edx
-    mov ecx, dword [var_rand_state_222]
+    mov ecx, dword [var_rand_state_230]
     add eax, ecx
     rol eax, 7
-    add dword [var_rand_state_222], eax
-    mov dword [var_rand_state_222], eax
+    add dword [var_rand_state_230], eax
+    mov dword [var_rand_state_230], eax
     mov ecx, 1
     mov ebx, 4
     sub ebx, ecx
@@ -7275,217 +7901,217 @@ rand_init_222:
     add eax, ecx
     mov dword [var_reel3], eax
     call _clearscreen
-    push str_323
+    push str_350
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_200
+    push str_91
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    mov esi, temp_str_324
+    mov esi, temp_str_351
     mov edi, var_symbol1
     call _copy_string
-    mov esi, temp_str_325
+    mov esi, temp_str_352
     mov edi, var_symbolname1
     call _copy_string
     mov eax, dword [var_reel1]
-    mov ebx, 1
-    cmp eax, ebx
-    je if_then_223
-    jmp if_else_223
-if_then_223:
-    mov esi, temp_str_326
-    mov edi, var_symbol1
-    call _copy_string
-    mov esi, temp_str_327
-    mov edi, var_symbolname1
-    call _copy_string
-    jmp if_end_223
-if_else_223:
-if_end_223:
-    mov eax, dword [var_reel1]
-    mov ebx, 2
-    cmp eax, ebx
-    je if_then_224
-    jmp if_else_224
-if_then_224:
-    mov esi, temp_str_328
-    mov edi, var_symbol1
-    call _copy_string
-    mov esi, temp_str_329
-    mov edi, var_symbolname1
-    call _copy_string
-    jmp if_end_224
-if_else_224:
-if_end_224:
-    mov eax, dword [var_reel1]
-    mov ebx, 3
-    cmp eax, ebx
-    je if_then_225
-    jmp if_else_225
-if_then_225:
-    mov esi, temp_str_330
-    mov edi, var_symbol1
-    call _copy_string
-    mov esi, temp_str_331
-    mov edi, var_symbolname1
-    call _copy_string
-    jmp if_end_225
-if_else_225:
-if_end_225:
-    mov eax, dword [var_reel1]
-    mov ebx, 4
-    cmp eax, ebx
-    je if_then_226
-    jmp if_else_226
-if_then_226:
-    mov esi, temp_str_332
-    mov edi, var_symbol1
-    call _copy_string
-    mov esi, temp_str_333
-    mov edi, var_symbolname1
-    call _copy_string
-    jmp if_end_226
-if_else_226:
-if_end_226:
-    mov esi, temp_str_334
-    mov edi, var_symbol2
-    call _copy_string
-    mov esi, temp_str_335
-    mov edi, var_symbolname2
-    call _copy_string
-    mov eax, dword [var_reel2]
-    mov ebx, 1
-    cmp eax, ebx
-    je if_then_227
-    jmp if_else_227
-if_then_227:
-    mov esi, temp_str_336
-    mov edi, var_symbol2
-    call _copy_string
-    mov esi, temp_str_337
-    mov edi, var_symbolname2
-    call _copy_string
-    jmp if_end_227
-if_else_227:
-if_end_227:
-    mov eax, dword [var_reel2]
-    mov ebx, 2
-    cmp eax, ebx
-    je if_then_228
-    jmp if_else_228
-if_then_228:
-    mov esi, temp_str_338
-    mov edi, var_symbol2
-    call _copy_string
-    mov esi, temp_str_339
-    mov edi, var_symbolname2
-    call _copy_string
-    jmp if_end_228
-if_else_228:
-if_end_228:
-    mov eax, dword [var_reel2]
-    mov ebx, 3
-    cmp eax, ebx
-    je if_then_229
-    jmp if_else_229
-if_then_229:
-    mov esi, temp_str_340
-    mov edi, var_symbol2
-    call _copy_string
-    mov esi, temp_str_341
-    mov edi, var_symbolname2
-    call _copy_string
-    jmp if_end_229
-if_else_229:
-if_end_229:
-    mov eax, dword [var_reel2]
-    mov ebx, 4
-    cmp eax, ebx
-    je if_then_230
-    jmp if_else_230
-if_then_230:
-    mov esi, temp_str_342
-    mov edi, var_symbol2
-    call _copy_string
-    mov esi, temp_str_343
-    mov edi, var_symbolname2
-    call _copy_string
-    jmp if_end_230
-if_else_230:
-if_end_230:
-    mov esi, temp_str_344
-    mov edi, var_symbol3
-    call _copy_string
-    mov esi, temp_str_345
-    mov edi, var_symbolname3
-    call _copy_string
-    mov eax, dword [var_reel3]
     mov ebx, 1
     cmp eax, ebx
     je if_then_231
     jmp if_else_231
 if_then_231:
-    mov esi, temp_str_346
-    mov edi, var_symbol3
+    mov esi, temp_str_353
+    mov edi, var_symbol1
     call _copy_string
-    mov esi, temp_str_347
-    mov edi, var_symbolname3
+    mov esi, temp_str_354
+    mov edi, var_symbolname1
     call _copy_string
     jmp if_end_231
 if_else_231:
 if_end_231:
-    mov eax, dword [var_reel3]
+    mov eax, dword [var_reel1]
     mov ebx, 2
     cmp eax, ebx
     je if_then_232
     jmp if_else_232
 if_then_232:
-    mov esi, temp_str_348
-    mov edi, var_symbol3
+    mov esi, temp_str_355
+    mov edi, var_symbol1
     call _copy_string
-    mov esi, temp_str_349
-    mov edi, var_symbolname3
+    mov esi, temp_str_356
+    mov edi, var_symbolname1
     call _copy_string
     jmp if_end_232
 if_else_232:
 if_end_232:
-    mov eax, dword [var_reel3]
+    mov eax, dword [var_reel1]
     mov ebx, 3
     cmp eax, ebx
     je if_then_233
     jmp if_else_233
 if_then_233:
-    mov esi, temp_str_350
-    mov edi, var_symbol3
+    mov esi, temp_str_357
+    mov edi, var_symbol1
     call _copy_string
-    mov esi, temp_str_351
-    mov edi, var_symbolname3
+    mov esi, temp_str_358
+    mov edi, var_symbolname1
     call _copy_string
     jmp if_end_233
 if_else_233:
 if_end_233:
-    mov eax, dword [var_reel3]
+    mov eax, dword [var_reel1]
     mov ebx, 4
     cmp eax, ebx
     je if_then_234
     jmp if_else_234
 if_then_234:
-    mov esi, temp_str_352
-    mov edi, var_symbol3
+    mov esi, temp_str_359
+    mov edi, var_symbol1
     call _copy_string
-    mov esi, temp_str_353
-    mov edi, var_symbolname3
+    mov esi, temp_str_360
+    mov edi, var_symbolname1
     call _copy_string
     jmp if_end_234
 if_else_234:
 if_end_234:
-    push str_354
+    mov esi, temp_str_361
+    mov edi, var_symbol2
+    call _copy_string
+    mov esi, temp_str_362
+    mov edi, var_symbolname2
+    call _copy_string
+    mov eax, dword [var_reel2]
+    mov ebx, 1
+    cmp eax, ebx
+    je if_then_235
+    jmp if_else_235
+if_then_235:
+    mov esi, temp_str_363
+    mov edi, var_symbol2
+    call _copy_string
+    mov esi, temp_str_364
+    mov edi, var_symbolname2
+    call _copy_string
+    jmp if_end_235
+if_else_235:
+if_end_235:
+    mov eax, dword [var_reel2]
+    mov ebx, 2
+    cmp eax, ebx
+    je if_then_236
+    jmp if_else_236
+if_then_236:
+    mov esi, temp_str_365
+    mov edi, var_symbol2
+    call _copy_string
+    mov esi, temp_str_366
+    mov edi, var_symbolname2
+    call _copy_string
+    jmp if_end_236
+if_else_236:
+if_end_236:
+    mov eax, dword [var_reel2]
+    mov ebx, 3
+    cmp eax, ebx
+    je if_then_237
+    jmp if_else_237
+if_then_237:
+    mov esi, temp_str_367
+    mov edi, var_symbol2
+    call _copy_string
+    mov esi, temp_str_368
+    mov edi, var_symbolname2
+    call _copy_string
+    jmp if_end_237
+if_else_237:
+if_end_237:
+    mov eax, dword [var_reel2]
+    mov ebx, 4
+    cmp eax, ebx
+    je if_then_238
+    jmp if_else_238
+if_then_238:
+    mov esi, temp_str_369
+    mov edi, var_symbol2
+    call _copy_string
+    mov esi, temp_str_370
+    mov edi, var_symbolname2
+    call _copy_string
+    jmp if_end_238
+if_else_238:
+if_end_238:
+    mov esi, temp_str_371
+    mov edi, var_symbol3
+    call _copy_string
+    mov esi, temp_str_372
+    mov edi, var_symbolname3
+    call _copy_string
+    mov eax, dword [var_reel3]
+    mov ebx, 1
+    cmp eax, ebx
+    je if_then_239
+    jmp if_else_239
+if_then_239:
+    mov esi, temp_str_373
+    mov edi, var_symbol3
+    call _copy_string
+    mov esi, temp_str_374
+    mov edi, var_symbolname3
+    call _copy_string
+    jmp if_end_239
+if_else_239:
+if_end_239:
+    mov eax, dword [var_reel3]
+    mov ebx, 2
+    cmp eax, ebx
+    je if_then_240
+    jmp if_else_240
+if_then_240:
+    mov esi, temp_str_375
+    mov edi, var_symbol3
+    call _copy_string
+    mov esi, temp_str_376
+    mov edi, var_symbolname3
+    call _copy_string
+    jmp if_end_240
+if_else_240:
+if_end_240:
+    mov eax, dword [var_reel3]
+    mov ebx, 3
+    cmp eax, ebx
+    je if_then_241
+    jmp if_else_241
+if_then_241:
+    mov esi, temp_str_377
+    mov edi, var_symbol3
+    call _copy_string
+    mov esi, temp_str_378
+    mov edi, var_symbolname3
+    call _copy_string
+    jmp if_end_241
+if_else_241:
+if_end_241:
+    mov eax, dword [var_reel3]
+    mov ebx, 4
+    cmp eax, ebx
+    je if_then_242
+    jmp if_else_242
+if_then_242:
+    mov esi, temp_str_379
+    mov edi, var_symbol3
+    call _copy_string
+    mov esi, temp_str_380
+    mov edi, var_symbolname3
+    call _copy_string
+    jmp if_end_242
+if_else_242:
+if_end_242:
+    push str_381
     call _printf
     add esp, 4
     push str_3
@@ -7497,7 +8123,7 @@ if_end_234:
     call _boop
     add esp, 4
     push var_symbol1
-    push str_355
+    push str_382
     call _printf
     add esp, 8
     push str_3
@@ -7510,7 +8136,7 @@ if_end_234:
     add esp, 4
     push var_symbol2
     push var_symbol1
-    push str_356
+    push str_383
     call _printf
     add esp, 12
     push str_3
@@ -7524,13 +8150,13 @@ if_end_234:
     push var_symbol3
     push var_symbol2
     push var_symbol1
-    push str_357
+    push str_384
     call _printf
     add esp, 16
     push str_3
     call _printf
     add esp, 4
-    push str_200
+    push str_91
     call _printf
     add esp, 4
     push str_3
@@ -7539,7 +8165,7 @@ if_end_234:
     push var_symbolname3
     push var_symbolname2
     push var_symbolname1
-    push str_358
+    push str_385
     call _printf
     add esp, 16
     push str_3
@@ -7555,23 +8181,23 @@ if_end_234:
     mov eax, dword [var_reel1]
     mov ebx, dword [var_reel2]
     cmp eax, ebx
-    je if_then_235
-    jmp if_else_235
-if_then_235:
+    je if_then_243
+    jmp if_else_243
+if_then_243:
     mov eax, dword [var_reel2]
     mov ebx, dword [var_reel3]
     cmp eax, ebx
-    je if_then_236
-    jmp if_else_236
-if_then_236:
+    je if_then_244
+    jmp if_else_244
+if_then_244:
     mov eax, 2
     mov dword [var_wintype], eax
     mov eax, dword [var_reel1]
     mov ebx, 1
     cmp eax, ebx
-    je if_then_237
-    jmp if_else_237
-if_then_237:
+    je if_then_245
+    jmp if_else_245
+if_then_245:
     mov eax, dword [var_betamount]
     push eax
     mov eax, 20
@@ -7579,7 +8205,7 @@ if_then_237:
     imul ebx, eax
     mov eax, ebx
     mov dword [var_reward], eax
-    push str_359
+    push str_386
     call _printf
     add esp, 4
     push str_3
@@ -7594,15 +8220,15 @@ if_then_237:
     push 700
     call _boop
     add esp, 4
-    jmp if_end_237
-if_else_237:
-if_end_237:
+    jmp if_end_245
+if_else_245:
+if_end_245:
     mov eax, dword [var_reel1]
     mov ebx, 2
     cmp eax, ebx
-    je if_then_238
-    jmp if_else_238
-if_then_238:
+    je if_then_246
+    jmp if_else_246
+if_then_246:
     mov eax, dword [var_betamount]
     push eax
     mov eax, 8
@@ -7610,7 +8236,7 @@ if_then_238:
     imul ebx, eax
     mov eax, ebx
     mov dword [var_reward], eax
-    push str_360
+    push str_387
     call _printf
     add esp, 4
     push str_3
@@ -7622,15 +8248,15 @@ if_then_238:
     push 500
     call _boop
     add esp, 4
-    jmp if_end_238
-if_else_238:
-if_end_238:
+    jmp if_end_246
+if_else_246:
+if_end_246:
     mov eax, dword [var_reel1]
     mov ebx, 3
     cmp eax, ebx
-    je if_then_239
-    jmp if_else_239
-if_then_239:
+    je if_then_247
+    jmp if_else_247
+if_then_247:
     mov eax, dword [var_betamount]
     push eax
     mov eax, 5
@@ -7638,7 +8264,7 @@ if_then_239:
     imul ebx, eax
     mov eax, ebx
     mov dword [var_reward], eax
-    push str_361
+    push str_388
     call _printf
     add esp, 4
     push str_3
@@ -7650,15 +8276,15 @@ if_then_239:
     push 400
     call _boop
     add esp, 4
-    jmp if_end_239
-if_else_239:
-if_end_239:
+    jmp if_end_247
+if_else_247:
+if_end_247:
     mov eax, dword [var_reel1]
     mov ebx, 4
     cmp eax, ebx
-    je if_then_240
-    jmp if_else_240
-if_then_240:
+    je if_then_248
+    jmp if_else_248
+if_then_248:
     mov eax, dword [var_betamount]
     push eax
     mov eax, 3
@@ -7666,7 +8292,7 @@ if_then_240:
     imul ebx, eax
     mov eax, ebx
     mov dword [var_reward], eax
-    push str_362
+    push str_389
     call _printf
     add esp, 4
     push str_3
@@ -7675,11 +8301,11 @@ if_then_240:
     push 300
     call _boop
     add esp, 4
-    jmp if_end_240
-if_else_240:
-if_end_240:
-    jmp if_end_236
-if_else_236:
+    jmp if_end_248
+if_else_248:
+if_end_248:
+    jmp if_end_244
+if_else_244:
     mov eax, 1
     mov dword [var_wintype], eax
     mov eax, dword [var_betamount]
@@ -7689,7 +8315,7 @@ if_else_236:
     imul ebx, eax
     mov eax, ebx
     mov dword [var_reward], eax
-    push str_363
+    push str_390
     call _printf
     add esp, 4
     push str_3
@@ -7698,15 +8324,15 @@ if_else_236:
     push 300
     call _boop
     add esp, 4
-if_end_236:
-    jmp if_end_235
-if_else_235:
+if_end_244:
+    jmp if_end_243
+if_else_243:
     mov eax, dword [var_reel2]
     mov ebx, dword [var_reel3]
     cmp eax, ebx
-    je if_then_241
-    jmp if_else_241
-if_then_241:
+    je if_then_249
+    jmp if_else_249
+if_then_249:
     mov eax, 1
     mov dword [var_wintype], eax
     mov eax, dword [var_betamount]
@@ -7716,7 +8342,7 @@ if_then_241:
     imul ebx, eax
     mov eax, ebx
     mov dword [var_reward], eax
-    push str_363
+    push str_390
     call _printf
     add esp, 4
     push str_3
@@ -7725,14 +8351,14 @@ if_then_241:
     push 300
     call _boop
     add esp, 4
-    jmp if_end_241
-if_else_241:
+    jmp if_end_249
+if_else_249:
     mov eax, dword [var_reel1]
     mov ebx, dword [var_reel3]
     cmp eax, ebx
-    je if_then_242
-    jmp if_else_242
-if_then_242:
+    je if_then_250
+    jmp if_else_250
+if_then_250:
     mov eax, 1
     mov dword [var_wintype], eax
     mov eax, dword [var_betamount]
@@ -7742,7 +8368,7 @@ if_then_242:
     imul ebx, eax
     mov eax, ebx
     mov dword [var_reward], eax
-    push str_363
+    push str_390
     call _printf
     add esp, 4
     push str_3
@@ -7751,9 +8377,9 @@ if_then_242:
     push 300
     call _boop
     add esp, 4
-    jmp if_end_242
-if_else_242:
-    push str_364
+    jmp if_end_250
+if_else_250:
+    push str_391
     call _printf
     add esp, 4
     push str_3
@@ -7762,15 +8388,15 @@ if_else_242:
     push 100
     call _boop
     add esp, 4
-if_end_242:
-if_end_241:
-if_end_235:
+if_end_250:
+if_end_249:
+if_end_243:
     mov eax, dword [var_reward]
     mov ebx, 0
     cmp eax, ebx
-    jg if_then_243
-    jmp if_else_243
-if_then_243:
+    jg if_then_251
+    jmp if_else_251
+if_then_251:
     mov eax, dword [var_reward]
     push eax
     mov eax, dword [var_prestigebonus]
@@ -7802,9 +8428,9 @@ if_then_243:
     mov eax, dword [var_wintype]
     mov ebx, 2
     cmp eax, ebx
-    je if_then_244
-    jmp if_else_244
-if_then_244:
+    je if_then_252
+    jmp if_else_252
+if_then_252:
     mov eax, dword [var_minigamewins]
     push eax
     mov eax, 1
@@ -7812,17 +8438,17 @@ if_then_244:
     add ebx, eax
     mov eax, ebx
     mov dword [var_minigamewins], eax
-    jmp if_end_244
-if_else_244:
-if_end_244:
-    push str_200
+    jmp if_end_252
+if_else_252:
+if_end_252:
+    push str_91
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
     push dword [var_reward]
-    push str_365
+    push str_392
     call _printf
     add esp, 8
     push str_3
@@ -7838,97 +8464,97 @@ if_end_244:
     mov eax, dword [var_net]
     mov ebx, 0
     cmp eax, ebx
-    jg if_then_245
-    jmp if_else_245
-if_then_245:
+    jg if_then_253
+    jmp if_else_253
+if_then_253:
     push dword [var_net]
-    push str_366
+    push str_393
     call _printf
     add esp, 8
     push str_3
     call _printf
     add esp, 4
-    jmp if_end_245
-if_else_245:
+    jmp if_end_253
+if_else_253:
     mov eax, dword [var_net]
     mov ebx, 0
     cmp eax, ebx
-    je if_then_246
-    jmp if_else_246
-if_then_246:
-    push str_367
+    je if_then_254
+    jmp if_else_254
+if_then_254:
+    push str_394
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    jmp if_end_246
-if_else_246:
+    jmp if_end_254
+if_else_254:
     push dword [var_net]
-    push str_368
+    push str_395
     call _printf
     add esp, 8
     push str_3
     call _printf
     add esp, 4
-if_end_246:
-if_end_245:
+if_end_254:
+if_end_253:
     push str_3
     call _printf
     add esp, 4
-    jmp if_end_243
-if_else_243:
-    push str_200
+    jmp if_end_251
+if_else_251:
+    push str_91
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
     push dword [var_betamount]
-    push str_369
+    push str_396
     call _printf
     add esp, 8
     push str_3
     call _printf
     add esp, 4
-if_end_243:
-    push str_200
+if_end_251:
+    push str_91
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_370
+    push str_397
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_371
+    push str_398
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_372
+    push str_399
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_373
+    push str_400
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_374
+    push str_401
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_375
+    push str_402
     call _printf
     add esp, 4
     push str_3
@@ -7936,25 +8562,25 @@ if_end_243:
     add esp, 4
     push 2000
     call _Sleep@4
-if_end_219:
-    jmp if_end_213
-if_else_213:
-if_end_213:
-    jmp if_end_120
-if_else_120:
-if_end_120:
+if_end_227:
+    jmp if_end_221
+if_else_221:
+if_end_221:
+    jmp if_end_128
+if_else_128:
+if_end_128:
     mov eax, dword [var_cmd]
     mov ebx, 7
     cmp eax, ebx
-    je if_then_247
-    jmp if_else_247
-if_then_247:
+    je if_then_255
+    jmp if_else_255
+if_then_255:
     mov eax, dword [var_dailyclaimed]
     mov ebx, 0
     cmp eax, ebx
-    je if_then_248
-    jmp if_else_248
-if_then_248:
+    je if_then_256
+    jmp if_else_256
+if_then_256:
     mov eax, dword [var_level]
     push eax
     mov eax, 10
@@ -7998,21 +8624,21 @@ if_then_248:
     mov eax, ebx
     mov dword [var_gold], eax
     push dword [var_rewardwood]
-    push str_376
+    push str_403
     call _printf
     add esp, 8
     push str_3
     call _printf
     add esp, 4
     push dword [var_rewardstone]
-    push str_377
+    push str_404
     call _printf
     add esp, 8
     push str_3
     call _printf
     add esp, 4
     push dword [var_rewardgold]
-    push str_378
+    push str_405
     call _printf
     add esp, 8
     push str_3
@@ -8023,10 +8649,10 @@ if_then_248:
     mov eax, dword [var_dailyclaimed]
     mov ebx, 1
     cmp eax, ebx
-    je if_then_249
-    jmp if_else_249
-if_then_249:
-    push str_379
+    je if_then_257
+    jmp if_else_257
+if_then_257:
+    push str_406
     call _printf
     add esp, 4
     push str_3
@@ -8035,14 +8661,14 @@ if_then_249:
     push 300
     call _boop
     add esp, 4
-    jmp if_end_249
-if_else_249:
-if_end_249:
+    jmp if_end_257
+if_else_257:
+if_end_257:
     push 1500
     call _Sleep@4
-    jmp if_end_248
-if_else_248:
-    push str_380
+    jmp if_end_256
+if_else_256:
+    push str_407
     call _printf
     add esp, 4
     push str_3
@@ -8050,23 +8676,23 @@ if_else_248:
     add esp, 4
     push 1000
     call _Sleep@4
-if_end_248:
-    jmp if_end_247
-if_else_247:
-if_end_247:
+if_end_256:
+    jmp if_end_255
+if_else_255:
+if_end_255:
     mov eax, dword [var_cmd]
     mov ebx, 8
     cmp eax, ebx
-    je if_then_250
-    jmp if_else_250
-if_then_250:
+    je if_then_258
+    jmp if_else_258
+if_then_258:
     mov eax, dword [var_bossalive]
     mov ebx, 0
     cmp eax, ebx
-    je if_then_251
-    jmp if_else_251
-if_then_251:
-    push str_381
+    je if_then_259
+    jmp if_else_259
+if_then_259:
+    push str_408
     call _printf
     add esp, 4
     push str_3
@@ -8074,8 +8700,8 @@ if_then_251:
     add esp, 4
     push 800
     call _Sleep@4
-    jmp if_end_251
-if_else_251:
+    jmp if_end_259
+if_else_259:
     mov eax, dword [var_level]
     push eax
     mov eax, dword [var_prestigebonus]
@@ -8091,7 +8717,7 @@ if_else_251:
     mov eax, ebx
     mov dword [var_bosshp], eax
     push dword [var_damage]
-    push str_382
+    push str_409
     call _printf
     add esp, 8
     push str_3
@@ -8100,9 +8726,9 @@ if_else_251:
     mov eax, dword [var_bosshp]
     mov ebx, 1
     cmp eax, ebx
-    jl if_then_252
-    jmp if_else_252
-if_then_252:
+    jl if_then_260
+    jmp if_else_260
+if_then_260:
     mov eax, 0
     mov dword [var_bossalive], eax
     mov eax, dword [var_level]
@@ -8149,7 +8775,7 @@ if_then_252:
     add ebx, eax
     mov eax, ebx
     mov dword [var_gold], eax
-    push str_383
+    push str_410
     call _printf
     add esp, 4
     push str_3
@@ -8157,10 +8783,10 @@ if_then_252:
     add esp, 4
     push 1500
     call _Sleep@4
-    jmp if_end_252
-if_else_252:
+    jmp if_end_260
+if_else_260:
     push dword [var_bosshp]
-    push str_384
+    push str_411
     call _printf
     add esp, 8
     push str_3
@@ -8168,35 +8794,35 @@ if_else_252:
     add esp, 4
     push 800
     call _Sleep@4
-if_end_252:
-if_end_251:
-    jmp if_end_250
-if_else_250:
-if_end_250:
+if_end_260:
+if_end_259:
+    jmp if_end_258
+if_else_258:
+if_end_258:
     mov eax, dword [var_cmd]
     mov ebx, 9
     cmp eax, ebx
-    je if_then_253
-    jmp if_else_253
-if_then_253:
+    je if_then_261
+    jmp if_else_261
+if_then_261:
     mov eax, 1
     mov dword [var_marketopen], eax
-    cmp dword [var_rand_state_254], 0
-    jne rand_init_254
+    cmp dword [var_rand_state_262], 0
+    jne rand_init_262
     push 0
     call _time
     add esp, 4
-    mov dword [var_rand_state_254], eax
-rand_init_254:
-    mov eax, dword [var_rand_state_254]
+    mov dword [var_rand_state_262], eax
+rand_init_262:
+    mov eax, dword [var_rand_state_262]
     xor eax, eax
     rdtsc
     xor edx, edx
-    mov ecx, dword [var_rand_state_254]
+    mov ecx, dword [var_rand_state_262]
     add eax, ecx
     rol eax, 7
-    add dword [var_rand_state_254], eax
-    mov dword [var_rand_state_254], eax
+    add dword [var_rand_state_262], eax
+    mov dword [var_rand_state_262], eax
     mov ecx, 1
     mov ebx, 2
     sub ebx, ecx
@@ -8206,22 +8832,22 @@ rand_init_254:
     mov eax, edx
     add eax, ecx
     mov dword [var_woodexchangerate], eax
-    cmp dword [var_rand_state_255], 0
-    jne rand_init_255
+    cmp dword [var_rand_state_263], 0
+    jne rand_init_263
     push 0
     call _time
     add esp, 4
-    mov dword [var_rand_state_255], eax
-rand_init_255:
-    mov eax, dword [var_rand_state_255]
+    mov dword [var_rand_state_263], eax
+rand_init_263:
+    mov eax, dword [var_rand_state_263]
     xor eax, eax
     rdtsc
     xor edx, edx
-    mov ecx, dword [var_rand_state_255]
+    mov ecx, dword [var_rand_state_263]
     add eax, ecx
     rol eax, 7
-    add dword [var_rand_state_255], eax
-    mov dword [var_rand_state_255], eax
+    add dword [var_rand_state_263], eax
+    mov dword [var_rand_state_263], eax
     mov ecx, 1
     mov ebx, 2
     sub ebx, ecx
@@ -8231,22 +8857,22 @@ rand_init_255:
     mov eax, edx
     add eax, ecx
     mov dword [var_stoneexchangerate], eax
-    cmp dword [var_rand_state_256], 0
-    jne rand_init_256
+    cmp dword [var_rand_state_264], 0
+    jne rand_init_264
     push 0
     call _time
     add esp, 4
-    mov dword [var_rand_state_256], eax
-rand_init_256:
-    mov eax, dword [var_rand_state_256]
+    mov dword [var_rand_state_264], eax
+rand_init_264:
+    mov eax, dword [var_rand_state_264]
     xor eax, eax
     rdtsc
     xor edx, edx
-    mov ecx, dword [var_rand_state_256]
+    mov ecx, dword [var_rand_state_264]
     add eax, ecx
     rol eax, 7
-    add dword [var_rand_state_256], eax
-    mov dword [var_rand_state_256], eax
+    add dword [var_rand_state_264], eax
+    mov dword [var_rand_state_264], eax
     mov ecx, 1
     mov ebx, 2
     sub ebx, ecx
@@ -8259,9 +8885,9 @@ rand_init_256:
     mov eax, dword [var_prestigebonus]
     mov ebx, 1
     cmp eax, ebx
-    jg if_then_257
-    jmp if_else_257
-if_then_257:
+    jg if_then_265
+    jmp if_else_265
+if_then_265:
     mov eax, dword [var_woodexchangerate]
     push eax
     mov eax, 1
@@ -8283,9 +8909,9 @@ if_then_257:
     add ebx, eax
     mov eax, ebx
     mov dword [var_goldexchangerate], eax
-    jmp if_end_257
-if_else_257:
-if_end_257:
+    jmp if_end_265
+if_else_265:
+if_end_265:
     mov eax, dword [var_level]
     push eax
     mov eax, 10
@@ -8296,164 +8922,167 @@ if_end_257:
     mov eax, dword [var_baseamount]
     mov ebx, 10
     cmp eax, ebx
-    jl if_then_258
-    jmp if_else_258
-if_then_258:
+    jl if_then_266
+    jmp if_else_266
+if_then_266:
     mov eax, 10
     mov dword [var_baseamount], eax
-    jmp if_end_258
-if_else_258:
-if_end_258:
+    jmp if_end_266
+if_else_266:
+if_end_266:
     mov eax, dword [var_traderachievement]
     mov ebx, 0
     cmp eax, ebx
-    je if_then_259
-    jmp if_else_259
-if_then_259:
+    je if_then_267
+    jmp if_else_267
+if_then_267:
     mov eax, dword [var_tradesmade]
     mov ebx, 0
     cmp eax, ebx
-    je if_then_260
-    jmp if_else_260
-if_then_260:
+    je if_then_268
+    jmp if_else_268
+if_then_268:
     mov eax, 0
     mov dword [var_tradesmade], eax
-    jmp if_end_260
-if_else_260:
-if_end_260:
-    jmp if_end_259
-if_else_259:
-if_end_259:
-while_start_261:
+    jmp if_end_268
+if_else_268:
+if_end_268:
+    jmp if_end_267
+if_else_267:
+if_end_267:
+while_start_269:
     mov eax, dword [var_marketopen]
     mov ebx, 1
     cmp eax, ebx
-    jne while_end_261
+    jne while_end_269
     call _clearscreen
-    push str_385
+    push str_412
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_386
+    push str_413
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_387
+    push str_88
+    call _printf
+    add esp, 4
+    push str_3
     call _printf
     add esp, 4
     push dword [var_gold]
     push dword [var_stone]
     push dword [var_wood]
-    push str_388
+    push str_89
     call _printf
     add esp, 16
     push str_3
     call _printf
     add esp, 4
-    push str_200
+    push str_91
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
     push dword [var_woodexchangerate]
-    push str_389
+    push str_414
     call _printf
     add esp, 8
     push dword [var_baseamount]
     push dword [var_baseamount]
-    push str_390
+    push str_415
     call _printf
     add esp, 12
     push str_3
     call _printf
     add esp, 4
     push dword [var_stoneexchangerate]
-    push str_391
+    push str_416
     call _printf
     add esp, 8
     push dword [var_baseamount]
     push dword [var_baseamount]
-    push str_392
+    push str_417
     call _printf
     add esp, 12
     push str_3
     call _printf
     add esp, 4
     push dword [var_goldexchangerate]
-    push str_393
+    push str_418
     call _printf
     add esp, 8
     push dword [var_baseamount]
     push dword [var_baseamount]
-    push str_394
+    push str_419
     call _printf
     add esp, 12
     push str_3
     call _printf
     add esp, 4
-    push str_395
+    push str_420
     call _printf
     add esp, 4
-    push str_396
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push str_397
-    call _printf
-    add esp, 4
-    push str_398
+    push str_421
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_399
+    push str_422
     call _printf
     add esp, 4
-    push str_400
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push str_401
+    push str_423
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_200
+    push str_424
+    call _printf
+    add esp, 4
+    push str_425
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_402
+    push str_426
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push str_91
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push str_427
     call _printf
     add esp, 4
     push var_choice
-    push scanf_fmt_403
+    push scanf_fmt_428
     call _scanf
     add esp, 8
     mov eax, dword [var_choice]
     mov ebx, 1
     cmp eax, ebx
-    je if_then_262
-    jmp if_else_262
-if_then_262:
+    je if_then_270
+    jmp if_else_270
+if_then_270:
     mov eax, dword [var_wood]
     mov ebx, dword [var_baseamount]
     cmp eax, ebx
-    jg if_then_263
-    jmp if_else_263
-if_then_263:
+    jg if_then_271
+    jmp if_else_271
+if_then_271:
     mov eax, dword [var_wood]
     push eax
     mov eax, dword [var_baseamount]
@@ -8484,7 +9113,7 @@ if_then_263:
     mov dword [var_tradesmade], eax
     push dword [var_stonegain]
     push dword [var_baseamount]
-    push str_404
+    push str_429
     call _printf
     add esp, 12
     push str_3
@@ -8495,11 +9124,11 @@ if_then_263:
     add esp, 4
     push 1000
     call _Sleep@4
-    jmp if_end_263
-if_else_263:
+    jmp if_end_271
+if_else_271:
     push dword [var_wood]
     push dword [var_baseamount]
-    push str_405
+    push str_430
     call _printf
     add esp, 12
     push str_3
@@ -8510,22 +9139,22 @@ if_else_263:
     add esp, 4
     push 1000
     call _Sleep@4
-if_end_263:
-    jmp if_end_262
-if_else_262:
-if_end_262:
+if_end_271:
+    jmp if_end_270
+if_else_270:
+if_end_270:
     mov eax, dword [var_choice]
     mov ebx, 2
     cmp eax, ebx
-    je if_then_264
-    jmp if_else_264
-if_then_264:
+    je if_then_272
+    jmp if_else_272
+if_then_272:
     mov eax, dword [var_stone]
     mov ebx, dword [var_baseamount]
     cmp eax, ebx
-    jg if_then_265
-    jmp if_else_265
-if_then_265:
+    jg if_then_273
+    jmp if_else_273
+if_then_273:
     mov eax, dword [var_stone]
     push eax
     mov eax, dword [var_baseamount]
@@ -8556,7 +9185,7 @@ if_then_265:
     mov dword [var_tradesmade], eax
     push dword [var_goldgain]
     push dword [var_baseamount]
-    push str_406
+    push str_431
     call _printf
     add esp, 12
     push str_3
@@ -8567,11 +9196,11 @@ if_then_265:
     add esp, 4
     push 1000
     call _Sleep@4
-    jmp if_end_265
-if_else_265:
+    jmp if_end_273
+if_else_273:
     push dword [var_stone]
     push dword [var_baseamount]
-    push str_407
+    push str_432
     call _printf
     add esp, 12
     push str_3
@@ -8582,22 +9211,22 @@ if_else_265:
     add esp, 4
     push 1000
     call _Sleep@4
-if_end_265:
-    jmp if_end_264
-if_else_264:
-if_end_264:
+if_end_273:
+    jmp if_end_272
+if_else_272:
+if_end_272:
     mov eax, dword [var_choice]
     mov ebx, 3
     cmp eax, ebx
-    je if_then_266
-    jmp if_else_266
-if_then_266:
+    je if_then_274
+    jmp if_else_274
+if_then_274:
     mov eax, dword [var_gold]
     mov ebx, dword [var_baseamount]
     cmp eax, ebx
-    jg if_then_267
-    jmp if_else_267
-if_then_267:
+    jg if_then_275
+    jmp if_else_275
+if_then_275:
     mov eax, dword [var_gold]
     push eax
     mov eax, dword [var_baseamount]
@@ -8628,7 +9257,7 @@ if_then_267:
     mov dword [var_tradesmade], eax
     push dword [var_woodgain]
     push dword [var_baseamount]
-    push str_408
+    push str_433
     call _printf
     add esp, 12
     push str_3
@@ -8639,11 +9268,11 @@ if_then_267:
     add esp, 4
     push 1000
     call _Sleep@4
-    jmp if_end_267
-if_else_267:
+    jmp if_end_275
+if_else_275:
     push dword [var_gold]
     push dword [var_baseamount]
-    push str_409
+    push str_434
     call _printf
     add esp, 12
     push str_3
@@ -8654,16 +9283,16 @@ if_else_267:
     add esp, 4
     push 1000
     call _Sleep@4
-if_end_267:
-    jmp if_end_266
-if_else_266:
-if_end_266:
+if_end_275:
+    jmp if_end_274
+if_else_274:
+if_end_274:
     mov eax, dword [var_choice]
     mov ebx, 4
     cmp eax, ebx
-    je if_then_268
-    jmp if_else_268
-if_then_268:
+    je if_then_276
+    jmp if_else_276
+if_then_276:
     mov eax, dword [var_baseamount]
     push eax
     mov eax, 10
@@ -8671,22 +9300,22 @@ if_then_268:
     imul ebx, eax
     mov eax, ebx
     mov dword [var_bulksamount], eax
-    cmp dword [var_rand_state_269], 0
-    jne rand_init_269
+    cmp dword [var_rand_state_277], 0
+    jne rand_init_277
     push 0
     call _time
     add esp, 4
-    mov dword [var_rand_state_269], eax
-rand_init_269:
-    mov eax, dword [var_rand_state_269]
+    mov dword [var_rand_state_277], eax
+rand_init_277:
+    mov eax, dword [var_rand_state_277]
     xor eax, eax
     rdtsc
     xor edx, edx
-    mov ecx, dword [var_rand_state_269]
+    mov ecx, dword [var_rand_state_277]
     add eax, ecx
     rol eax, 7
-    add dword [var_rand_state_269], eax
-    mov dword [var_rand_state_269], eax
+    add dword [var_rand_state_277], eax
+    mov dword [var_rand_state_277], eax
     mov ecx, 1
     mov ebx, 3
     sub ebx, ecx
@@ -8697,13 +9326,13 @@ rand_init_269:
     add eax, ecx
     mov dword [var_bulkbonus], eax
     call _clearscreen
-    push str_410
+    push str_435
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_411
+    push str_436
     call _printf
     add esp, 4
     push str_3
@@ -8711,7 +9340,7 @@ rand_init_269:
     add esp, 4
     push dword [var_bulkbonus]
     push dword [var_woodexchangerate]
-    push str_412
+    push str_437
     call _printf
     add esp, 12
     push str_3
@@ -8719,7 +9348,7 @@ rand_init_269:
     add esp, 4
     push dword [var_bulkbonus]
     push dword [var_stoneexchangerate]
-    push str_413
+    push str_438
     call _printf
     add esp, 12
     push str_3
@@ -8727,37 +9356,37 @@ rand_init_269:
     add esp, 4
     push dword [var_bulkbonus]
     push dword [var_goldexchangerate]
-    push str_414
+    push str_439
     call _printf
     add esp, 12
     push str_3
     call _printf
     add esp, 4
-    push str_415
+    push str_440
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_416
+    push str_441
     call _printf
     add esp, 4
     push var_bulkchoice
-    push scanf_fmt_417
+    push scanf_fmt_442
     call _scanf
     add esp, 8
     mov eax, dword [var_bulkchoice]
     mov ebx, 1
     cmp eax, ebx
-    je if_then_270
-    jmp if_else_270
-if_then_270:
+    je if_then_278
+    jmp if_else_278
+if_then_278:
     mov eax, dword [var_wood]
     mov ebx, dword [var_bulksamount]
     cmp eax, ebx
-    jg if_then_271
-    jmp if_else_271
-if_then_271:
+    jg if_then_279
+    jmp if_else_279
+if_then_279:
     mov eax, dword [var_wood]
     push eax
     mov eax, dword [var_bulksamount]
@@ -8793,11 +9422,11 @@ if_then_271:
     mov dword [var_tradesmade], eax
     push dword [var_stonegain]
     push dword [var_bulksamount]
-    push str_404
+    push str_429
     call _printf
     add esp, 12
     push dword [var_woodexchangerate]
-    push str_418
+    push str_443
     call _printf
     add esp, 8
     push str_3
@@ -8808,11 +9437,11 @@ if_then_271:
     add esp, 4
     push 1500
     call _Sleep@4
-    jmp if_end_271
-if_else_271:
+    jmp if_end_279
+if_else_279:
     push dword [var_wood]
     push dword [var_bulksamount]
-    push str_405
+    push str_430
     call _printf
     add esp, 12
     push str_3
@@ -8823,22 +9452,22 @@ if_else_271:
     add esp, 4
     push 1000
     call _Sleep@4
-if_end_271:
-    jmp if_end_270
-if_else_270:
-if_end_270:
+if_end_279:
+    jmp if_end_278
+if_else_278:
+if_end_278:
     mov eax, dword [var_bulkchoice]
     mov ebx, 2
     cmp eax, ebx
-    je if_then_272
-    jmp if_else_272
-if_then_272:
+    je if_then_280
+    jmp if_else_280
+if_then_280:
     mov eax, dword [var_stone]
     mov ebx, dword [var_bulksamount]
     cmp eax, ebx
-    jg if_then_273
-    jmp if_else_273
-if_then_273:
+    jg if_then_281
+    jmp if_else_281
+if_then_281:
     mov eax, dword [var_stone]
     push eax
     mov eax, dword [var_bulksamount]
@@ -8874,11 +9503,11 @@ if_then_273:
     mov dword [var_tradesmade], eax
     push dword [var_goldgain]
     push dword [var_bulksamount]
-    push str_406
+    push str_431
     call _printf
     add esp, 12
     push dword [var_stoneexchangerate]
-    push str_418
+    push str_443
     call _printf
     add esp, 8
     push str_3
@@ -8889,11 +9518,11 @@ if_then_273:
     add esp, 4
     push 1500
     call _Sleep@4
-    jmp if_end_273
-if_else_273:
+    jmp if_end_281
+if_else_281:
     push dword [var_stone]
     push dword [var_bulksamount]
-    push str_407
+    push str_432
     call _printf
     add esp, 12
     push str_3
@@ -8904,22 +9533,22 @@ if_else_273:
     add esp, 4
     push 1000
     call _Sleep@4
-if_end_273:
-    jmp if_end_272
-if_else_272:
-if_end_272:
+if_end_281:
+    jmp if_end_280
+if_else_280:
+if_end_280:
     mov eax, dword [var_bulkchoice]
     mov ebx, 3
     cmp eax, ebx
-    je if_then_274
-    jmp if_else_274
-if_then_274:
+    je if_then_282
+    jmp if_else_282
+if_then_282:
     mov eax, dword [var_gold]
     mov ebx, dword [var_bulksamount]
     cmp eax, ebx
-    jg if_then_275
-    jmp if_else_275
-if_then_275:
+    jg if_then_283
+    jmp if_else_283
+if_then_283:
     mov eax, dword [var_gold]
     push eax
     mov eax, dword [var_bulksamount]
@@ -8955,11 +9584,11 @@ if_then_275:
     mov dword [var_tradesmade], eax
     push dword [var_woodgain]
     push dword [var_bulksamount]
-    push str_408
+    push str_433
     call _printf
     add esp, 12
     push dword [var_goldexchangerate]
-    push str_418
+    push str_443
     call _printf
     add esp, 8
     push str_3
@@ -8970,11 +9599,11 @@ if_then_275:
     add esp, 4
     push 1500
     call _Sleep@4
-    jmp if_end_275
-if_else_275:
+    jmp if_end_283
+if_else_283:
     push dword [var_gold]
     push dword [var_bulksamount]
-    push str_409
+    push str_434
     call _printf
     add esp, 12
     push str_3
@@ -8985,186 +9614,186 @@ if_else_275:
     add esp, 4
     push 1000
     call _Sleep@4
-if_end_275:
-    jmp if_end_274
-if_else_274:
-if_end_274:
-    jmp if_end_268
-if_else_268:
-if_end_268:
+if_end_283:
+    jmp if_end_282
+if_else_282:
+if_end_282:
+    jmp if_end_276
+if_else_276:
+if_end_276:
     mov eax, dword [var_choice]
     mov ebx, 5
     cmp eax, ebx
-    je if_then_276
-    jmp if_else_276
-if_then_276:
+    je if_then_284
+    jmp if_else_284
+if_then_284:
     call _clearscreen
-    push str_419
+    push str_444
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_420
+    push str_445
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_421
+    push str_446
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_422
+    push str_447
     call _printf
     add esp, 4
-    push str_423
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push str_424
-    call _printf
-    add esp, 4
-    push str_425
+    push str_448
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_426
+    push str_449
     call _printf
     add esp, 4
-    push str_427
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push str_415
+    push str_450
     call _printf
     add esp, 4
     push str_3
     call _printf
     add esp, 4
-    push str_428
+    push str_451
+    call _printf
+    add esp, 4
+    push str_452
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push str_440
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push str_453
     call _printf
     add esp, 4
     push var_specchoice
-    push scanf_fmt_429
+    push scanf_fmt_454
     call _scanf
     add esp, 8
     mov eax, dword [var_specchoice]
     mov ebx, 4
     cmp eax, ebx
-    jl if_then_277
-    jmp if_else_277
-if_then_277:
-    push str_430
+    jl if_then_285
+    jmp if_else_285
+if_then_285:
+    push str_455
     call _printf
     add esp, 4
     push var_betamount
-    push scanf_fmt_431
+    push scanf_fmt_456
     call _scanf
     add esp, 8
     mov eax, dword [var_betamount]
     mov ebx, 10
     cmp eax, ebx
-    jl if_then_278
-    jmp if_else_278
-if_then_278:
+    jl if_then_286
+    jmp if_else_286
+if_then_286:
     mov eax, 10
     mov dword [var_betamount], eax
-    jmp if_end_278
-if_else_278:
-if_end_278:
+    jmp if_end_286
+if_else_286:
+if_end_286:
     mov eax, 0
     mov dword [var_canbet], eax
     mov eax, dword [var_specchoice]
     mov ebx, 1
     cmp eax, ebx
-    je if_then_279
-    jmp if_else_279
-if_then_279:
+    je if_then_287
+    jmp if_else_287
+if_then_287:
     mov eax, dword [var_wood]
     mov ebx, dword [var_betamount]
     cmp eax, ebx
-    jg if_then_280
-    jmp if_else_280
-if_then_280:
+    jg if_then_288
+    jmp if_else_288
+if_then_288:
     mov eax, 1
     mov dword [var_canbet], eax
-    jmp if_end_280
-if_else_280:
-if_end_280:
-    jmp if_end_279
-if_else_279:
-if_end_279:
+    jmp if_end_288
+if_else_288:
+if_end_288:
+    jmp if_end_287
+if_else_287:
+if_end_287:
     mov eax, dword [var_specchoice]
     mov ebx, 2
     cmp eax, ebx
-    je if_then_281
-    jmp if_else_281
-if_then_281:
+    je if_then_289
+    jmp if_else_289
+if_then_289:
     mov eax, dword [var_stone]
     mov ebx, dword [var_betamount]
     cmp eax, ebx
-    jg if_then_282
-    jmp if_else_282
-if_then_282:
+    jg if_then_290
+    jmp if_else_290
+if_then_290:
     mov eax, 1
     mov dword [var_canbet], eax
-    jmp if_end_282
-if_else_282:
-if_end_282:
-    jmp if_end_281
-if_else_281:
-if_end_281:
+    jmp if_end_290
+if_else_290:
+if_end_290:
+    jmp if_end_289
+if_else_289:
+if_end_289:
     mov eax, dword [var_specchoice]
     mov ebx, 3
     cmp eax, ebx
-    je if_then_283
-    jmp if_else_283
-if_then_283:
+    je if_then_291
+    jmp if_else_291
+if_then_291:
     mov eax, dword [var_gold]
     mov ebx, dword [var_betamount]
     cmp eax, ebx
-    jg if_then_284
-    jmp if_else_284
-if_then_284:
+    jg if_then_292
+    jmp if_else_292
+if_then_292:
     mov eax, 1
     mov dword [var_canbet], eax
-    jmp if_end_284
-if_else_284:
-if_end_284:
-    jmp if_end_283
-if_else_283:
-if_end_283:
+    jmp if_end_292
+if_else_292:
+if_end_292:
+    jmp if_end_291
+if_else_291:
+if_end_291:
     mov eax, dword [var_canbet]
     mov ebx, 1
     cmp eax, ebx
-    je if_then_285
-    jmp if_else_285
-if_then_285:
-    cmp dword [var_rand_state_286], 0
-    jne rand_init_286
+    je if_then_293
+    jmp if_else_293
+if_then_293:
+    cmp dword [var_rand_state_294], 0
+    jne rand_init_294
     push 0
     call _time
     add esp, 4
-    mov dword [var_rand_state_286], eax
-rand_init_286:
-    mov eax, dword [var_rand_state_286]
+    mov dword [var_rand_state_294], eax
+rand_init_294:
+    mov eax, dword [var_rand_state_294]
     xor eax, eax
     rdtsc
     xor edx, edx
-    mov ecx, dword [var_rand_state_286]
+    mov ecx, dword [var_rand_state_294]
     add eax, ecx
     rol eax, 7
-    add dword [var_rand_state_286], eax
-    mov dword [var_rand_state_286], eax
+    add dword [var_rand_state_294], eax
+    mov dword [var_rand_state_294], eax
     mov ecx, 1
     mov ebx, 100
     sub ebx, ecx
@@ -9177,13 +9806,13 @@ rand_init_286:
     mov eax, dword [var_specresult]
     mov ebx, 61
     cmp eax, ebx
-    jl if_then_287
-    jmp if_else_287
-if_then_287:
+    jl if_then_295
+    jmp if_else_295
+if_then_295:
     push 500
     call _boop
     add esp, 4
-    push str_432
+    push str_457
     call _printf
     add esp, 4
     push str_3
@@ -9192,9 +9821,9 @@ if_then_287:
     mov eax, dword [var_specchoice]
     mov ebx, 1
     cmp eax, ebx
-    je if_then_288
-    jmp if_else_288
-if_then_288:
+    je if_then_296
+    jmp if_else_296
+if_then_296:
     mov eax, dword [var_wood]
     push eax
     mov eax, dword [var_betamount]
@@ -9217,18 +9846,18 @@ if_then_288:
     mov eax, ebx
     mov dword [var_wood], eax
     push dword [var_winnings]
-    push str_433
+    push str_458
     call _printf
     add esp, 8
-    jmp if_end_288
-if_else_288:
-if_end_288:
+    jmp if_end_296
+if_else_296:
+if_end_296:
     mov eax, dword [var_specchoice]
     mov ebx, 2
     cmp eax, ebx
-    je if_then_289
-    jmp if_else_289
-if_then_289:
+    je if_then_297
+    jmp if_else_297
+if_then_297:
     mov eax, dword [var_stone]
     push eax
     mov eax, dword [var_betamount]
@@ -9251,18 +9880,18 @@ if_then_289:
     mov eax, ebx
     mov dword [var_stone], eax
     push dword [var_winnings]
-    push str_434
+    push str_459
     call _printf
     add esp, 8
-    jmp if_end_289
-if_else_289:
-if_end_289:
+    jmp if_end_297
+if_else_297:
+if_end_297:
     mov eax, dword [var_specchoice]
     mov ebx, 3
     cmp eax, ebx
-    je if_then_290
-    jmp if_else_290
-if_then_290:
+    je if_then_298
+    jmp if_else_298
+if_then_298:
     mov eax, dword [var_gold]
     push eax
     mov eax, dword [var_betamount]
@@ -9285,23 +9914,23 @@ if_then_290:
     mov eax, ebx
     mov dword [var_gold], eax
     push dword [var_winnings]
-    push str_435
+    push str_460
     call _printf
     add esp, 8
-    jmp if_end_290
-if_else_290:
-if_end_290:
+    jmp if_end_298
+if_else_298:
+if_end_298:
     push str_3
     call _printf
     add esp, 4
     push 1500
     call _Sleep@4
-    jmp if_end_287
-if_else_287:
+    jmp if_end_295
+if_else_295:
     push 100
     call _boop
     add esp, 4
-    push str_436
+    push str_461
     call _printf
     add esp, 4
     push str_3
@@ -9310,9 +9939,9 @@ if_else_287:
     mov eax, dword [var_specchoice]
     mov ebx, 1
     cmp eax, ebx
-    je if_then_291
-    jmp if_else_291
-if_then_291:
+    je if_then_299
+    jmp if_else_299
+if_then_299:
     mov eax, dword [var_wood]
     push eax
     mov eax, dword [var_betamount]
@@ -9321,18 +9950,18 @@ if_then_291:
     mov eax, ebx
     mov dword [var_wood], eax
     push dword [var_betamount]
-    push str_437
+    push str_462
     call _printf
     add esp, 8
-    jmp if_end_291
-if_else_291:
-if_end_291:
+    jmp if_end_299
+if_else_299:
+if_end_299:
     mov eax, dword [var_specchoice]
     mov ebx, 2
     cmp eax, ebx
-    je if_then_292
-    jmp if_else_292
-if_then_292:
+    je if_then_300
+    jmp if_else_300
+if_then_300:
     mov eax, dword [var_stone]
     push eax
     mov eax, dword [var_betamount]
@@ -9341,18 +9970,18 @@ if_then_292:
     mov eax, ebx
     mov dword [var_stone], eax
     push dword [var_betamount]
-    push str_438
+    push str_463
     call _printf
     add esp, 8
-    jmp if_end_292
-if_else_292:
-if_end_292:
+    jmp if_end_300
+if_else_300:
+if_end_300:
     mov eax, dword [var_specchoice]
     mov ebx, 3
     cmp eax, ebx
-    je if_then_293
-    jmp if_else_293
-if_then_293:
+    je if_then_301
+    jmp if_else_301
+if_then_301:
     mov eax, dword [var_gold]
     push eax
     mov eax, dword [var_betamount]
@@ -9361,18 +9990,18 @@ if_then_293:
     mov eax, ebx
     mov dword [var_gold], eax
     push dword [var_betamount]
-    push str_439
+    push str_464
     call _printf
     add esp, 8
-    jmp if_end_293
-if_else_293:
-if_end_293:
+    jmp if_end_301
+if_else_301:
+if_end_301:
     push str_3
     call _printf
     add esp, 4
     push 1500
     call _Sleep@4
-if_end_287:
+if_end_295:
     mov eax, dword [var_speculationsmade]
     push eax
     mov eax, 1
@@ -9380,9 +10009,9 @@ if_end_287:
     add ebx, eax
     mov eax, ebx
     mov dword [var_speculationsmade], eax
-    jmp if_end_285
-if_else_285:
-    push str_284
+    jmp if_end_293
+if_else_293:
+    push str_311
     call _printf
     add esp, 4
     push str_3
@@ -9393,25 +10022,25 @@ if_else_285:
     add esp, 4
     push 1000
     call _Sleep@4
+if_end_293:
+    jmp if_end_285
+if_else_285:
 if_end_285:
-    jmp if_end_277
-if_else_277:
-if_end_277:
-    jmp if_end_276
-if_else_276:
-if_end_276:
+    jmp if_end_284
+if_else_284:
+if_end_284:
     mov eax, dword [var_choice]
     mov ebx, 6
     cmp eax, ebx
-    je if_then_294
-    jmp if_else_294
-if_then_294:
+    je if_then_302
+    jmp if_else_302
+if_then_302:
     mov eax, dword [var_gold]
     mov ebx, 9
     cmp eax, ebx
-    jg if_then_295
-    jmp if_else_295
-if_then_295:
+    jg if_then_303
+    jmp if_else_303
+if_then_303:
     mov eax, dword [var_gold]
     push eax
     mov eax, 10
@@ -9419,22 +10048,22 @@ if_then_295:
     sub ebx, eax
     mov eax, ebx
     mov dword [var_gold], eax
-    cmp dword [var_rand_state_296], 0
-    jne rand_init_296
+    cmp dword [var_rand_state_304], 0
+    jne rand_init_304
     push 0
     call _time
     add esp, 4
-    mov dword [var_rand_state_296], eax
-rand_init_296:
-    mov eax, dword [var_rand_state_296]
+    mov dword [var_rand_state_304], eax
+rand_init_304:
+    mov eax, dword [var_rand_state_304]
     xor eax, eax
     rdtsc
     xor edx, edx
-    mov ecx, dword [var_rand_state_296]
+    mov ecx, dword [var_rand_state_304]
     add eax, ecx
     rol eax, 7
-    add dword [var_rand_state_296], eax
-    mov dword [var_rand_state_296], eax
+    add dword [var_rand_state_304], eax
+    mov dword [var_rand_state_304], eax
     mov ecx, 1
     mov ebx, 2
     sub ebx, ecx
@@ -9444,22 +10073,22 @@ rand_init_296:
     mov eax, edx
     add eax, ecx
     mov dword [var_woodexchangerate], eax
-    cmp dword [var_rand_state_297], 0
-    jne rand_init_297
+    cmp dword [var_rand_state_305], 0
+    jne rand_init_305
     push 0
     call _time
     add esp, 4
-    mov dword [var_rand_state_297], eax
-rand_init_297:
-    mov eax, dword [var_rand_state_297]
+    mov dword [var_rand_state_305], eax
+rand_init_305:
+    mov eax, dword [var_rand_state_305]
     xor eax, eax
     rdtsc
     xor edx, edx
-    mov ecx, dword [var_rand_state_297]
+    mov ecx, dword [var_rand_state_305]
     add eax, ecx
     rol eax, 7
-    add dword [var_rand_state_297], eax
-    mov dword [var_rand_state_297], eax
+    add dword [var_rand_state_305], eax
+    mov dword [var_rand_state_305], eax
     mov ecx, 1
     mov ebx, 2
     sub ebx, ecx
@@ -9469,22 +10098,22 @@ rand_init_297:
     mov eax, edx
     add eax, ecx
     mov dword [var_stoneexchangerate], eax
-    cmp dword [var_rand_state_298], 0
-    jne rand_init_298
+    cmp dword [var_rand_state_306], 0
+    jne rand_init_306
     push 0
     call _time
     add esp, 4
-    mov dword [var_rand_state_298], eax
-rand_init_298:
-    mov eax, dword [var_rand_state_298]
+    mov dword [var_rand_state_306], eax
+rand_init_306:
+    mov eax, dword [var_rand_state_306]
     xor eax, eax
     rdtsc
     xor edx, edx
-    mov ecx, dword [var_rand_state_298]
+    mov ecx, dword [var_rand_state_306]
     add eax, ecx
     rol eax, 7
-    add dword [var_rand_state_298], eax
-    mov dword [var_rand_state_298], eax
+    add dword [var_rand_state_306], eax
+    mov dword [var_rand_state_306], eax
     mov ecx, 1
     mov ebx, 2
     sub ebx, ecx
@@ -9497,9 +10126,9 @@ rand_init_298:
     mov eax, dword [var_prestigebonus]
     mov ebx, 1
     cmp eax, ebx
-    jg if_then_299
-    jmp if_else_299
-if_then_299:
+    jg if_then_307
+    jmp if_else_307
+if_then_307:
     mov eax, dword [var_woodexchangerate]
     push eax
     mov eax, 1
@@ -9521,10 +10150,10 @@ if_then_299:
     add ebx, eax
     mov eax, ebx
     mov dword [var_goldexchangerate], eax
-    jmp if_end_299
-if_else_299:
-if_end_299:
-    push str_440
+    jmp if_end_307
+if_else_307:
+if_end_307:
+    push str_465
     call _printf
     add esp, 4
     push str_3
@@ -9535,9 +10164,9 @@ if_end_299:
     add esp, 4
     push 1000
     call _Sleep@4
-    jmp if_end_295
-if_else_295:
-    push str_441
+    jmp if_end_303
+if_else_303:
+    push str_466
     call _printf
     add esp, 4
     push str_3
@@ -9548,19 +10177,19 @@ if_else_295:
     add esp, 4
     push 1000
     call _Sleep@4
-if_end_295:
-    jmp if_end_294
-if_else_294:
-if_end_294:
+if_end_303:
+    jmp if_end_302
+if_else_302:
+if_end_302:
     mov eax, dword [var_choice]
     mov ebx, 7
     cmp eax, ebx
-    je if_then_300
-    jmp if_else_300
-if_then_300:
+    je if_then_308
+    jmp if_else_308
+if_then_308:
     mov eax, 0
     mov dword [var_marketopen], eax
-    push str_442
+    push str_467
     call _printf
     add esp, 4
     push str_3
@@ -9568,22 +10197,22 @@ if_then_300:
     add esp, 4
     push 500
     call _Sleep@4
-    jmp if_end_300
-if_else_300:
-if_end_300:
-    jmp while_start_261
-while_end_261:
-    jmp if_end_253
-if_else_253:
-if_end_253:
+    jmp if_end_308
+if_else_308:
+if_end_308:
+    jmp while_start_269
+while_end_269:
+    jmp if_end_261
+if_else_261:
+if_end_261:
     mov eax, dword [var_cmd]
     mov ebx, 10
     cmp eax, ebx
-    je if_then_301
-    jmp if_else_301
-if_then_301:
+    je if_then_309
+    jmp if_else_309
+if_then_309:
     call _clearscreen
-    push str_443
+    push str_468
     call _printf
     add esp, 4
     push str_3
@@ -9604,7 +10233,7 @@ if_then_301:
     call _printf
     add esp, 4
     push dword [var_achievements]
-    push str_82
+    push str_86
     call _printf
     add esp, 8
     push str_3
@@ -9625,21 +10254,21 @@ if_then_301:
     mov eax, ebx
     mov dword [var_total], eax
     push dword [var_total]
-    push str_444
+    push str_469
     call _printf
     add esp, 8
     push str_3
     call _printf
     add esp, 4
     push dword [var_turn]
-    push str_445
+    push str_470
     call _printf
     add esp, 8
     push str_3
     call _printf
     add esp, 4
     push dword [var_totalcollections]
-    push str_446
+    push str_471
     call _printf
     add esp, 8
     push str_3
@@ -9647,15 +10276,15 @@ if_then_301:
     add esp, 4
     mov eax, 1
     mov dword [var_gameover], eax
-    jmp if_end_301
-if_else_301:
-if_end_301:
+    jmp if_end_309
+if_else_309:
+if_end_309:
     mov eax, dword [var_hascollected]
     mov ebx, 1
     cmp eax, ebx
-    je if_then_302
-    jmp if_else_302
-if_then_302:
+    je if_then_310
+    jmp if_else_310
+if_then_310:
     mov eax, dword [var_wood]
     push eax
     mov eax, dword [var_stone]
@@ -9673,1036 +10302,17 @@ if_then_302:
     mov eax, dword [var_rich]
     mov ebx, 0
     cmp eax, ebx
-    je if_then_303
-    jmp if_else_303
-if_then_303:
-    mov eax, dword [var_totalresources]
-    mov ebx, 99
-    cmp eax, ebx
-    jg if_then_304
-    jmp if_else_304
-if_then_304:
-    mov eax, 1
-    mov dword [var_rich], eax
-    mov eax, dword [var_achievements]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_achievements], eax
-    push str_447
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push 1500
-    call _Sleep@4
-    jmp if_end_304
-if_else_304:
-if_end_304:
-    jmp if_end_303
-if_else_303:
-if_end_303:
-    mov eax, dword [var_wealthy]
-    mov ebx, 0
-    cmp eax, ebx
-    je if_then_305
-    jmp if_else_305
-if_then_305:
-    mov eax, dword [var_totalresources]
-    mov ebx, 999
-    cmp eax, ebx
-    jg if_then_306
-    jmp if_else_306
-if_then_306:
-    mov eax, 1
-    mov dword [var_wealthy], eax
-    mov eax, dword [var_achievements]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_achievements], eax
-    push str_448
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push 1500
-    call _Sleep@4
-    jmp if_end_306
-if_else_306:
-if_end_306:
-    jmp if_end_305
-if_else_305:
-if_end_305:
-    mov eax, dword [var_millionaire]
-    mov ebx, 0
-    cmp eax, ebx
-    je if_then_307
-    jmp if_else_307
-if_then_307:
-    mov eax, dword [var_totalresources]
-    mov ebx, 9999
-    cmp eax, ebx
-    jg if_then_308
-    jmp if_else_308
-if_then_308:
-    mov eax, 1
-    mov dword [var_millionaire], eax
-    mov eax, dword [var_achievements]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_achievements], eax
-    push str_449
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push 1500
-    call _Sleep@4
-    jmp if_end_308
-if_else_308:
-if_end_308:
-    jmp if_end_307
-if_else_307:
-if_end_307:
-    mov eax, dword [var_woodmaster]
-    mov ebx, 0
-    cmp eax, ebx
-    je if_then_309
-    jmp if_else_309
-if_then_309:
-    mov eax, dword [var_wood]
-    mov ebx, 49
-    cmp eax, ebx
-    jg if_then_310
-    jmp if_else_310
-if_then_310:
-    mov eax, 1
-    mov dword [var_woodmaster], eax
-    mov eax, dword [var_achievements]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_achievements], eax
-    push str_450
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push 1500
-    call _Sleep@4
-    jmp if_end_310
-if_else_310:
-if_end_310:
-    jmp if_end_309
-if_else_309:
-if_end_309:
-    mov eax, dword [var_stonemaster]
-    mov ebx, 0
-    cmp eax, ebx
     je if_then_311
     jmp if_else_311
 if_then_311:
-    mov eax, dword [var_stone]
-    mov ebx, 49
+    mov eax, dword [var_totalresources]
+    mov ebx, 99
     cmp eax, ebx
     jg if_then_312
     jmp if_else_312
 if_then_312:
     mov eax, 1
-    mov dword [var_stonemaster], eax
-    mov eax, dword [var_achievements]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_achievements], eax
-    push str_451
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push 1500
-    call _Sleep@4
-    jmp if_end_312
-if_else_312:
-if_end_312:
-    jmp if_end_311
-if_else_311:
-if_end_311:
-    mov eax, dword [var_goldmaster]
-    mov ebx, 0
-    cmp eax, ebx
-    je if_then_313
-    jmp if_else_313
-if_then_313:
-    mov eax, dword [var_gold]
-    mov ebx, 49
-    cmp eax, ebx
-    jg if_then_314
-    jmp if_else_314
-if_then_314:
-    mov eax, 1
-    mov dword [var_goldmaster], eax
-    mov eax, dword [var_achievements]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_achievements], eax
-    push str_452
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push 1500
-    call _Sleep@4
-    jmp if_end_314
-if_else_314:
-if_end_314:
-    jmp if_end_313
-if_else_313:
-if_end_313:
-    mov eax, dword [var_woodtycoon]
-    mov ebx, 0
-    cmp eax, ebx
-    je if_then_315
-    jmp if_else_315
-if_then_315:
-    mov eax, dword [var_wood]
-    mov ebx, 499
-    cmp eax, ebx
-    jg if_then_316
-    jmp if_else_316
-if_then_316:
-    mov eax, 1
-    mov dword [var_woodtycoon], eax
-    mov eax, dword [var_achievements]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_achievements], eax
-    push str_453
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push 1500
-    call _Sleep@4
-    jmp if_end_316
-if_else_316:
-if_end_316:
-    jmp if_end_315
-if_else_315:
-if_end_315:
-    mov eax, dword [var_stonetycoon]
-    mov ebx, 0
-    cmp eax, ebx
-    je if_then_317
-    jmp if_else_317
-if_then_317:
-    mov eax, dword [var_stone]
-    mov ebx, 499
-    cmp eax, ebx
-    jg if_then_318
-    jmp if_else_318
-if_then_318:
-    mov eax, 1
-    mov dword [var_stonetycoon], eax
-    mov eax, dword [var_achievements]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_achievements], eax
-    push str_454
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push 1500
-    call _Sleep@4
-    jmp if_end_318
-if_else_318:
-if_end_318:
-    jmp if_end_317
-if_else_317:
-if_end_317:
-    mov eax, dword [var_goldtycoon]
-    mov ebx, 0
-    cmp eax, ebx
-    je if_then_319
-    jmp if_else_319
-if_then_319:
-    mov eax, dword [var_gold]
-    mov ebx, 499
-    cmp eax, ebx
-    jg if_then_320
-    jmp if_else_320
-if_then_320:
-    mov eax, 1
-    mov dword [var_goldtycoon], eax
-    mov eax, dword [var_achievements]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_achievements], eax
-    push str_455
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push 1500
-    call _Sleep@4
-    jmp if_end_320
-if_else_320:
-if_end_320:
-    jmp if_end_319
-if_else_319:
-if_end_319:
-    mov eax, dword [var_minigamemaster]
-    mov ebx, 0
-    cmp eax, ebx
-    je if_then_321
-    jmp if_else_321
-if_then_321:
-    mov eax, dword [var_minigamewins]
-    mov ebx, 9
-    cmp eax, ebx
-    jg if_then_322
-    jmp if_else_322
-if_then_322:
-    mov eax, 1
-    mov dword [var_minigamemaster], eax
-    mov eax, dword [var_achievements]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_achievements], eax
-    push str_456
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push 1500
-    call _Sleep@4
-    jmp if_end_322
-if_else_322:
-if_end_322:
-    jmp if_end_321
-if_else_321:
-if_end_321:
-    mov eax, dword [var_eventexplorer]
-    mov ebx, 0
-    cmp eax, ebx
-    je if_then_323
-    jmp if_else_323
-if_then_323:
-    mov eax, dword [var_totalevents]
-    mov ebx, 19
-    cmp eax, ebx
-    jg if_then_324
-    jmp if_else_324
-if_then_324:
-    mov eax, 1
-    mov dword [var_eventexplorer], eax
-    mov eax, dword [var_achievements]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_achievements], eax
-    push str_457
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push 1500
-    call _Sleep@4
-    jmp if_end_324
-if_else_324:
-if_end_324:
-    jmp if_end_323
-if_else_323:
-if_end_323:
-    mov eax, dword [var_turnveteran]
-    mov ebx, 0
-    cmp eax, ebx
-    je if_then_325
-    jmp if_else_325
-if_then_325:
-    mov eax, dword [var_turn]
-    mov ebx, 99
-    cmp eax, ebx
-    jg if_then_326
-    jmp if_else_326
-if_then_326:
-    mov eax, 1
-    mov dword [var_turnveteran], eax
-    mov eax, dword [var_achievements]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_achievements], eax
-    push str_458
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push 1500
-    call _Sleep@4
-    jmp if_end_326
-if_else_326:
-if_end_326:
-    jmp if_end_325
-if_else_325:
-if_end_325:
-    mov eax, dword [var_collectoraddict]
-    mov ebx, 0
-    cmp eax, ebx
-    je if_then_327
-    jmp if_else_327
-if_then_327:
-    mov eax, dword [var_totalcollections]
-    mov ebx, 199
-    cmp eax, ebx
-    jg if_then_328
-    jmp if_else_328
-if_then_328:
-    mov eax, 1
-    mov dword [var_collectoraddict], eax
-    mov eax, dword [var_achievements]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_achievements], eax
-    push str_459
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push 1500
-    call _Sleep@4
-    jmp if_end_328
-if_else_328:
-if_end_328:
-    jmp if_end_327
-if_else_327:
-if_end_327:
-    mov eax, dword [var_ironfist]
-    mov ebx, 0
-    cmp eax, ebx
-    je if_then_329
-    jmp if_else_329
-if_then_329:
-    mov eax, dword [var_level]
-    mov ebx, 99
-    cmp eax, ebx
-    jg if_then_330
-    jmp if_else_330
-if_then_330:
-    mov eax, 1
-    mov dword [var_ironfist], eax
-    mov eax, dword [var_achievements]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_achievements], eax
-    push str_460
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push 1500
-    call _Sleep@4
-    jmp if_end_330
-if_else_330:
-if_end_330:
-    jmp if_end_329
-if_else_329:
-if_end_329:
-    mov eax, dword [var_collectorpro]
-    mov ebx, 0
-    cmp eax, ebx
-    je if_then_331
-    jmp if_else_331
-if_then_331:
-    mov eax, dword [var_totalcollections]
-    mov ebx, 499
-    cmp eax, ebx
-    jg if_then_332
-    jmp if_else_332
-if_then_332:
-    mov eax, 1
-    mov dword [var_collectorpro], eax
-    mov eax, dword [var_achievements]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_achievements], eax
-    push str_461
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push 1500
-    call _Sleep@4
-    jmp if_end_332
-if_else_332:
-if_end_332:
-    jmp if_end_331
-if_else_331:
-if_end_331:
-    mov eax, dword [var_ultrarich]
-    mov ebx, 0
-    cmp eax, ebx
-    je if_then_333
-    jmp if_else_333
-if_then_333:
-    mov eax, dword [var_totalresources]
-    mov ebx, 99999
-    cmp eax, ebx
-    jg if_then_334
-    jmp if_else_334
-if_then_334:
-    mov eax, 1
-    mov dword [var_ultrarich], eax
-    mov eax, dword [var_achievements]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_achievements], eax
-    push str_462
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push 1500
-    call _Sleep@4
-    jmp if_end_334
-if_else_334:
-if_end_334:
-    jmp if_end_333
-if_else_333:
-if_end_333:
-    mov eax, dword [var_grinder]
-    mov ebx, 0
-    cmp eax, ebx
-    je if_then_335
-    jmp if_else_335
-if_then_335:
-    mov eax, dword [var_turn]
-    mov ebx, 499
-    cmp eax, ebx
-    jg if_then_336
-    jmp if_else_336
-if_then_336:
-    mov eax, 1
-    mov dword [var_grinder], eax
-    mov eax, dword [var_achievements]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_achievements], eax
-    push str_463
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push 1500
-    call _Sleep@4
-    jmp if_end_336
-if_else_336:
-if_end_336:
-    jmp if_end_335
-if_else_335:
-if_end_335:
-    mov eax, dword [var_hoarder]
-    mov ebx, 0
-    cmp eax, ebx
-    je if_then_337
-    jmp if_else_337
-if_then_337:
-    mov eax, dword [var_wood]
-    mov ebx, 4999
-    cmp eax, ebx
-    jg if_then_338
-    jmp if_else_338
-if_then_338:
-    mov eax, 1
-    mov dword [var_hoarder], eax
-    jmp if_end_338
-if_else_338:
-if_end_338:
-    mov eax, dword [var_stone]
-    mov ebx, 4999
-    cmp eax, ebx
-    jg if_then_339
-    jmp if_else_339
-if_then_339:
-    mov eax, 1
-    mov dword [var_hoarder], eax
-    jmp if_end_339
-if_else_339:
-if_end_339:
-    mov eax, dword [var_gold]
-    mov ebx, 4999
-    cmp eax, ebx
-    jg if_then_340
-    jmp if_else_340
-if_then_340:
-    mov eax, 1
-    mov dword [var_hoarder], eax
-    jmp if_end_340
-if_else_340:
-if_end_340:
-    mov eax, dword [var_hoarder]
-    mov ebx, 1
-    cmp eax, ebx
-    je if_then_341
-    jmp if_else_341
-if_then_341:
-    mov eax, dword [var_achievements]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_achievements], eax
-    push str_464
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push 1500
-    call _Sleep@4
-    jmp if_end_341
-if_else_341:
-if_end_341:
-    jmp if_end_337
-if_else_337:
-if_end_337:
-    mov eax, dword [var_unstoppable]
-    mov ebx, 0
-    cmp eax, ebx
-    je if_then_342
-    jmp if_else_342
-if_then_342:
-    mov eax, dword [var_minigamewins]
-    mov ebx, 24
-    cmp eax, ebx
-    jg if_then_343
-    jmp if_else_343
-if_then_343:
-    mov eax, 1
-    mov dword [var_unstoppable], eax
-    mov eax, dword [var_achievements]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_achievements], eax
-    push str_465
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push 1500
-    call _Sleep@4
-    jmp if_end_343
-if_else_343:
-if_end_343:
-    jmp if_end_342
-if_else_342:
-if_end_342:
-    mov eax, dword [var_eventlegend]
-    mov ebx, 0
-    cmp eax, ebx
-    je if_then_344
-    jmp if_else_344
-if_then_344:
-    mov eax, dword [var_totalevents]
-    mov ebx, 99
-    cmp eax, ebx
-    jg if_then_345
-    jmp if_else_345
-if_then_345:
-    mov eax, 1
-    mov dword [var_eventlegend], eax
-    mov eax, dword [var_achievements]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_achievements], eax
-    push str_466
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push 1500
-    call _Sleep@4
-    jmp if_end_345
-if_else_345:
-if_end_345:
-    jmp if_end_344
-if_else_344:
-if_end_344:
-    mov eax, dword [var_jackpot]
-    mov ebx, 0
-    cmp eax, ebx
-    je if_then_346
-    jmp if_else_346
-if_then_346:
-    mov eax, dword [var_minigamewins]
-    mov ebx, 14
-    cmp eax, ebx
-    jg if_then_347
-    jmp if_else_347
-if_then_347:
-    mov eax, 1
-    mov dword [var_jackpot], eax
-    mov eax, dword [var_achievements]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_achievements], eax
-    push str_467
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push 1500
-    call _Sleep@4
-    jmp if_end_347
-if_else_347:
-if_end_347:
-    jmp if_end_346
-if_else_346:
-if_end_346:
-    mov eax, dword [var_dedicated]
-    mov ebx, 0
-    cmp eax, ebx
-    je if_then_348
-    jmp if_else_348
-if_then_348:
-    mov eax, dword [var_turn]
-    mov ebx, 999
-    cmp eax, ebx
-    jg if_then_349
-    jmp if_else_349
-if_then_349:
-    mov eax, 1
-    mov dword [var_dedicated], eax
-    mov eax, dword [var_achievements]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_achievements], eax
-    push str_468
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push 1500
-    call _Sleep@4
-    jmp if_end_349
-if_else_349:
-if_end_349:
-    jmp if_end_348
-if_else_348:
-if_end_348:
-    mov eax, dword [var_maxedout]
-    mov ebx, 0
-    cmp eax, ebx
-    je if_then_350
-    jmp if_else_350
-if_then_350:
-    mov eax, dword [var_level]
-    mov ebx, 199
-    cmp eax, ebx
-    jg if_then_351
-    jmp if_else_351
-if_then_351:
-    mov eax, 1
-    mov dword [var_maxedout], eax
-    mov eax, dword [var_achievements]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_achievements], eax
-    push str_469
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push 1500
-    call _Sleep@4
-    jmp if_end_351
-if_else_351:
-if_end_351:
-    jmp if_end_350
-if_else_350:
-if_end_350:
-    mov eax, dword [var_maxedout]
-    mov ebx, 0
-    cmp eax, ebx
-    je if_then_352
-    jmp if_else_352
-if_then_352:
-    mov eax, dword [var_level]
-    mov ebx, 199
-    cmp eax, ebx
-    jg if_then_353
-    jmp if_else_353
-if_then_353:
-    mov eax, 1
-    mov dword [var_maxedout], eax
-    mov eax, dword [var_achievements]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_achievements], eax
-    push str_469
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push 1500
-    call _Sleep@4
-    jmp if_end_353
-if_else_353:
-if_end_353:
-    jmp if_end_352
-if_else_352:
-if_end_352:
-    mov eax, dword [var_traderachievement]
-    mov ebx, 0
-    cmp eax, ebx
-    je if_then_354
-    jmp if_else_354
-if_then_354:
-    mov eax, dword [var_tradesmade]
-    mov ebx, 9
-    cmp eax, ebx
-    jg if_then_355
-    jmp if_else_355
-if_then_355:
-    mov eax, 1
-    mov dword [var_traderachievement], eax
-    mov eax, dword [var_achievements]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_achievements], eax
-    push str_470
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push 1500
-    call _Sleep@4
-    jmp if_end_355
-if_else_355:
-if_end_355:
-    jmp if_end_354
-if_else_354:
-if_end_354:
-    mov eax, dword [var_speculatorachievement]
-    mov ebx, 0
-    cmp eax, ebx
-    je if_then_356
-    jmp if_else_356
-if_then_356:
-    mov eax, dword [var_speculationsmade]
-    mov ebx, 4
-    cmp eax, ebx
-    jg if_then_357
-    jmp if_else_357
-if_then_357:
-    mov eax, 1
-    mov dword [var_speculatorachievement], eax
-    mov eax, dword [var_achievements]
-    push eax
-    mov eax, 1
-    pop ebx
-    add ebx, eax
-    mov eax, ebx
-    mov dword [var_achievements], eax
-    push str_471
-    call _printf
-    add esp, 4
-    push str_3
-    call _printf
-    add esp, 4
-    push 300
-    call _boop
-    add esp, 4
-    push 1500
-    call _Sleep@4
-    jmp if_end_357
-if_else_357:
-if_end_357:
-    jmp if_end_356
-if_else_356:
-if_end_356:
-    mov eax, dword [var_markettycoon]
-    mov ebx, 0
-    cmp eax, ebx
-    je if_then_358
-    jmp if_else_358
-if_then_358:
-    mov eax, dword [var_tradesmade]
-    mov ebx, 49
-    cmp eax, ebx
-    jg if_then_359
-    jmp if_else_359
-if_then_359:
-    mov eax, 1
-    mov dword [var_markettycoon], eax
+    mov dword [var_rich], eax
     mov eax, dword [var_achievements]
     push eax
     mov eax, 1
@@ -10721,30 +10331,1087 @@ if_then_359:
     add esp, 4
     push 1500
     call _Sleep@4
+    jmp if_end_312
+if_else_312:
+if_end_312:
+    jmp if_end_311
+if_else_311:
+if_end_311:
+    mov eax, dword [var_wealthy]
+    mov ebx, 0
+    cmp eax, ebx
+    je if_then_313
+    jmp if_else_313
+if_then_313:
+    mov eax, dword [var_totalresources]
+    mov ebx, 999
+    cmp eax, ebx
+    jg if_then_314
+    jmp if_else_314
+if_then_314:
+    mov eax, 1
+    mov dword [var_wealthy], eax
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_473
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
+    jmp if_end_314
+if_else_314:
+if_end_314:
+    jmp if_end_313
+if_else_313:
+if_end_313:
+    mov eax, dword [var_millionaire]
+    mov ebx, 0
+    cmp eax, ebx
+    je if_then_315
+    jmp if_else_315
+if_then_315:
+    mov eax, dword [var_totalresources]
+    mov ebx, 9999
+    cmp eax, ebx
+    jg if_then_316
+    jmp if_else_316
+if_then_316:
+    mov eax, 1
+    mov dword [var_millionaire], eax
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_474
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
+    jmp if_end_316
+if_else_316:
+if_end_316:
+    jmp if_end_315
+if_else_315:
+if_end_315:
+    mov eax, dword [var_woodmaster]
+    mov ebx, 0
+    cmp eax, ebx
+    je if_then_317
+    jmp if_else_317
+if_then_317:
+    mov eax, dword [var_wood]
+    mov ebx, 49
+    cmp eax, ebx
+    jg if_then_318
+    jmp if_else_318
+if_then_318:
+    mov eax, 1
+    mov dword [var_woodmaster], eax
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_475
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
+    jmp if_end_318
+if_else_318:
+if_end_318:
+    jmp if_end_317
+if_else_317:
+if_end_317:
+    mov eax, dword [var_stonemaster]
+    mov ebx, 0
+    cmp eax, ebx
+    je if_then_319
+    jmp if_else_319
+if_then_319:
+    mov eax, dword [var_stone]
+    mov ebx, 49
+    cmp eax, ebx
+    jg if_then_320
+    jmp if_else_320
+if_then_320:
+    mov eax, 1
+    mov dword [var_stonemaster], eax
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_476
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
+    jmp if_end_320
+if_else_320:
+if_end_320:
+    jmp if_end_319
+if_else_319:
+if_end_319:
+    mov eax, dword [var_goldmaster]
+    mov ebx, 0
+    cmp eax, ebx
+    je if_then_321
+    jmp if_else_321
+if_then_321:
+    mov eax, dword [var_gold]
+    mov ebx, 49
+    cmp eax, ebx
+    jg if_then_322
+    jmp if_else_322
+if_then_322:
+    mov eax, 1
+    mov dword [var_goldmaster], eax
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_477
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
+    jmp if_end_322
+if_else_322:
+if_end_322:
+    jmp if_end_321
+if_else_321:
+if_end_321:
+    mov eax, dword [var_woodtycoon]
+    mov ebx, 0
+    cmp eax, ebx
+    je if_then_323
+    jmp if_else_323
+if_then_323:
+    mov eax, dword [var_wood]
+    mov ebx, 499
+    cmp eax, ebx
+    jg if_then_324
+    jmp if_else_324
+if_then_324:
+    mov eax, 1
+    mov dword [var_woodtycoon], eax
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_478
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
+    jmp if_end_324
+if_else_324:
+if_end_324:
+    jmp if_end_323
+if_else_323:
+if_end_323:
+    mov eax, dword [var_stonetycoon]
+    mov ebx, 0
+    cmp eax, ebx
+    je if_then_325
+    jmp if_else_325
+if_then_325:
+    mov eax, dword [var_stone]
+    mov ebx, 499
+    cmp eax, ebx
+    jg if_then_326
+    jmp if_else_326
+if_then_326:
+    mov eax, 1
+    mov dword [var_stonetycoon], eax
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_479
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
+    jmp if_end_326
+if_else_326:
+if_end_326:
+    jmp if_end_325
+if_else_325:
+if_end_325:
+    mov eax, dword [var_goldtycoon]
+    mov ebx, 0
+    cmp eax, ebx
+    je if_then_327
+    jmp if_else_327
+if_then_327:
+    mov eax, dword [var_gold]
+    mov ebx, 499
+    cmp eax, ebx
+    jg if_then_328
+    jmp if_else_328
+if_then_328:
+    mov eax, 1
+    mov dword [var_goldtycoon], eax
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_480
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
+    jmp if_end_328
+if_else_328:
+if_end_328:
+    jmp if_end_327
+if_else_327:
+if_end_327:
+    mov eax, dword [var_minigamemaster]
+    mov ebx, 0
+    cmp eax, ebx
+    je if_then_329
+    jmp if_else_329
+if_then_329:
+    mov eax, dword [var_minigamewins]
+    mov ebx, 9
+    cmp eax, ebx
+    jg if_then_330
+    jmp if_else_330
+if_then_330:
+    mov eax, 1
+    mov dword [var_minigamemaster], eax
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_481
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
+    jmp if_end_330
+if_else_330:
+if_end_330:
+    jmp if_end_329
+if_else_329:
+if_end_329:
+    mov eax, dword [var_eventexplorer]
+    mov ebx, 0
+    cmp eax, ebx
+    je if_then_331
+    jmp if_else_331
+if_then_331:
+    mov eax, dword [var_totalevents]
+    mov ebx, 19
+    cmp eax, ebx
+    jg if_then_332
+    jmp if_else_332
+if_then_332:
+    mov eax, 1
+    mov dword [var_eventexplorer], eax
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_482
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
+    jmp if_end_332
+if_else_332:
+if_end_332:
+    jmp if_end_331
+if_else_331:
+if_end_331:
+    mov eax, dword [var_turnveteran]
+    mov ebx, 0
+    cmp eax, ebx
+    je if_then_333
+    jmp if_else_333
+if_then_333:
+    mov eax, dword [var_turn]
+    mov ebx, 99
+    cmp eax, ebx
+    jg if_then_334
+    jmp if_else_334
+if_then_334:
+    mov eax, 1
+    mov dword [var_turnveteran], eax
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_483
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
+    jmp if_end_334
+if_else_334:
+if_end_334:
+    jmp if_end_333
+if_else_333:
+if_end_333:
+    mov eax, dword [var_collectoraddict]
+    mov ebx, 0
+    cmp eax, ebx
+    je if_then_335
+    jmp if_else_335
+if_then_335:
+    mov eax, dword [var_totalcollections]
+    mov ebx, 199
+    cmp eax, ebx
+    jg if_then_336
+    jmp if_else_336
+if_then_336:
+    mov eax, 1
+    mov dword [var_collectoraddict], eax
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_484
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
+    jmp if_end_336
+if_else_336:
+if_end_336:
+    jmp if_end_335
+if_else_335:
+if_end_335:
+    mov eax, dword [var_ironfist]
+    mov ebx, 0
+    cmp eax, ebx
+    je if_then_337
+    jmp if_else_337
+if_then_337:
+    mov eax, dword [var_level]
+    mov ebx, 99
+    cmp eax, ebx
+    jg if_then_338
+    jmp if_else_338
+if_then_338:
+    mov eax, 1
+    mov dword [var_ironfist], eax
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_485
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
+    jmp if_end_338
+if_else_338:
+if_end_338:
+    jmp if_end_337
+if_else_337:
+if_end_337:
+    mov eax, dword [var_collectorpro]
+    mov ebx, 0
+    cmp eax, ebx
+    je if_then_339
+    jmp if_else_339
+if_then_339:
+    mov eax, dword [var_totalcollections]
+    mov ebx, 499
+    cmp eax, ebx
+    jg if_then_340
+    jmp if_else_340
+if_then_340:
+    mov eax, 1
+    mov dword [var_collectorpro], eax
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_486
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
+    jmp if_end_340
+if_else_340:
+if_end_340:
+    jmp if_end_339
+if_else_339:
+if_end_339:
+    mov eax, dword [var_ultrarich]
+    mov ebx, 0
+    cmp eax, ebx
+    je if_then_341
+    jmp if_else_341
+if_then_341:
+    mov eax, dword [var_totalresources]
+    mov ebx, 99999
+    cmp eax, ebx
+    jg if_then_342
+    jmp if_else_342
+if_then_342:
+    mov eax, 1
+    mov dword [var_ultrarich], eax
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_487
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
+    jmp if_end_342
+if_else_342:
+if_end_342:
+    jmp if_end_341
+if_else_341:
+if_end_341:
+    mov eax, dword [var_grinder]
+    mov ebx, 0
+    cmp eax, ebx
+    je if_then_343
+    jmp if_else_343
+if_then_343:
+    mov eax, dword [var_turn]
+    mov ebx, 499
+    cmp eax, ebx
+    jg if_then_344
+    jmp if_else_344
+if_then_344:
+    mov eax, 1
+    mov dword [var_grinder], eax
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_488
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
+    jmp if_end_344
+if_else_344:
+if_end_344:
+    jmp if_end_343
+if_else_343:
+if_end_343:
+    mov eax, dword [var_hoarder]
+    mov ebx, 0
+    cmp eax, ebx
+    je if_then_345
+    jmp if_else_345
+if_then_345:
+    mov eax, dword [var_wood]
+    mov ebx, 4999
+    cmp eax, ebx
+    jg if_then_346
+    jmp if_else_346
+if_then_346:
+    mov eax, 1
+    mov dword [var_hoarder], eax
+    jmp if_end_346
+if_else_346:
+if_end_346:
+    mov eax, dword [var_stone]
+    mov ebx, 4999
+    cmp eax, ebx
+    jg if_then_347
+    jmp if_else_347
+if_then_347:
+    mov eax, 1
+    mov dword [var_hoarder], eax
+    jmp if_end_347
+if_else_347:
+if_end_347:
+    mov eax, dword [var_gold]
+    mov ebx, 4999
+    cmp eax, ebx
+    jg if_then_348
+    jmp if_else_348
+if_then_348:
+    mov eax, 1
+    mov dword [var_hoarder], eax
+    jmp if_end_348
+if_else_348:
+if_end_348:
+    mov eax, dword [var_hoarder]
+    mov ebx, 1
+    cmp eax, ebx
+    je if_then_349
+    jmp if_else_349
+if_then_349:
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_489
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
+    jmp if_end_349
+if_else_349:
+if_end_349:
+    jmp if_end_345
+if_else_345:
+if_end_345:
+    mov eax, dword [var_unstoppable]
+    mov ebx, 0
+    cmp eax, ebx
+    je if_then_350
+    jmp if_else_350
+if_then_350:
+    mov eax, dword [var_minigamewins]
+    mov ebx, 24
+    cmp eax, ebx
+    jg if_then_351
+    jmp if_else_351
+if_then_351:
+    mov eax, 1
+    mov dword [var_unstoppable], eax
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_490
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
+    jmp if_end_351
+if_else_351:
+if_end_351:
+    jmp if_end_350
+if_else_350:
+if_end_350:
+    mov eax, dword [var_eventlegend]
+    mov ebx, 0
+    cmp eax, ebx
+    je if_then_352
+    jmp if_else_352
+if_then_352:
+    mov eax, dword [var_totalevents]
+    mov ebx, 99
+    cmp eax, ebx
+    jg if_then_353
+    jmp if_else_353
+if_then_353:
+    mov eax, 1
+    mov dword [var_eventlegend], eax
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_491
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
+    jmp if_end_353
+if_else_353:
+if_end_353:
+    jmp if_end_352
+if_else_352:
+if_end_352:
+    mov eax, dword [var_jackpot]
+    mov ebx, 0
+    cmp eax, ebx
+    je if_then_354
+    jmp if_else_354
+if_then_354:
+    mov eax, dword [var_minigamewins]
+    mov ebx, 14
+    cmp eax, ebx
+    jg if_then_355
+    jmp if_else_355
+if_then_355:
+    mov eax, 1
+    mov dword [var_jackpot], eax
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_492
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
+    jmp if_end_355
+if_else_355:
+if_end_355:
+    jmp if_end_354
+if_else_354:
+if_end_354:
+    mov eax, dword [var_dedicated]
+    mov ebx, 0
+    cmp eax, ebx
+    je if_then_356
+    jmp if_else_356
+if_then_356:
+    mov eax, dword [var_turn]
+    mov ebx, 999
+    cmp eax, ebx
+    jg if_then_357
+    jmp if_else_357
+if_then_357:
+    mov eax, 1
+    mov dword [var_dedicated], eax
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_493
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
+    jmp if_end_357
+if_else_357:
+if_end_357:
+    jmp if_end_356
+if_else_356:
+if_end_356:
+    mov eax, dword [var_maxedout]
+    mov ebx, 0
+    cmp eax, ebx
+    je if_then_358
+    jmp if_else_358
+if_then_358:
+    mov eax, dword [var_level]
+    mov ebx, 199
+    cmp eax, ebx
+    jg if_then_359
+    jmp if_else_359
+if_then_359:
+    mov eax, 1
+    mov dword [var_maxedout], eax
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_494
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
     jmp if_end_359
 if_else_359:
 if_end_359:
     jmp if_end_358
 if_else_358:
 if_end_358:
-    jmp if_end_302
-if_else_302:
-if_end_302:
-    mov eax, dword [var_gameover]
-    mov ebx, 1
+    mov eax, dword [var_maxedout]
+    mov ebx, 0
     cmp eax, ebx
     je if_then_360
     jmp if_else_360
 if_then_360:
+    mov eax, dword [var_level]
+    mov ebx, 199
+    cmp eax, ebx
+    jg if_then_361
+    jmp if_else_361
+if_then_361:
+    mov eax, 1
+    mov dword [var_maxedout], eax
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_494
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
+    jmp if_end_361
+if_else_361:
+if_end_361:
+    jmp if_end_360
+if_else_360:
+if_end_360:
+    mov eax, dword [var_traderachievement]
+    mov ebx, 0
+    cmp eax, ebx
+    je if_then_362
+    jmp if_else_362
+if_then_362:
+    mov eax, dword [var_tradesmade]
+    mov ebx, 9
+    cmp eax, ebx
+    jg if_then_363
+    jmp if_else_363
+if_then_363:
+    mov eax, 1
+    mov dword [var_traderachievement], eax
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_495
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
+    jmp if_end_363
+if_else_363:
+if_end_363:
+    jmp if_end_362
+if_else_362:
+if_end_362:
+    mov eax, dword [var_speculatorachievement]
+    mov ebx, 0
+    cmp eax, ebx
+    je if_then_364
+    jmp if_else_364
+if_then_364:
+    mov eax, dword [var_speculationsmade]
+    mov ebx, 4
+    cmp eax, ebx
+    jg if_then_365
+    jmp if_else_365
+if_then_365:
+    mov eax, 1
+    mov dword [var_speculatorachievement], eax
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_496
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
+    jmp if_end_365
+if_else_365:
+if_end_365:
+    jmp if_end_364
+if_else_364:
+if_end_364:
+    mov eax, dword [var_markettycoon]
+    mov ebx, 0
+    cmp eax, ebx
+    je if_then_366
+    jmp if_else_366
+if_then_366:
+    mov eax, dword [var_tradesmade]
+    mov ebx, 49
+    cmp eax, ebx
+    jg if_then_367
+    jmp if_else_367
+if_then_367:
+    mov eax, 1
+    mov dword [var_markettycoon], eax
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_497
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
+    jmp if_end_367
+if_else_367:
+if_end_367:
+    jmp if_end_366
+if_else_366:
+if_end_366:
+    mov eax, dword [var_buildingachievement]
+    mov ebx, 0
+    cmp eax, ebx
+    je if_then_368
+    jmp if_else_368
+if_then_368:
+    mov eax, dword [var_totalbuildings]
+    mov ebx, 4
+    cmp eax, ebx
+    jg if_then_369
+    jmp if_else_369
+if_then_369:
+    mov eax, 1
+    mov dword [var_buildingachievement], eax
+    mov eax, dword [var_achievements]
+    push eax
+    mov eax, 1
+    pop ebx
+    add ebx, eax
+    mov eax, ebx
+    mov dword [var_achievements], eax
+    push str_498
+    call _printf
+    add esp, 4
+    push str_3
+    call _printf
+    add esp, 4
+    push 300
+    call _boop
+    add esp, 4
+    push 1500
+    call _Sleep@4
+    jmp if_end_369
+if_else_369:
+if_end_369:
+    jmp if_end_368
+if_else_368:
+if_end_368:
+    jmp if_end_310
+if_else_310:
+if_end_310:
+    mov eax, dword [var_gameover]
+    mov ebx, 1
+    cmp eax, ebx
+    je if_then_370
+    jmp if_else_370
+if_then_370:
     mov eax, 3
     mov esp, ebp
     pop ebp
     ret
     mov eax, 1
     ret
-    jmp if_end_360
-if_else_360:
-if_end_360:
+    jmp if_end_370
+if_else_370:
+if_end_370:
     mov eax, dword [var_turn]
     push eax
     mov eax, 1
@@ -10755,16 +11422,16 @@ if_end_360:
     mov eax, dword [var_turn]
     mov ebx, 50
     cmp eax, ebx
-    jg if_then_361
-    jmp if_else_361
-if_then_361:
+    jg if_then_371
+    jmp if_else_371
+if_then_371:
     mov eax, 0
     mov dword [var_dailyclaimed], eax
     mov eax, 0
     mov dword [var_turn], eax
-    jmp if_end_361
-if_else_361:
-if_end_361:
+    jmp if_end_371
+if_else_371:
+if_end_371:
     push 1000
     call _Sleep@4
     jmp loop_start_2
