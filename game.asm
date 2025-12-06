@@ -40,7 +40,7 @@ _compare_strings:
 _clearscreen:
     push ebp
     mov ebp, esp
-    push cmd_499
+    push cmd_500
     call _system
     add esp, 4
     mov eax, 1
@@ -218,7 +218,7 @@ _showstats:
     mov eax, dword [ebp+44]
     mov dword [var_achievements], eax
     push dword [var_turn]
-    push str_500
+    push str_501
     call _printf
     add esp, 8
     push str_3
@@ -253,7 +253,7 @@ _showstats:
     call _printf
     add esp, 4
     push dword [var_autocollect]
-    push str_501
+    push str_502
     call _printf
     add esp, 8
     push str_3
@@ -268,14 +268,14 @@ _showstats:
     add esp, 4
     push dword [var_prestigebonus]
     push dword [var_prestigelevel]
-    push str_502
+    push str_503
     call _printf
     add esp, 12
     push str_3
     call _printf
     add esp, 4
     push dword [var_achievements]
-    push str_503
+    push str_86
     call _printf
     add esp, 8
     push str_3
@@ -437,7 +437,7 @@ str_82 db "Gold Mines: %d (+%d gold/turn)", 0
 str_83 db "Warehouses: %d (+%d%% collection)", 0
 str_84 db "Next Upgrade Needs: Wood %d, Stone %d, Gold %d", 0
 str_85 db "Multiplier: %d", 0
-str_86 db "Achievements: %d/30", 0
+str_86 db "Achievements: %d/35", 0
 str_87 db "=== RESOURCE SHOP ===", 0
 str_88 db "Your Resources:", 0
 str_89 db "Wood: %d | Stone: %d | Gold: %d", 0
@@ -479,7 +479,7 @@ str_124 db "PRESTIGE ACHIEVED! Level %d", 0
 str_125 db "All resources converted to x%d bonus!", 0
 str_126 db "Need %d total resources (have %d)", 0
 str_127 db "Leaving shop...", 0
-str_128 db "=== ACHIEVEMENTS (%d/30) ===", 0
+str_128 db "=== ACHIEVEMENTS (%d/35) ===", 0
 str_129 db "[X] First Steps - Collect your first resource", 0
 str_130 db "[ ] First Steps - Collect your first resource", 0
 str_131 db "[X] Halfway There - Reach Level 5", 0
@@ -820,41 +820,41 @@ str_465 db "Market rates refreshed! (-10 gold)", 0
 str_466 db "Need 10 gold to refresh rates!", 0
 str_467 db "Leaving marketplace...", 0
 str_468 db "Exiting game...", 0
-str_469 db "Total Resources: %d", 0
-str_470 db "Turns Played: %d", 0
-str_471 db "Collections Made: %d", 0
-str_472 db "=== ACHIEVEMENT UNLOCKED: Resource Baron! (100+ total resources) ===", 0
-str_473 db "=== ACHIEVEMENT UNLOCKED: Wealthy Magnate! (1,000+ total resources) ===", 0
-str_474 db "=== ACHIEVEMENT UNLOCKED: Resource Millionaire! (10,000+ total resources) ===", 0
-str_475 db "=== ACHIEVEMENT UNLOCKED: Lumberjack! (50+ wood) ===", 0
-str_476 db "=== ACHIEVEMENT UNLOCKED: Quarry King! (50+ stone) ===", 0
-str_477 db "=== ACHIEVEMENT UNLOCKED: Gold Digger! (50+ gold) ===", 0
-str_478 db "=== ACHIEVEMENT UNLOCKED: Wood Tycoon! (500+ wood) ===", 0
-str_479 db "=== ACHIEVEMENT UNLOCKED: Stone Tycoon! (500+ stone) ===", 0
-str_480 db "=== ACHIEVEMENT UNLOCKED: Gold Tycoon! (500+ gold) ===", 0
-str_481 db "=== ACHIEVEMENT UNLOCKED: Minigame Master! (10 minigame wins) ===", 0
-str_482 db "=== ACHIEVEMENT UNLOCKED: Event Explorer! (20 random events) ===", 0
-str_483 db "=== ACHIEVEMENT UNLOCKED: Turn Veteran! (100 turns played) ===", 0
-str_484 db "=== ACHIEVEMENT UNLOCKED: Collector Addict! (200 collections made) ===", 0
-str_485 db "=== ACHIEVEMENT UNLOCKED: Iron Fist! (Level 100) ===", 0
-str_486 db "=== ACHIEVEMENT UNLOCKED: Collector Pro! (500 collections) ===", 0
-str_487 db "=== ACHIEVEMENT UNLOCKED: Ultra Rich! (100,000+ total resources) ===", 0
-str_488 db "=== ACHIEVEMENT UNLOCKED: Grinder! (500 turns played) ===", 0
-str_489 db "=== ACHIEVEMENT UNLOCKED: Hoarder! (5,000+ of a resource) ===", 0
-str_490 db "=== ACHIEVEMENT UNLOCKED: Unstoppable! (25 minigame wins) ===", 0
-str_491 db "=== ACHIEVEMENT UNLOCKED: Event Legend! (100 random events) ===", 0
-str_492 db "=== ACHIEVEMENT UNLOCKED: Jackpot! (15 minigame wins) ===", 0
-str_493 db "=== ACHIEVEMENT UNLOCKED: Dedicated! (1,000 turns played) ===", 0
-str_494 db "=== ACHIEVEMENT UNLOCKED: Maxed Out! (Level 200) ===", 0
-str_495 db "=== ACHIEVEMENT UNLOCKED: Trader! (10 trades made) ===", 0
-str_496 db "=== ACHIEVEMENT UNLOCKED: Speculator! (5 market bets made) ===", 0
-str_497 db "=== ACHIEVEMENT UNLOCKED: Market Tycoon! (50 trades made) ===", 0
-str_498 db "=== ACHIEVEMENT UNLOCKED: Master Builder! (5 buildings built) ===", 0
-cmd_499 db "cls", 0
-str_500 db "Turn: %d", 0
-str_501 db "Auto Collect Rate: %d", 0
-str_502 db "Prestige: Level %d (x%d bonus)", 0
-str_503 db "Achievements: %d/31", 0
+str_469 db "Achievements: %d/30", 0
+str_470 db "Total Resources: %d", 0
+str_471 db "Turns Played: %d", 0
+str_472 db "Collections Made: %d", 0
+str_473 db "=== ACHIEVEMENT UNLOCKED: Resource Baron! (100+ total resources) ===", 0
+str_474 db "=== ACHIEVEMENT UNLOCKED: Wealthy Magnate! (1,000+ total resources) ===", 0
+str_475 db "=== ACHIEVEMENT UNLOCKED: Resource Millionaire! (10,000+ total resources) ===", 0
+str_476 db "=== ACHIEVEMENT UNLOCKED: Lumberjack! (50+ wood) ===", 0
+str_477 db "=== ACHIEVEMENT UNLOCKED: Quarry King! (50+ stone) ===", 0
+str_478 db "=== ACHIEVEMENT UNLOCKED: Gold Digger! (50+ gold) ===", 0
+str_479 db "=== ACHIEVEMENT UNLOCKED: Wood Tycoon! (500+ wood) ===", 0
+str_480 db "=== ACHIEVEMENT UNLOCKED: Stone Tycoon! (500+ stone) ===", 0
+str_481 db "=== ACHIEVEMENT UNLOCKED: Gold Tycoon! (500+ gold) ===", 0
+str_482 db "=== ACHIEVEMENT UNLOCKED: Minigame Master! (10 minigame wins) ===", 0
+str_483 db "=== ACHIEVEMENT UNLOCKED: Event Explorer! (20 random events) ===", 0
+str_484 db "=== ACHIEVEMENT UNLOCKED: Turn Veteran! (100 turns played) ===", 0
+str_485 db "=== ACHIEVEMENT UNLOCKED: Collector Addict! (200 collections made) ===", 0
+str_486 db "=== ACHIEVEMENT UNLOCKED: Iron Fist! (Level 100) ===", 0
+str_487 db "=== ACHIEVEMENT UNLOCKED: Collector Pro! (500 collections) ===", 0
+str_488 db "=== ACHIEVEMENT UNLOCKED: Ultra Rich! (100,000+ total resources) ===", 0
+str_489 db "=== ACHIEVEMENT UNLOCKED: Grinder! (500 turns played) ===", 0
+str_490 db "=== ACHIEVEMENT UNLOCKED: Hoarder! (5,000+ of a resource) ===", 0
+str_491 db "=== ACHIEVEMENT UNLOCKED: Unstoppable! (25 minigame wins) ===", 0
+str_492 db "=== ACHIEVEMENT UNLOCKED: Event Legend! (100 random events) ===", 0
+str_493 db "=== ACHIEVEMENT UNLOCKED: Jackpot! (15 minigame wins) ===", 0
+str_494 db "=== ACHIEVEMENT UNLOCKED: Dedicated! (1,000 turns played) ===", 0
+str_495 db "=== ACHIEVEMENT UNLOCKED: Maxed Out! (Level 200) ===", 0
+str_496 db "=== ACHIEVEMENT UNLOCKED: Trader! (10 trades made) ===", 0
+str_497 db "=== ACHIEVEMENT UNLOCKED: Speculator! (5 market bets made) ===", 0
+str_498 db "=== ACHIEVEMENT UNLOCKED: Market Tycoon! (50 trades made) ===", 0
+str_499 db "=== ACHIEVEMENT UNLOCKED: Master Builder! (5 buildings built) ===", 0
+cmd_500 db "cls", 0
+str_501 db "Turn: %d", 0
+str_502 db "Auto Collect Rate: %d", 0
+str_503 db "Prestige: Level %d (x%d bonus)", 0
 str_504 db "A wild RESOURCE GOLEM appears!", 0
 
 section .bss
@@ -10233,7 +10233,7 @@ if_then_309:
     call _printf
     add esp, 4
     push dword [var_achievements]
-    push str_86
+    push str_469
     call _printf
     add esp, 8
     push str_3
@@ -10254,21 +10254,21 @@ if_then_309:
     mov eax, ebx
     mov dword [var_total], eax
     push dword [var_total]
-    push str_469
-    call _printf
-    add esp, 8
-    push str_3
-    call _printf
-    add esp, 4
-    push dword [var_turn]
     push str_470
     call _printf
     add esp, 8
     push str_3
     call _printf
     add esp, 4
-    push dword [var_totalcollections]
+    push dword [var_turn]
     push str_471
+    call _printf
+    add esp, 8
+    push str_3
+    call _printf
+    add esp, 4
+    push dword [var_totalcollections]
+    push str_472
     call _printf
     add esp, 8
     push str_3
@@ -10320,7 +10320,7 @@ if_then_312:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_472
+    push str_473
     call _printf
     add esp, 4
     push str_3
@@ -10358,7 +10358,7 @@ if_then_314:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_473
+    push str_474
     call _printf
     add esp, 4
     push str_3
@@ -10396,7 +10396,7 @@ if_then_316:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_474
+    push str_475
     call _printf
     add esp, 4
     push str_3
@@ -10434,7 +10434,7 @@ if_then_318:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_475
+    push str_476
     call _printf
     add esp, 4
     push str_3
@@ -10472,7 +10472,7 @@ if_then_320:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_476
+    push str_477
     call _printf
     add esp, 4
     push str_3
@@ -10510,7 +10510,7 @@ if_then_322:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_477
+    push str_478
     call _printf
     add esp, 4
     push str_3
@@ -10548,7 +10548,7 @@ if_then_324:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_478
+    push str_479
     call _printf
     add esp, 4
     push str_3
@@ -10586,7 +10586,7 @@ if_then_326:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_479
+    push str_480
     call _printf
     add esp, 4
     push str_3
@@ -10624,7 +10624,7 @@ if_then_328:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_480
+    push str_481
     call _printf
     add esp, 4
     push str_3
@@ -10662,7 +10662,7 @@ if_then_330:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_481
+    push str_482
     call _printf
     add esp, 4
     push str_3
@@ -10700,7 +10700,7 @@ if_then_332:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_482
+    push str_483
     call _printf
     add esp, 4
     push str_3
@@ -10738,7 +10738,7 @@ if_then_334:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_483
+    push str_484
     call _printf
     add esp, 4
     push str_3
@@ -10776,7 +10776,7 @@ if_then_336:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_484
+    push str_485
     call _printf
     add esp, 4
     push str_3
@@ -10814,7 +10814,7 @@ if_then_338:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_485
+    push str_486
     call _printf
     add esp, 4
     push str_3
@@ -10852,7 +10852,7 @@ if_then_340:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_486
+    push str_487
     call _printf
     add esp, 4
     push str_3
@@ -10890,7 +10890,7 @@ if_then_342:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_487
+    push str_488
     call _printf
     add esp, 4
     push str_3
@@ -10928,7 +10928,7 @@ if_then_344:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_488
+    push str_489
     call _printf
     add esp, 4
     push str_3
@@ -10997,7 +10997,7 @@ if_then_349:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_489
+    push str_490
     call _printf
     add esp, 4
     push str_3
@@ -11035,7 +11035,7 @@ if_then_351:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_490
+    push str_491
     call _printf
     add esp, 4
     push str_3
@@ -11073,7 +11073,7 @@ if_then_353:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_491
+    push str_492
     call _printf
     add esp, 4
     push str_3
@@ -11111,7 +11111,7 @@ if_then_355:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_492
+    push str_493
     call _printf
     add esp, 4
     push str_3
@@ -11149,7 +11149,7 @@ if_then_357:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_493
+    push str_494
     call _printf
     add esp, 4
     push str_3
@@ -11187,7 +11187,7 @@ if_then_359:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_494
+    push str_495
     call _printf
     add esp, 4
     push str_3
@@ -11225,7 +11225,7 @@ if_then_361:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_494
+    push str_495
     call _printf
     add esp, 4
     push str_3
@@ -11263,7 +11263,7 @@ if_then_363:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_495
+    push str_496
     call _printf
     add esp, 4
     push str_3
@@ -11301,7 +11301,7 @@ if_then_365:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_496
+    push str_497
     call _printf
     add esp, 4
     push str_3
@@ -11339,7 +11339,7 @@ if_then_367:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_497
+    push str_498
     call _printf
     add esp, 4
     push str_3
@@ -11377,7 +11377,7 @@ if_then_369:
     add ebx, eax
     mov eax, ebx
     mov dword [var_achievements], eax
-    push str_498
+    push str_499
     call _printf
     add esp, 4
     push str_3
