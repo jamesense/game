@@ -1,6 +1,6 @@
 How to compile:
 
-Required: NASM, GCC
+Required: NASM, GCC, Strip
 
 Download game.asm from the repo
 
